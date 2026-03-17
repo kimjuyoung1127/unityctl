@@ -1,5 +1,7 @@
 # AI Agent Quickstart
 
+See also: [glossary](./glossary.md)
+
 This guide is for AI coding agents (Claude, Copilot, etc.) that need to automate Unity projects.
 
 ## Zero-config Setup
@@ -8,7 +10,7 @@ This guide is for AI coding agents (Claude, Copilot, etc.) that need to automate
 # 1. Clone and build
 git clone https://github.com/your-username/unityctl.git
 cd unityctl
-dotnet build src/Unityctl.Cli -c Release
+dotnet build unityctl.slnx
 
 # 2. Add plugin to target Unity project
 dotnet run --project src/Unityctl.Cli -- init --project "/path/to/unity/project"
@@ -38,6 +40,14 @@ dotnet run --project src/Unityctl.Cli -- test --project "/path/to/project" --mod
 dotnet run --project src/Unityctl.Cli -- build --project "/path/to/project" --target StandaloneWindows64 --json
 ```
 
+## Parameters
+
+Commands accept typed parameters via JSON payload. The CLI maps command-line flags to `JsonObject` parameters internally. Key parameter types:
+- **String**: `--target StandaloneWindows64` → `request.GetParam("target")`
+- **Bool**: handler-side `request.GetParam<bool>("verbose")`
+- **Int**: handler-side `request.GetParam<int>("count")`
+- **Nested**: handler-side `request.GetObjectParam("options")`
+
 ## StatusCode Reference
 
 | Code | Name | Meaning | Action |
@@ -45,14 +55,22 @@ dotnet run --project src/Unityctl.Cli -- build --project "/path/to/project" --ta
 | 0 | Ready | Success | Done |
 | 100-103 | Transient | Unity is busy | Retry (auto with --wait) |
 | 200 | NotFound | No Unity installed | Install Unity |
-| 201 | ProjectLocked | Editor has project open | Close Editor |
+| 201 | ProjectLocked | Editor has project open | Close Editor or wait for IPC (Phase 2B) |
 | 203 | PluginNotInstalled | Plugin missing | Run `init` |
 | 500+ | Error | Something broke | Check logs |
+
+## Transport Selection
+
+The `CommandExecutor` selects transport automatically:
+1. **IPC** (Phase 2B): if Unity Editor is running with plugin → <200ms response
+2. **Batch**: spawn Unity in batchmode → 30-120s response
+
+Currently only batch transport is implemented. IPC will be added in Phase 2B.
 
 ## Error Recovery
 
 If a command fails, check:
 1. `editor list` — is Unity installed?
 2. `init --project <path>` — is the plugin installed?
-3. Is the project locked by a running Editor?
+3. Is the project locked by a running Editor? (batch transport limitation)
 4. Check the log file path in the error output for Unity logs.

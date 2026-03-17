@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Unityctl.Cli.Platform;
+using Unityctl.Core.Platform;
 using Xunit;
 
 namespace Unityctl.Cli.Tests;

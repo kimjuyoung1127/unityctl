@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using Unityctl.Plugin.Editor.Shared;
 
 namespace Unityctl.Plugin.Editor.Commands
@@ -13,12 +14,11 @@ namespace Unityctl.Plugin.Editor.Commands
 #if UNITY_EDITOR
             try
             {
-                var mode = GetParam(request, "mode", "edit");
-                var filter = GetParam(request, "filter", null);
+                var mode = request.GetParam("mode", "edit");
+                var filter = request.GetParam("filter", null);
 
                 UnityEngine.Debug.Log($"[unityctl] Running tests: mode={mode}, filter={filter ?? "(all)"}");
 
-                // Use Unity Test Framework API
                 var testMode = mode.ToLowerInvariant() switch
                 {
                     "edit" or "editmode" => UnityEngine.TestTools.TestPlatform.EditMode,
@@ -26,8 +26,6 @@ namespace Unityctl.Plugin.Editor.Commands
                     _ => UnityEngine.TestTools.TestPlatform.EditMode
                 };
 
-                // For batchmode, we use the command-line test runner approach
-                // The results are collected via TestRunnerApi callbacks
                 var api = UnityEditor.TestTools.TestRunner.Api.ScriptableObject
                     .CreateInstance<UnityEditor.TestTools.TestRunner.Api.TestRunnerApi>();
 
@@ -43,19 +41,16 @@ namespace Unityctl.Plugin.Editor.Commands
                     }
                 };
 
-                // Synchronous execution in batchmode
                 var resultCollector = new TestResultCollector();
                 api.RegisterCallbacks(resultCollector);
                 api.Execute(executionSettings);
 
-                // In batchmode, tests run synchronously
-                // The results will be available in the collector after Execute returns
-
-                return CommandResponse.Ok($"Tests started (mode={mode})", new Dictionary<string, object>
+                var data = new JObject
                 {
                     ["mode"] = mode,
                     ["filter"] = filter ?? "(all)"
-                });
+                };
+                return CommandResponse.Ok($"Tests started (mode={mode})", data);
             }
             catch (Exception e)
             {
@@ -66,13 +61,6 @@ namespace Unityctl.Plugin.Editor.Commands
 #else
             return CommandResponse.Fail(StatusCode.UnknownError, "Not running in Unity Editor");
 #endif
-        }
-
-        private static string GetParam(CommandRequest request, string key, string defaultValue)
-        {
-            if (request.parameters != null && request.parameters.TryGetValue(key, out var val) && val != null)
-                return val.ToString();
-            return defaultValue;
         }
     }
 

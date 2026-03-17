@@ -1,52 +1,47 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Unityctl.Cli.Platform;
+using Unityctl.Core.Discovery;
+using Unityctl.Core.Platform;
 using Unityctl.Shared;
 using Unityctl.Shared.Protocol;
 using Unityctl.Shared.Serialization;
+using Unityctl.Shared.Transport;
 
-namespace Unityctl.Cli.Infrastructure;
+namespace Unityctl.Core.Transport;
 
 /// <summary>
-/// Spawns Unity in batchmode with --response-file protocol.
-/// Handles request/response file management, process lifecycle, and log tailing.
+/// Batch transport: spawns Unity in batchmode for each command.
+/// Extracted from BatchModeRunner.
 /// </summary>
-public sealed class BatchModeRunner
+public sealed class BatchTransport : ITransport
 {
     private readonly IPlatformServices _platform;
     private readonly UnityEditorDiscovery _discovery;
+    private readonly string _projectPath;
 
-    public BatchModeRunner(IPlatformServices platform, UnityEditorDiscovery discovery)
+    public string Name => "batch";
+    public TransportCapability Capabilities => TransportCapability.Command;
+
+    public BatchTransport(IPlatformServices platform, UnityEditorDiscovery discovery, string projectPath)
     {
         _platform = platform;
         _discovery = discovery;
+        _projectPath = Path.GetFullPath(projectPath);
     }
 
-    /// <summary>
-    /// Execute a command via Unity batchmode.
-    /// </summary>
-    public async Task<CommandResponse> ExecuteAsync(
-        string projectPath,
-        string command,
-        CommandRequest? request = null,
-        int timeoutMs = Constants.BatchModeTimeoutMs,
-        CancellationToken ct = default)
+    public async Task<CommandResponse> SendAsync(CommandRequest request, CancellationToken ct = default)
     {
-        projectPath = Path.GetFullPath(projectPath);
-
-        // Check project lock
-        if (_platform.IsProjectLocked(projectPath))
+        if (_platform.IsProjectLocked(_projectPath))
         {
             return CommandResponse.Fail(StatusCode.ProjectLocked,
                 "Unity project is locked by another process. Close the running Editor first.");
         }
 
-        // Find editor
-        var editor = _discovery.FindEditorForProject(projectPath);
+        var editor = _discovery.FindEditorForProject(_projectPath);
         if (editor == null)
         {
             return CommandResponse.Fail(StatusCode.NotFound,
-                $"No matching Unity Editor found for project at {projectPath}");
+                $"No matching Unity Editor found for project at {_projectPath}");
         }
 
         var unityExe = _platform.GetUnityExecutablePath(editor.Location);
@@ -56,9 +51,6 @@ public sealed class BatchModeRunner
                 $"Unity executable not found at {unityExe}");
         }
 
-        // Prepare request/response files
-        request ??= new CommandRequest();
-        request.Command = command;
         if (string.IsNullOrEmpty(request.RequestId))
             request.RequestId = Guid.NewGuid().ToString("N");
 
@@ -68,17 +60,14 @@ public sealed class BatchModeRunner
 
         try
         {
-            // Write request file
             var requestJson = JsonSerializer.Serialize(request, UnityctlJsonContext.Default.CommandRequest);
             await File.WriteAllTextAsync(requestPath, requestJson, ct);
 
-            // Build Unity arguments
-            var arguments = BuildArguments(projectPath, command, requestPath, responsePath, logPath);
+            var arguments = BuildArguments(_projectPath, request.Command, requestPath, responsePath, logPath);
 
-            Console.Error.WriteLine($"[unityctl] Spawning Unity batchmode: {command}");
+            Console.Error.WriteLine($"[unityctl] Spawning Unity batchmode: {request.Command}");
             Console.Error.WriteLine($"[unityctl] Editor: {editor.Version} at {editor.Location}");
 
-            // Spawn Unity process
             using var process = new Process();
             process.StartInfo = new ProcessStartInfo
             {
@@ -92,9 +81,8 @@ public sealed class BatchModeRunner
 
             process.Start();
 
-            // Wait with timeout
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            cts.CancelAfter(timeoutMs);
+            cts.CancelAfter(Constants.BatchModeTimeoutMs);
 
             try
             {
@@ -104,39 +92,45 @@ public sealed class BatchModeRunner
             {
                 try { process.Kill(entireProcessTree: true); } catch { }
                 return CommandResponse.Fail(StatusCode.Busy,
-                    $"Unity batchmode timed out after {timeoutMs / 1000}s");
+                    $"Unity batchmode timed out after {Constants.BatchModeTimeoutMs / 1000}s");
             }
 
-            // Read response file
             if (File.Exists(responsePath))
             {
                 var responseJson = await File.ReadAllTextAsync(responsePath, ct);
                 var response = JsonSerializer.Deserialize(responseJson, UnityctlJsonContext.Default.CommandResponse);
                 if (response != null)
-                {
                     return response;
-                }
             }
 
-            // Fallback: response file doesn't exist or parse failed
             var exitCode = process.ExitCode;
             var logTail = await TailLogAsync(logPath, 60);
 
             return CommandResponse.Fail(
-                exitCode == 0 ? StatusCode.UnknownError : StatusCode.UnknownError,
+                StatusCode.UnknownError,
                 $"Unity exited with code {exitCode} but no response file was written.",
                 string.IsNullOrEmpty(logTail) ? null : new List<string> { logTail });
         }
         finally
         {
-            // Cleanup temp files
             TryDelete(requestPath);
             TryDelete(responsePath);
-            // Keep log file for debugging (user can delete manually)
         }
     }
 
-    private string BuildArguments(string projectPath, string command, string requestPath, string responsePath, string logPath)
+    public IAsyncEnumerable<EventEnvelope>? SubscribeAsync(string channel, CancellationToken ct = default)
+        => null; // Batch transport does not support streaming
+
+    public async Task<bool> ProbeAsync(CancellationToken ct = default)
+    {
+        // Batch is always available if editor exists
+        var editor = _discovery.FindEditorForProject(_projectPath);
+        return await Task.FromResult(editor != null);
+    }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    private static string BuildArguments(string projectPath, string command, string requestPath, string responsePath, string logPath)
     {
         return string.Join(" ",
             "-batchmode",

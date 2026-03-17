@@ -3,7 +3,7 @@ using Unityctl.Cli.Commands;
 
 var app = ConsoleApp.Create();
 
-app.Add("", () => Console.WriteLine($"unityctl v{Unityctl.Shared.Constants.Version} — Unity CLI for agentic workflows\nUse --help for available commands."));
+app.Add("", () => Console.WriteLine($"unityctl v{Unityctl.Shared.Constants.Version} — A deterministic control plane for Unity\nUse --help for available commands."));
 
 app.Add("init", (string project, string? source = null) =>
     InitCommand.Execute(project, source));

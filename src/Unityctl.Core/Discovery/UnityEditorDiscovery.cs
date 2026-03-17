@@ -1,9 +1,8 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using Unityctl.Cli.Platform;
+using Unityctl.Core.Platform;
 using Unityctl.Shared.Models;
 
-namespace Unityctl.Cli.Infrastructure;
+namespace Unityctl.Core.Discovery;
 
 /// <summary>
 /// Discovers installed Unity Editor versions via Unity Hub's editors.json
@@ -18,15 +17,10 @@ public sealed class UnityEditorDiscovery
         _platform = platform;
     }
 
-    /// <summary>
-    /// Find all installed Unity Editors.
-    /// Strategy: 1) Parse editors.json from Unity Hub, 2) Scan default paths.
-    /// </summary>
     public List<UnityEditorInfo> FindEditors()
     {
         var editors = new Dictionary<string, UnityEditorInfo>(StringComparer.OrdinalIgnoreCase);
 
-        // Strategy 1: Unity Hub editors.json
         var editorsJsonPath = _platform.GetUnityHubEditorsJsonPath();
         if (File.Exists(editorsJsonPath))
         {
@@ -41,7 +35,6 @@ public sealed class UnityEditorDiscovery
             }
         }
 
-        // Strategy 2: Scan default paths
         foreach (var searchPath in _platform.GetDefaultEditorSearchPaths())
         {
             if (!Directory.Exists(searchPath)) continue;
@@ -51,9 +44,6 @@ public sealed class UnityEditorDiscovery
         return editors.Values.OrderByDescending(e => e.Version).ToList();
     }
 
-    /// <summary>
-    /// Find the best editor for a specific project by reading ProjectVersion.txt.
-    /// </summary>
     public UnityEditorInfo? FindEditorForProject(string projectPath)
     {
         var versionFile = Path.Combine(projectPath, "ProjectSettings", "ProjectVersion.txt");

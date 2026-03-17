@@ -1,10 +1,13 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Unityctl.Cli/Unityctl.Cli.csproj" />
     <Project Path="src/Unityctl.Shared/Unityctl.Shared.csproj" />
+    <Project Path="src/Unityctl.Core/Unityctl.Core.csproj" />
+    <Project Path="src/Unityctl.Cli/Unityctl.Cli.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Unityctl.Cli.Tests/Unityctl.Cli.Tests.csproj" />
     <Project Path="tests/Unityctl.Shared.Tests/Unityctl.Shared.Tests.csproj" />
+    <Project Path="tests/Unityctl.Core.Tests/Unityctl.Core.Tests.csproj" />
+    <Project Path="tests/Unityctl.Cli.Tests/Unityctl.Cli.Tests.csproj" />
+    <Project Path="tests/Unityctl.Integration.Tests/Unityctl.Integration.Tests.csproj" />
   </Folder>
 </Solution>

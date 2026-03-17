@@ -1,6 +1,6 @@
 using Unityctl.Shared.Protocol;
 
-namespace Unityctl.Cli.Infrastructure;
+namespace Unityctl.Core.Retry;
 
 /// <summary>
 /// Retry policy based on StatusCode classification.

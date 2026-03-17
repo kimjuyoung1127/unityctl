@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Unityctl.Shared\Unityctl.Shared.csproj" />
+    <ProjectReference Include="..\Unityctl.Core\Unityctl.Core.csproj" />
   </ItemGroup>
 </Project>

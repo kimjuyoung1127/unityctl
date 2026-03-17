@@ -1,6 +1,6 @@
 using Unityctl.Shared.Models;
 
-namespace Unityctl.Cli.Platform;
+namespace Unityctl.Core.Platform;
 
 public interface IPlatformServices
 {

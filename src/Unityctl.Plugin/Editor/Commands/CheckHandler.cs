@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using Unityctl.Plugin.Editor.Shared;
 
 namespace Unityctl.Plugin.Editor.Commands
@@ -14,7 +15,7 @@ namespace Unityctl.Plugin.Editor.Commands
 #if UNITY_EDITOR
             try
             {
-                var type = GetParam(request, "type", "compile");
+                var type = request.GetParam("type", "compile");
 
                 if (type != "compile")
                 {
@@ -22,24 +23,18 @@ namespace Unityctl.Plugin.Editor.Commands
                         $"Unknown check type: {type}. Currently only 'compile' is supported.");
                 }
 
-                // If we're in batchmode and reached this point, compilation already succeeded
-                // (Unity won't execute methods if compilation fails)
-                // But we can also check for warnings via CompilationPipeline
-
-                var messages = UnityEditor.Compilation.CompilationPipeline
-                    .GetPrecompiledAssemblyPaths(UnityEditor.Compilation.CompilationPipeline.PrecompiledAssemblySources.All);
-
                 var assemblyNames = UnityEditor.Compilation.CompilationPipeline
                     .GetAssemblies(UnityEditor.Compilation.AssembliesType.Player)
                     .Select(a => a.name)
                     .ToArray();
 
-                return CommandResponse.Ok("Compilation check passed", new Dictionary<string, object>
+                var data = new JObject
                 {
                     ["assemblies"] = assemblyNames.Length,
                     ["assemblyNames"] = string.Join(", ", assemblyNames.Take(10)),
                     ["isCompiling"] = UnityEditor.EditorApplication.isCompiling
-                });
+                };
+                return CommandResponse.Ok("Compilation check passed", data);
             }
             catch (Exception e)
             {
@@ -50,13 +45,6 @@ namespace Unityctl.Plugin.Editor.Commands
 #else
             return CommandResponse.Fail(StatusCode.UnknownError, "Not running in Unity Editor");
 #endif
-        }
-
-        private static string GetParam(CommandRequest request, string key, string defaultValue)
-        {
-            if (request.parameters != null && request.parameters.TryGetValue(key, out var val) && val != null)
-                return val.ToString();
-            return defaultValue;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using Unityctl.Plugin.Editor.Shared;
 
 namespace Unityctl.Plugin.Editor.Commands
@@ -8,13 +9,14 @@ namespace Unityctl.Plugin.Editor.Commands
 
         public CommandResponse Execute(CommandRequest request)
         {
-            return CommandResponse.Ok("pong", new System.Collections.Generic.Dictionary<string, object>
+            var data = new JObject
             {
-                ["version"] = "0.1.0",
+                ["version"] = "0.2.0",
 #if UNITY_EDITOR
                 ["unityVersion"] = UnityEngine.Application.unityVersion
 #endif
-            });
+            };
+            return CommandResponse.Ok("pong", data);
         }
     }
 }

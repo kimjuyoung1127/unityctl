@@ -1,5 +1,5 @@
+using Newtonsoft.Json.Linq;
 using Unityctl.Plugin.Editor.Shared;
-using System.Collections.Generic;
 
 namespace Unityctl.Plugin.Editor.Commands
 {
@@ -24,7 +24,7 @@ namespace Unityctl.Plugin.Editor.Commands
             else
                 code = StatusCode.Ready;
 
-            var data = new Dictionary<string, object>
+            var data = new JObject
             {
                 ["isCompiling"] = isCompiling,
                 ["isPlaying"] = isPlaying,

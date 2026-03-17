@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using Unityctl.Plugin.Editor.Shared;
 
 namespace Unityctl.Plugin.Editor.Commands
@@ -15,8 +16,8 @@ namespace Unityctl.Plugin.Editor.Commands
 #if UNITY_EDITOR
             try
             {
-                var target = GetParam(request, "target", "StandaloneWindows64");
-                var outputPath = GetParam(request, "outputPath", null);
+                var target = request.GetParam("target", "StandaloneWindows64");
+                var outputPath = request.GetParam("outputPath", null);
 
                 var buildTarget = ParseBuildTarget(target);
                 if (buildTarget == null)
@@ -25,13 +26,11 @@ namespace Unityctl.Plugin.Editor.Commands
                         $"Unknown build target: {target}. Valid targets: StandaloneWindows64, StandaloneOSX, StandaloneLinux64, Android, iOS, WebGL");
                 }
 
-                // Default output path
                 if (string.IsNullOrEmpty(outputPath))
                 {
                     outputPath = Path.Combine("Builds", target, GetDefaultExecutableName(buildTarget.Value));
                 }
 
-                // Get enabled scenes
                 var scenes = UnityEditor.EditorBuildSettings.scenes
                     .Where(s => s.enabled)
                     .Select(s => s.path)
@@ -43,7 +42,6 @@ namespace Unityctl.Plugin.Editor.Commands
                         "No scenes enabled in Build Settings. Add scenes to EditorBuildSettings.");
                 }
 
-                // Ensure output directory exists
                 var dir = Path.GetDirectoryName(outputPath);
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
@@ -63,14 +61,15 @@ namespace Unityctl.Plugin.Editor.Commands
 
                 if (summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 {
-                    return CommandResponse.Ok("Build succeeded", new Dictionary<string, object>
+                    var data = new JObject
                     {
                         ["outputPath"] = outputPath,
-                        ["totalSize"] = summary.totalSize,
+                        ["totalSize"] = (long)summary.totalSize,
                         ["totalTime"] = summary.totalTime.TotalSeconds,
                         ["totalErrors"] = summary.totalErrors,
                         ["totalWarnings"] = summary.totalWarnings
-                    });
+                    };
+                    return CommandResponse.Ok("Build succeeded", data);
                 }
                 else
                 {
@@ -128,12 +127,5 @@ namespace Unityctl.Plugin.Editor.Commands
             };
         }
 #endif
-
-        private static string GetParam(CommandRequest request, string key, string defaultValue)
-        {
-            if (request.parameters != null && request.parameters.TryGetValue(key, out var val) && val != null)
-                return val.ToString();
-            return defaultValue;
-        }
     }
 }

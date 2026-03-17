@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using System.Linq;
 using Unityctl.Plugin.Editor.Commands;
 using Unityctl.Plugin.Editor.Shared;
+using Newtonsoft.Json;
 
 namespace Unityctl.Plugin.Editor.BatchMode
 {
@@ -56,11 +56,7 @@ namespace Unityctl.Plugin.Editor.BatchMode
                 if (!string.IsNullOrEmpty(requestPath) && File.Exists(requestPath))
                 {
                     var json = File.ReadAllText(requestPath);
-#if UNITY_EDITOR
-                    request = UnityEngine.JsonUtility.FromJson<CommandRequest>(json);
-#else
-                    request = new CommandRequest { command = command ?? "ping" };
-#endif
+                    request = JsonConvert.DeserializeObject<CommandRequest>(json);
                 }
                 else
                 {
@@ -87,11 +83,7 @@ namespace Unityctl.Plugin.Editor.BatchMode
 
             try
             {
-#if UNITY_EDITOR
-                var responseJson = UnityEngine.JsonUtility.ToJson(response, true);
-#else
-                var responseJson = System.Text.Json.JsonSerializer.Serialize(response);
-#endif
+                var responseJson = JsonConvert.SerializeObject(response, Formatting.Indented);
                 var dir = Path.GetDirectoryName(responsePath);
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                     Directory.CreateDirectory(dir);

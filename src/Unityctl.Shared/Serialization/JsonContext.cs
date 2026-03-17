@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Unityctl.Shared.Protocol;
 
@@ -6,8 +7,11 @@ namespace Unityctl.Shared.Serialization;
 
 [JsonSerializable(typeof(CommandRequest))]
 [JsonSerializable(typeof(CommandResponse))]
+[JsonSerializable(typeof(EventEnvelope))]
+[JsonSerializable(typeof(SessionInfo))]
 [JsonSerializable(typeof(StatusCode))]
-[JsonSerializable(typeof(Dictionary<string, object?>))]
+[JsonSerializable(typeof(JsonObject))]
+[JsonSerializable(typeof(JsonNode))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     WriteIndented = true,

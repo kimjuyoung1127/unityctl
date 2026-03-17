@@ -1,6 +1,8 @@
-using Unityctl.Cli.Infrastructure;
+using System.Text.Json.Nodes;
 using Unityctl.Cli.Output;
-using Unityctl.Cli.Platform;
+using Unityctl.Core.Discovery;
+using Unityctl.Core.Platform;
+using Unityctl.Core.Transport;
 using Unityctl.Shared.Protocol;
 
 namespace Unityctl.Cli.Commands;
@@ -11,18 +13,19 @@ public static class TestCommand
     {
         var platform = PlatformFactory.Create();
         var discovery = new UnityEditorDiscovery(platform);
-        var runner = new BatchModeRunner(platform, discovery);
+        var executor = new CommandExecutor(platform, discovery);
 
         var request = new CommandRequest
         {
-            Parameters = new Dictionary<string, object?>
+            Command = "test",
+            Parameters = new JsonObject
             {
                 ["mode"] = mode,
                 ["filter"] = filter
             }
         };
 
-        var response = runner.ExecuteAsync(project, "test", request).GetAwaiter().GetResult();
+        var response = executor.ExecuteAsync(project, request).GetAwaiter().GetResult();
 
         if (json)
             JsonOutput.PrintResponse(response);

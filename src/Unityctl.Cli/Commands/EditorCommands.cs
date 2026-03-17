@@ -1,7 +1,6 @@
 using System.Text.Json;
-using Unityctl.Cli.Infrastructure;
-using Unityctl.Cli.Platform;
-using Unityctl.Shared.Serialization;
+using Unityctl.Core.Discovery;
+using Unityctl.Core.Platform;
 
 namespace Unityctl.Cli.Commands;
 

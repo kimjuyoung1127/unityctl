@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace Unityctl.Shared.Protocol;
@@ -14,7 +15,7 @@ public sealed class CommandResponse
     public string? Message { get; set; }
 
     [JsonPropertyName("data")]
-    public Dictionary<string, object?>? Data { get; set; }
+    public JsonObject? Data { get; set; }
 
     [JsonPropertyName("errors")]
     public List<string>? Errors { get; set; }
@@ -22,7 +23,7 @@ public sealed class CommandResponse
     [JsonPropertyName("requestId")]
     public string? RequestId { get; set; }
 
-    public static CommandResponse Ok(string? message = null, Dictionary<string, object?>? data = null) =>
+    public static CommandResponse Ok(string? message = null, JsonObject? data = null) =>
         new()
         {
             StatusCode = StatusCode.Ready,

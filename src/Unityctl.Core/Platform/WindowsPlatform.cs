@@ -1,26 +1,29 @@
 using Unityctl.Shared.Models;
 
-namespace Unityctl.Cli.Platform;
+namespace Unityctl.Core.Platform;
 
-public sealed class MacOsPlatform : IPlatformServices
+public sealed class WindowsPlatform : IPlatformServices
 {
     public string GetUnityHubEditorsJsonPath()
     {
-        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        return Path.Combine(home, "Library", "Application Support", "UnityHub", "editors.json");
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        return Path.Combine(appData, "UnityHub", "editors.json");
     }
 
     public IEnumerable<string> GetDefaultEditorSearchPaths()
     {
-        yield return "/Applications/Unity/Hub/Editor";
+        yield return @"C:\Program Files\Unity\Hub\Editor";
+        yield return Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            "Unity", "Hub", "Editor");
     }
 
     public string GetUnityExecutablePath(string editorBasePath)
-        => Path.Combine(editorBasePath, "Unity.app", "Contents", "MacOS", "Unity");
+        => Path.Combine(editorBasePath, "Editor", "Unity.exe");
 
     public IEnumerable<UnityProcessInfo> FindRunningUnityProcesses()
     {
-        // Phase 1-A에서 구현
+        // Phase 2B: WMI Win32_Process query
         yield break;
     }
 
@@ -41,8 +44,8 @@ public sealed class MacOsPlatform : IPlatformServices
 
     public Stream CreateIpcClientStream(string projectPath)
     {
-        // Phase 2에서 Unix Domain Socket 구현
-        throw new NotImplementedException("IPC is Phase 2");
+        // Phase 2B: NamedPipeClientStream
+        throw new NotImplementedException("IPC transport is Phase 2B");
     }
 
     public string GetTempResponseFilePath()

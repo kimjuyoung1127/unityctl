@@ -1,4 +1,4 @@
-using Unityctl.Cli.Infrastructure;
+using Unityctl.Core.Retry;
 using Unityctl.Shared.Protocol;
 using Xunit;
 
@@ -38,8 +38,8 @@ public class RetryPolicyTests
         Assert.Equal(2000, policy.GetDelayMs(1));
         Assert.Equal(4000, policy.GetDelayMs(2));
         Assert.Equal(8000, policy.GetDelayMs(3));
-        Assert.Equal(16000, policy.GetDelayMs(4)); // capped
-        Assert.Equal(16000, policy.GetDelayMs(5)); // capped
+        Assert.Equal(16000, policy.GetDelayMs(4));
+        Assert.Equal(16000, policy.GetDelayMs(5));
     }
 
     [Fact]
@@ -89,6 +89,6 @@ public class RetryPolicyTests
         });
 
         Assert.False(result.Success);
-        Assert.Equal(1, callCount); // No retries for fatal
+        Assert.Equal(1, callCount);
     }
 }

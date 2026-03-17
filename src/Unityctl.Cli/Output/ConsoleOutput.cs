@@ -27,9 +27,9 @@ public static class ConsoleOutput
 
         if (response.Data != null)
         {
-            foreach (var (key, value) in response.Data)
+            foreach (var prop in response.Data)
             {
-                Console.WriteLine($"  {key}: {value}");
+                Console.WriteLine($"  {prop.Key}: {prop.Value}");
             }
         }
 

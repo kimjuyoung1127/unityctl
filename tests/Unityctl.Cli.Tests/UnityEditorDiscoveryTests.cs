@@ -1,4 +1,4 @@
-using Unityctl.Cli.Infrastructure;
+using Unityctl.Core.Discovery;
 using Xunit;
 
 namespace Unityctl.Cli.Tests;

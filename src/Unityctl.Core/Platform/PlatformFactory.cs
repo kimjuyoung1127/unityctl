@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Unityctl.Cli.Platform;
+namespace Unityctl.Core.Platform;
 
 public static class PlatformFactory
 {
