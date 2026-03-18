@@ -25,8 +25,12 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Phase 3C (Watch Mode): Done
 - Phase 4B (Scene Diff): Done
 - Phase 5 (Agent Layer): Done
+- Write API Phase A (PlayMode, PlayerSettings, AssetRefresh): Done
+- Write API Phase B (GameObject CRUD, Scene Save): Done
+- Write API Phase B.5 (Component CRUD): Done
 
 최근 확정 사항:
+- Write API 전체 구현 완료 (2026-03-18): Phase A (play, player-settings, asset refresh) + Phase B (gameobject CRUD, scene save) + Phase B.5 (component add/remove/set-property). 351개 dotnet 테스트 통과. Unity 실측 완료.
 - Phase 5 Agent Layer 구현 완료 (2026-03-18): Unityctl.Mcp (MCP 서버, 11개 도구), SchemaCommand, ExecCommand, WorkflowCommand, ExecHandler(Plugin). 304개 dotnet 테스트 통과
 - Phase 4B Scene Diff 구현 완료 (2026-03-18): SceneSnapshotHandler, SceneDiffHandler, SceneCommand, SceneSnapshot/SceneDiffResult 프로토콜.
 - Phase 3C Watch Mode 구현 완료 (2026-03-18): WatchCommand, WatchEventSource, EventEnvelope, IPC Push 스트리밍
@@ -50,7 +54,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ```bash
 dotnet build unityctl.slnx                                          # 빌드
-dotnet test unityctl.slnx                                           # 전체 테스트 (304개)
+dotnet test unityctl.slnx                                           # 전체 테스트 (351개)
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # 유닛만
 dotnet run --project src/Unityctl.Cli -- <command> [options]         # CLI 실행
 ```
@@ -63,7 +67,7 @@ unityctl.slnx
 ├── src/Unityctl.Core      (net10.0)         비즈니스 로직 (transport, discovery, retry)
 ├── src/Unityctl.Cli       (net10.0)         얇은 CLI 셸 → Core에 위임
 ├── src/Unityctl.Plugin    (Unity UPM)       Editor 브릿지 (솔루션 빌드에 미포함)
-├── tests/*Tests           xUnit 테스트 (304개)
+├── tests/*Tests           xUnit 테스트 (351개)
 └── docs/                  ref/ + status/ + daily/ + weekly/
 ```
 
@@ -107,6 +111,9 @@ unityctl.slnx
 | **3C** | ✅ 완료 | **Watch Mode** (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
 | **4B** | ✅ 완료 | **Scene Diff** (SerializedObject, GlobalObjectId, propertyPath diff) |
 | **5** | ✅ 완료 | **Agent Layer** (Unityctl.Mcp MCP 서버, schema, exec, workflow) |
+| **Write A** | ✅ 완료 | **PlayMode, PlayerSettings, AssetRefresh** (IPC write path) |
+| **Write B** | ✅ 완료 | **GameObject CRUD + Scene Save** (GlobalObjectId, Undo, PrefabGuard) |
+| **Write B.5** | ✅ 완료 | **Component CRUD** (add/remove/set-property, SerializedObject) |
 
 ## Source of Truth 문서
 - 탐색 인덱스: `AGENTS.md`
@@ -131,7 +138,7 @@ unityctl.slnx
 7. 개발 진행 상세 이력: `docs/DEVELOPMENT.md`
 
 ## 테스트 표준
-- 총 304개 (Shared 60 + Core 96 + Cli 122 + Mcp 7 + Integration 19)
+- 총 351개 (Shared 60 + Core 96 + Cli 184 + Mcp 11)
 - `dotnet test unityctl.slnx` green 필수
 - Integration.Tests는 AppLocker 감지 + graceful skip
 

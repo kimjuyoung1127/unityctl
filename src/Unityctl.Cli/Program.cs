@@ -73,4 +73,55 @@ app.Add("exec", (string project, string? code = null, string? file = null, bool 
 app.Add("workflow run", (string file, string? project = null, bool json = false) =>
     WorkflowCommand.Run(file, project, json));
 
+app.Add("play start", (string project, bool json = false) =>
+    PlayModeCommand.Execute(project, "start", json));
+
+app.Add("play stop", (string project, bool json = false) =>
+    PlayModeCommand.Execute(project, "stop", json));
+
+app.Add("play pause", (string project, bool json = false) =>
+    PlayModeCommand.Execute(project, "pause", json));
+
+app.Add("player-settings get", (string project, string key, bool json = false) =>
+    PlayerSettingsCommand.Get(project, key, json));
+
+app.Add("player-settings set", (string project, string key, string value, bool json = false) =>
+    PlayerSettingsCommand.Set(project, key, value, json));
+
+app.Add("asset refresh", (string project, bool noWait = false, bool json = false) =>
+    AssetCommand.Refresh(project, noWait, json));
+
+app.Add("gameobject create", (string project, string name, string? parent = null, string? scene = null, bool json = false) =>
+    GameObjectCommand.Create(project, name, parent, scene, json));
+
+app.Add("gameobject delete", (string project, string id, bool json = false) =>
+    GameObjectCommand.Delete(project, id, json));
+
+app.Add("gameobject set-active", (string project, string id, string active, bool json = false) =>
+    GameObjectCommand.SetActive(project, id, active, json));
+
+app.Add("gameobject activate", (string project, string id, bool json = false) =>
+    GameObjectCommand.Activate(project, id, json));
+
+app.Add("gameobject deactivate", (string project, string id, bool json = false) =>
+    GameObjectCommand.Deactivate(project, id, json));
+
+app.Add("gameobject move", (string project, string id, string parent, bool json = false) =>
+    GameObjectCommand.Move(project, id, parent, json));
+
+app.Add("gameobject rename", (string project, string id, string name, bool json = false) =>
+    GameObjectCommand.Rename(project, id, name, json));
+
+app.Add("scene save", (string project, string? scene = null, bool all = false, bool json = false) =>
+    SceneCommand.Save(project, scene, all, json));
+
+app.Add("component add", (string project, string id, string type, bool json = false) =>
+    ComponentCommand.Add(project, id, type, json));
+
+app.Add("component remove", (string project, string componentId, bool json = false) =>
+    ComponentCommand.Remove(project, componentId, json));
+
+app.Add("component set-property", (string project, string componentId, string property, string value, bool json = false) =>
+    ComponentCommand.SetProperty(project, componentId, property, value, json));
+
 app.Run(args);

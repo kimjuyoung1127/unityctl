@@ -14,7 +14,11 @@ public class CommandCatalogTests
             ["init", "editor list", "ping", "status", "build", "test", "check", "tools", "log",
              "session list", "session stop", "session clean", "watch",
              "scene snapshot", "scene diff",
-             "schema", "exec", "workflow"],
+             "schema", "exec", "workflow",
+             "play-mode", "player-settings-get", "player-settings-set", "asset-refresh",
+             "gameobject-create", "gameobject-delete", "gameobject-set-active",
+             "gameobject-move", "gameobject-rename", "scene-save",
+             "component-add", "component-remove", "component-set-property"],
             names);
     }
 

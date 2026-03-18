@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Spectre.Console;
 using Unityctl.Cli.Execution;
 using Unityctl.Cli.Output;
 using Unityctl.Core.Discovery;
@@ -13,6 +14,25 @@ namespace Unityctl.Cli.Commands;
 
 public static class SceneCommand
 {
+    public static void Save(string project, string? scene = null, bool all = false, bool json = false)
+    {
+        var request = CreateSaveRequest(scene, all);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    internal static CommandRequest CreateSaveRequest(string? scene, bool all)
+    {
+        var parameters = new JsonObject();
+        if (!string.IsNullOrEmpty(scene)) parameters["scene"] = scene;
+        if (all) parameters["all"] = true;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.SceneSave,
+            Parameters = parameters
+        };
+    }
+
     public static void Snapshot(string project, string? scenePath = null, bool json = false)
     {
         var exitCode = SnapshotAsync(project, scenePath, json).GetAwaiter().GetResult();
@@ -425,30 +445,38 @@ public static class SceneCommand
             return;
         }
 
+        var console = ConsoleOutput.CreateOut();
+
         foreach (var scene in result.Scenes)
         {
-            Console.WriteLine($"Scene: {scene.ScenePath}");
+            var tree = new Tree(new Markup($"[bold]Scene:[/] {Markup.Escape(scene.ScenePath)}"));
 
             foreach (var obj in scene.AddedObjects)
-                Console.WriteLine($"  + {obj.Name} ({obj.ScenePath}) [ADDED]");
+                tree.AddNode(new Markup($"[green]+ {Markup.Escape(obj.Name)}[/] [dim]({Markup.Escape(obj.ScenePath)}) ADDED[/]"));
 
             foreach (var obj in scene.RemovedObjects)
-                Console.WriteLine($"  - {obj.Name} ({obj.ScenePath}) [REMOVED]");
+                tree.AddNode(new Markup($"[red]- {Markup.Escape(obj.Name)}[/] [dim]({Markup.Escape(obj.ScenePath)}) REMOVED[/]"));
 
             foreach (var obj in scene.ModifiedObjects)
             {
-                Console.WriteLine($"  ~ {obj.Name}");
+                var objNode = tree.AddNode(new Markup($"[yellow]~ {Markup.Escape(obj.Name)}[/]"));
+
                 foreach (var comp in obj.AddedComponents)
-                    Console.WriteLine($"    + component: {comp.TypeName} [ADDED]");
+                    objNode.AddNode(new Markup($"[green]+ component: {Markup.Escape(comp.TypeName)}[/]"));
+
                 foreach (var comp in obj.RemovedComponents)
-                    Console.WriteLine($"    - component: {comp.TypeName} [REMOVED]");
+                    objNode.AddNode(new Markup($"[red]- component: {Markup.Escape(comp.TypeName)}[/]"));
+
                 foreach (var comp in obj.ModifiedComponents)
                 {
-                    Console.WriteLine($"    ~ {comp.TypeName}");
+                    var compNode = objNode.AddNode(new Markup($"[yellow]~ {Markup.Escape(comp.TypeName)}[/]"));
                     foreach (var change in comp.PropertyChanges)
-                        Console.WriteLine($"      {change.PropertyPath}: {change.OldValue} → {change.NewValue}");
+                        compNode.AddNode(new Markup(
+                            $"[dim]{Markup.Escape(change.PropertyPath)}:[/] {Markup.Escape(change.OldValue)} [dim]\u2192[/] {Markup.Escape(change.NewValue)}"));
                 }
             }
+
+            console.Write(tree);
         }
     }
 

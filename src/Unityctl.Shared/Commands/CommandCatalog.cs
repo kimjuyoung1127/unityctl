@@ -150,6 +150,120 @@ public static class CommandCatalog
         Parameter("project", "string", "Default project path for steps that omit it", required: false),
         Parameter("json", "bool", "Output results as JSON", required: false));
 
+    public static readonly CommandDefinition PlayMode = Define(
+        WellKnownCommands.PlayMode,
+        "Control Unity play mode (start, stop, pause)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("action", "string", "Play mode action: start, stop, pause", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition PlayerSettingsGet = Define(
+        "player-settings-get",
+        "Get a PlayerSettings property value",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("key", "string", "Property name (e.g. companyName, productName)", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition PlayerSettingsSet = Define(
+        "player-settings-set",
+        "Set a PlayerSettings property value",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("key", "string", "Property name (e.g. companyName, productName)", required: true),
+        Parameter("value", "string", "New value to set", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition AssetRefresh = Define(
+        WellKnownCommands.AssetRefresh,
+        "Refresh the Unity AssetDatabase (IPC-only, async)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("noWait", "bool", "Return immediately after Accepted (do not poll)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition GameObjectCreate = Define(
+        WellKnownCommands.GameObjectCreate,
+        "Create a new GameObject in a scene",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("name", "string", "Name for the new GameObject", required: true),
+        Parameter("parent", "string", "Parent GlobalObjectId (optional)", required: false),
+        Parameter("scene", "string", "Target scene path (optional, defaults to active scene)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition GameObjectDelete = Define(
+        WellKnownCommands.GameObjectDelete,
+        "Delete a GameObject by GlobalObjectId",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the GameObject to delete", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition GameObjectSetActive = Define(
+        WellKnownCommands.GameObjectSetActive,
+        "Set a GameObject's active state",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the GameObject", required: true),
+        Parameter("active", "bool", "Active state to set", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition GameObjectMove = Define(
+        WellKnownCommands.GameObjectMove,
+        "Reparent a GameObject (same-scene only)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the GameObject to move", required: true),
+        Parameter("parent", "string", "GlobalObjectId of the new parent", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition GameObjectRename = Define(
+        WellKnownCommands.GameObjectRename,
+        "Rename a GameObject",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the GameObject", required: true),
+        Parameter("name", "string", "New name for the GameObject", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition SceneSave = Define(
+        WellKnownCommands.SceneSave,
+        "Save scene(s) to disk",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("scene", "string", "Scene path to save (optional, defaults to active scene)", required: false),
+        Parameter("all", "bool", "Save all dirty scenes", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition ComponentAdd = Define(
+        WellKnownCommands.ComponentAdd,
+        "Add a component to a GameObject",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the target GameObject", required: true),
+        Parameter("type", "string", "Component type name (e.g. UnityEngine.Rigidbody)", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition ComponentRemove = Define(
+        WellKnownCommands.ComponentRemove,
+        "Remove a component by its GlobalObjectId",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("componentId", "string", "GlobalObjectId of the component to remove", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition ComponentSetProperty = Define(
+        WellKnownCommands.ComponentSetProperty,
+        "Set a serialized property on a component via SerializedObject",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("componentId", "string", "GlobalObjectId of the target component", required: true),
+        Parameter("property", "string", "SerializedProperty path (e.g. m_Mass, m_LocalPosition.x)", required: true),
+        Parameter("value", "string", "New value as JSON string", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -169,7 +283,20 @@ public static class CommandCatalog
         SceneDiff,
         Schema,
         Exec,
-        Workflow
+        Workflow,
+        PlayMode,
+        PlayerSettingsGet,
+        PlayerSettingsSet,
+        AssetRefresh,
+        GameObjectCreate,
+        GameObjectDelete,
+        GameObjectSetActive,
+        GameObjectMove,
+        GameObjectRename,
+        SceneSave,
+        ComponentAdd,
+        ComponentRemove,
+        ComponentSetProperty
     ];
 
     private static CommandDefinition Define(
