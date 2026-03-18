@@ -15,7 +15,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ## 현재 상태 (2026-03-18)
 - Phase 0~1B: Done
-- Phase 1C (CI/CD): Hold (CI 있음, release.yml + README 미완)
+- Phase 1C (CI/CD): Done
 - Phase 2A/2A+: Done (Foundation + Tools Metadata)
 - Phase 2B (IPC Transport): Done
 - Phase 2C (Async Commands): Done
@@ -32,7 +32,8 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Write API 확장 (Scene open/create, Undo/Redo, Phase C): Done
 
 최근 확정 사항:
-- Write API 확장 구현 완료 (2026-03-18): 27개 신규 write 명령 (Asset CRUD 6 + Prefab 4 + Package/Settings 5 + Material 3 + Animation/UI 5 + Scene open/create 2 + Undo/Redo 2). 총 39개 write 명령. MCP 도구 13개 유지 (unityctl_run allowlist 39개). 388개 dotnet 테스트 통과. scene open/create + undo/redo Unity 실측 완료. Phase C (asset/prefab/package/material/animation/ui) 실측 미완.
+- Schema 정합성 + Material Create (2026-03-18): schema에 `cliName`/`cliFlag` 필드 추가 (CLI 호출명 ↔ IPC 프로토콜명 불일치 근본 해결). `material create` 명령 추가. allowlist 40개. Phase C Unity 실측 완료 (asset/prefab/package/project-settings/animation/ui/material 전부 검증).
+- Write API 확장 구현 완료 (2026-03-18): 28개 신규 write 명령 (Asset CRUD 6 + Prefab 4 + Package/Settings 5 + Material 4 + Animation/UI 5 + Scene open/create 2 + Undo/Redo 2). 총 40개 write/action 명령. MCP 도구 13개 유지 (unityctl_run allowlist 40개). 388개 dotnet 테스트 (Integration 2개 환경 의존 실패 가능).
 - MCP 하이브리드 전략 구현 완료 (2026-03-18): `unityctl_run` (allowlist 12개 write 명령), `unityctl_schema(command=...)` 온디맨드 필터. MCP 도구 12→13개. 356개 dotnet 테스트 통과. Unity 실측 완료.
 - Write API 전체 구현 완료 (2026-03-18): Phase A (play, player-settings, asset refresh) + Phase B (gameobject CRUD, scene save) + Phase B.5 (component add/remove/set-property). 351개 dotnet 테스트 통과. Unity 실측 완료.
 - Phase 5 Agent Layer 구현 완료 (2026-03-18): Unityctl.Mcp (MCP 서버, 13개 도구), SchemaCommand, ExecCommand, WorkflowCommand, ExecHandler(Plugin). 356개 dotnet 테스트 통과
@@ -105,7 +106,7 @@ unityctl.slnx
 | Phase | 상태 | 요약 |
 |-------|------|------|
 | 0~1B | ✅ 완료 | 골격, Plugin, CLI 기본, 핵심 기능 |
-| 1C | ⚠️ Hold | CI 있음, release.yml + README 미완 |
+| 1C | ✅ 완료 | CI + release.yml + README |
 | 2A/2A+ | ✅ 완료 | Foundation + Tools Metadata |
 | 2B | ✅ 완료 | IPC Transport (Named Pipe, probe-first) |
 | **2C** | ✅ 완료 | **Async Commands** (polling, single-flight, ACCEPTED) |
@@ -118,8 +119,8 @@ unityctl.slnx
 | **Write A** | ✅ 완료 | **PlayMode, PlayerSettings, AssetRefresh** (IPC write path) |
 | **Write B** | ✅ 완료 | **GameObject CRUD + Scene Save** (GlobalObjectId, Undo, PrefabGuard) |
 | **Write B.5** | ✅ 완료 | **Component CRUD** (add/remove/set-property, SerializedObject) |
-| **MCP Hybrid** | ✅ 완료 | **unityctl_run** (allowlist 39 write 명령) + **schema filter** (command 파라미터) |
-| **Write C** | ✅ 완료 | **커버리지 확장** (Asset 6 + Prefab 4 + Package/Settings 5 + Material 3 + Animation/UI 5 + Scene 2 + History 2 = 27개) |
+| **MCP Hybrid** | ✅ 완료 | **unityctl_run** (allowlist 40 write 명령) + **schema filter** (command 파라미터) |
+| **Write C** | ✅ 완료 | **커버리지 확장** (Asset 6 + Prefab 4 + Package/Settings 5 + Material 4 + Animation/UI 5 + Scene 2 + History 2 = 28개) |
 
 ## Source of Truth 문서
 - 탐색 인덱스: `AGENTS.md`
@@ -152,4 +153,3 @@ unityctl.slnx
 1. 도메인 리로드 후 IPC 자동 복구를 더 강하게 재현/종결 검증
 2. batch worker에서 IPC 서버 미기동 로그 검증
 3. pure transport-only latency 측정
-4. Phase 1C 잔여 (release.yml, README)

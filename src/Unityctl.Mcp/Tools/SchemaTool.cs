@@ -17,7 +17,8 @@ internal sealed class SchemaTool
         if (!string.IsNullOrWhiteSpace(command))
         {
             var matched = CommandCatalog.All
-                .FirstOrDefault(c => c.Name.Equals(command, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(c => c.Name.Equals(command, StringComparison.OrdinalIgnoreCase)
+                    || (c.CliName != null && c.CliName.Equals(command, StringComparison.OrdinalIgnoreCase)));
 
             if (matched is null)
             {

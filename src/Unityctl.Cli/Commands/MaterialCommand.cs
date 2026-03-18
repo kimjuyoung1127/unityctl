@@ -6,6 +6,12 @@ namespace Unityctl.Cli.Commands;
 
 public static class MaterialCommand
 {
+    public static void Create(string project, string path, string shader = "Standard", bool json = false)
+    {
+        var request = CreateCreateRequest(path, shader);
+        CommandRunner.Execute(project, request, json);
+    }
+
     public static void Get(string project, string path, string? property = null, bool json = false)
     {
         var request = CreateGetRequest(path, property);
@@ -22,6 +28,21 @@ public static class MaterialCommand
     {
         var request = CreateSetShaderRequest(path, shader);
         CommandRunner.Execute(project, request, json);
+    }
+
+    internal static CommandRequest CreateCreateRequest(string path, string shader)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentException("path must not be empty", nameof(path));
+
+        var parameters = new JsonObject { ["path"] = path };
+        if (!string.IsNullOrEmpty(shader)) parameters["shader"] = shader;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.MaterialCreate,
+            Parameters = parameters
+        };
     }
 
     internal static CommandRequest CreateGetRequest(string path, string? property)

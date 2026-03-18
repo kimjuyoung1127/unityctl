@@ -193,6 +193,9 @@ app.Add("project-settings set", (string project, string scope, string property, 
     ProjectSettingsCommand.Set(project, scope, property, value, json));
 
 // Phase C-4: Material/Shader
+app.Add("material create", (string project, string path, string shader = "Standard", bool json = false) =>
+    MaterialCommand.Create(project, path, shader, json));
+
 app.Add("material get", (string project, string path, string? property = null, bool json = false) =>
     MaterialCommand.Get(project, path, property, json));
 

@@ -26,7 +26,7 @@ public class CommandCatalogTests
              // Phase C-3: Package Manager + Project Settings
              "package-list", "package-add", "package-remove", "project-settings-get", "project-settings-set",
              // Phase C-4: Material/Shader
-             "material-get", "material-set", "material-set-shader",
+             "material-create", "material-get", "material-set", "material-set-shader",
              // Phase C-5: Animation + UI
              "animation-create-clip", "animation-create-controller",
              "ui-canvas-create", "ui-element-create", "ui-set-rect"],

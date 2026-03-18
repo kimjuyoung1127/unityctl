@@ -151,7 +151,7 @@ unityctl.slnx
 ├── src/Unityctl.Cli      (net10.0)         Thin CLI shell
 ├── src/Unityctl.Mcp      (net10.0)         MCP server (Claude/Cursor/VS Code)
 ├── src/Unityctl.Plugin   (Unity UPM)       Editor bridge
-└── tests/*                                 312 xUnit tests
+└── tests/*                                 388 xUnit tests
 ```
 
 ### Transport
@@ -170,7 +170,7 @@ dotnet run --project src/Unityctl.Mcp
 
 Compatible with Claude Code, Cursor, VS Code, and any MCP client.
 
-12 MCP tool names available across 11 classes: `ping`, `status`, `build`, `test`, `check`, `exec`, `log`, `session`, `schema`, `watch`, `scene snapshot`, `scene diff`.
+13 MCP tool names available across 12 classes: `ping`, `status`, `build`, `test`, `check`, `exec`, `log`, `session`, `schema`, `watch`, `scene snapshot`, `scene diff`, `unityctl_run`.
 
 ## Commands
 
@@ -185,15 +185,22 @@ Compatible with Claude Code, Cursor, VS Code, and any MCP client.
 | `build` | Build player (with `--dry-run` preflight) |
 | `play` | Control Unity play mode (`start`, `stop`, `pause`) |
 | `player-settings` | Read or update selected `PlayerSettings` values |
-| `asset` | Trigger async AssetDatabase refresh |
+| `asset` | Create, copy, move, delete, import assets and folders |
 | `gameobject` | Create, rename, move, delete, activate, deactivate GameObjects |
 | `component` | Add, remove, and edit Component properties with serialized paths |
 | `exec` | Execute C# expression in Unity |
 | `log` | Query flight recorder |
 | `session` | Manage execution sessions |
 | `watch` | Stream Unity events in real-time |
-| `scene` | Snapshot, diff, and save scene state |
-| `schema` | Output machine-readable command schema |
+| `material` | Create materials, get/set properties, change shaders |
+| `prefab` | Create, unpack, apply, and edit prefab assets |
+| `package` | List, add, and remove Unity packages |
+| `project-settings` | Get/set editor, physics, graphics, quality settings |
+| `animation` | Create AnimationClip and AnimatorController assets |
+| `ui` | Create Canvas, UI elements, set RectTransform |
+| `undo` / `redo` | Undo/redo Unity editor operations |
+| `scene` | Snapshot, diff, save, open, and create scenes |
+| `schema` | Output machine-readable command schema (with `cliName`/`cliFlag`) |
 | `workflow` | Run JSON workflow files |
 | `tools` | List available commands with metadata |
 
@@ -212,7 +219,7 @@ Compatible with Claude Code, Cursor, VS Code, and any MCP client.
 ## Testing
 
 ```bash
-dotnet test unityctl.slnx                                            # All 312 tests
+dotnet test unityctl.slnx                                            # All 388 tests
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # Unit only
 
 ```

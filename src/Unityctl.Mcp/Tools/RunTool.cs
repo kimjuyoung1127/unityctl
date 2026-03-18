@@ -48,6 +48,7 @@ internal sealed class RunTool(CommandExecutor executor)
         WellKnownCommands.ProjectSettingsGet,
         WellKnownCommands.ProjectSettingsSet,
         // Phase C-4: Material/Shader
+        WellKnownCommands.MaterialCreate,
         WellKnownCommands.MaterialGet,
         WellKnownCommands.MaterialSet,
         WellKnownCommands.MaterialSetShader,

@@ -148,7 +148,7 @@ public static class CommandCatalog
         "action",
         Parameter("file", "string", "Path to workflow JSON definition file", required: true),
         Parameter("project", "string", "Default project path for steps that omit it", required: false),
-        Parameter("json", "bool", "Output results as JSON", required: false));
+        Parameter("json", "bool", "Output results as JSON", required: false)).WithCli("workflow run");
 
     public static readonly CommandDefinition PlayMode = Define(
         WellKnownCommands.PlayMode,
@@ -156,7 +156,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("action", "string", "Play mode action: start, stop, pause", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("play <start|stop|pause>");
 
     public static readonly CommandDefinition PlayerSettingsGet = Define(
         "player-settings-get",
@@ -164,7 +164,7 @@ public static class CommandCatalog
         "query",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("key", "string", "Property name (e.g. companyName, productName)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("player-settings get");
 
     public static readonly CommandDefinition PlayerSettingsSet = Define(
         "player-settings-set",
@@ -173,7 +173,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("key", "string", "Property name (e.g. companyName, productName)", required: true),
         Parameter("value", "string", "New value to set", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("player-settings set");
 
     public static readonly CommandDefinition AssetRefresh = Define(
         WellKnownCommands.AssetRefresh,
@@ -181,7 +181,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("noWait", "bool", "Return immediately after Accepted (do not poll)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset refresh");
 
     public static readonly CommandDefinition GameObjectCreate = Define(
         WellKnownCommands.GameObjectCreate,
@@ -191,7 +191,7 @@ public static class CommandCatalog
         Parameter("name", "string", "Name for the new GameObject", required: true),
         Parameter("parent", "string", "Parent GlobalObjectId (optional)", required: false),
         Parameter("scene", "string", "Target scene path (optional, defaults to active scene)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("gameobject create");
 
     public static readonly CommandDefinition GameObjectDelete = Define(
         WellKnownCommands.GameObjectDelete,
@@ -199,7 +199,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the GameObject to delete", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("gameobject delete");
 
     public static readonly CommandDefinition GameObjectSetActive = Define(
         WellKnownCommands.GameObjectSetActive,
@@ -208,7 +208,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the GameObject", required: true),
         Parameter("active", "bool", "Active state to set", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("gameobject set-active");
 
     public static readonly CommandDefinition GameObjectMove = Define(
         WellKnownCommands.GameObjectMove,
@@ -217,7 +217,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the GameObject to move", required: true),
         Parameter("parent", "string", "GlobalObjectId of the new parent", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("gameobject move");
 
     public static readonly CommandDefinition GameObjectRename = Define(
         WellKnownCommands.GameObjectRename,
@@ -226,7 +226,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the GameObject", required: true),
         Parameter("name", "string", "New name for the GameObject", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("gameobject rename");
 
     public static readonly CommandDefinition SceneSave = Define(
         WellKnownCommands.SceneSave,
@@ -235,7 +235,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("scene", "string", "Scene path to save (optional, defaults to active scene)", required: false),
         Parameter("all", "bool", "Save all dirty scenes", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("scene save");
 
     public static readonly CommandDefinition SceneOpen = Define(
         WellKnownCommands.SceneOpen,
@@ -246,7 +246,7 @@ public static class CommandCatalog
         Parameter("mode", "string", "Open mode: single or additive (default: single)", required: false),
         Parameter("force", "bool", "Discard dirty scene changes when opening in single mode", required: false),
         Parameter("saveCurrentModified", "bool", "Save dirty scenes before opening in single mode", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("scene open");
 
     public static readonly CommandDefinition SceneCreate = Define(
         WellKnownCommands.SceneCreate,
@@ -258,7 +258,7 @@ public static class CommandCatalog
         Parameter("mode", "string", "Create mode: single or additive (default: single)", required: false),
         Parameter("force", "bool", "Discard dirty scene changes when creating in single mode", required: false),
         Parameter("saveCurrentModified", "bool", "Save dirty scenes before creating in single mode", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("scene create");
 
     public static readonly CommandDefinition ComponentAdd = Define(
         WellKnownCommands.ComponentAdd,
@@ -267,7 +267,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the target GameObject", required: true),
         Parameter("type", "string", "Component type name (e.g. UnityEngine.Rigidbody)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("component add");
 
     public static readonly CommandDefinition ComponentRemove = Define(
         WellKnownCommands.ComponentRemove,
@@ -275,7 +275,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("componentId", "string", "GlobalObjectId of the component to remove", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("component remove");
 
     public static readonly CommandDefinition ComponentSetProperty = Define(
         WellKnownCommands.ComponentSetProperty,
@@ -285,7 +285,7 @@ public static class CommandCatalog
         Parameter("componentId", "string", "GlobalObjectId of the target component", required: true),
         Parameter("property", "string", "SerializedProperty path (e.g. m_Mass, m_LocalPosition.x)", required: true),
         Parameter("value", "string", "New value as JSON string", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("component set-property");
 
     public static readonly CommandDefinition UndoCmd = Define(
         WellKnownCommands.Undo,
@@ -309,7 +309,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Asset path (e.g. Assets/Data/MyConfig.asset)", required: true),
         Parameter("type", "string", "Asset type (e.g. ScriptableObject)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset create");
 
     public static readonly CommandDefinition AssetCreateFolder = Define(
         WellKnownCommands.AssetCreateFolder,
@@ -318,7 +318,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("parent", "string", "Parent folder path (e.g. Assets/Data)", required: true),
         Parameter("name", "string", "New folder name", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset create-folder");
 
     public static readonly CommandDefinition AssetCopy = Define(
         WellKnownCommands.AssetCopy,
@@ -327,7 +327,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("source", "string", "Source asset path", required: true),
         Parameter("destination", "string", "Destination asset path", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset copy");
 
     public static readonly CommandDefinition AssetMoveCmd = Define(
         WellKnownCommands.AssetMove,
@@ -336,7 +336,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("source", "string", "Source asset path", required: true),
         Parameter("destination", "string", "Destination asset path", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset move");
 
     public static readonly CommandDefinition AssetDeleteCmd = Define(
         WellKnownCommands.AssetDelete,
@@ -344,7 +344,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Asset path to delete", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset delete");
 
     public static readonly CommandDefinition AssetImport = Define(
         WellKnownCommands.AssetImport,
@@ -353,7 +353,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Asset path to reimport", required: true),
         Parameter("options", "string", "Import options (e.g. ForceUpdate)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset import");
 
     // Write API — Phase C-2: Prefab
     public static readonly CommandDefinition PrefabCreate = Define(
@@ -363,7 +363,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("target", "string", "GlobalObjectId of the scene GameObject", required: true),
         Parameter("path", "string", "Prefab asset path (e.g. Assets/Prefabs/MyPrefab.prefab)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("prefab create");
 
     public static readonly CommandDefinition PrefabUnpack = Define(
         WellKnownCommands.PrefabUnpack,
@@ -372,7 +372,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the prefab instance", required: true),
         Parameter("mode", "string", "Unpack mode: completely or outermost (default: outermost)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("prefab unpack");
 
     public static readonly CommandDefinition PrefabApply = Define(
         WellKnownCommands.PrefabApply,
@@ -380,7 +380,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("id", "string", "GlobalObjectId of the prefab instance", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("prefab apply");
 
     public static readonly CommandDefinition PrefabEditCmd = Define(
         WellKnownCommands.PrefabEdit,
@@ -391,7 +391,7 @@ public static class CommandCatalog
         Parameter("property", "string", "SerializedProperty path on the root GameObject", required: true),
         Parameter("value", "string", "New value as JSON string", required: true),
         Parameter("childPath", "string", "Hierarchy path to child (e.g. Body/Arm)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("prefab edit");
 
     // Write API — Phase C-3: Package Manager + Project Settings
     public static readonly CommandDefinition PackageListCmd = Define(
@@ -399,7 +399,7 @@ public static class CommandCatalog
         "List installed packages",
         "query",
         Parameter("project", "string", "Path to Unity project", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("package list");
 
     public static readonly CommandDefinition PackageAddCmd = Define(
         WellKnownCommands.PackageAdd,
@@ -407,7 +407,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("package", "string", "Package identifier (e.g. com.unity.textmeshpro@3.0.6)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("package add");
 
     public static readonly CommandDefinition PackageRemoveCmd = Define(
         WellKnownCommands.PackageRemove,
@@ -415,7 +415,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("package", "string", "Package name (e.g. com.unity.textmeshpro)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("package remove");
 
     public static readonly CommandDefinition ProjectSettingsGetCmd = Define(
         WellKnownCommands.ProjectSettingsGet,
@@ -424,7 +424,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("scope", "string", "Settings scope: editor, graphics, quality, physics, time, audio", required: true),
         Parameter("property", "string", "SerializedProperty path", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("project-settings get");
 
     public static readonly CommandDefinition ProjectSettingsSetCmd = Define(
         WellKnownCommands.ProjectSettingsSet,
@@ -434,9 +434,18 @@ public static class CommandCatalog
         Parameter("scope", "string", "Settings scope: editor, graphics, quality, physics, time, audio", required: true),
         Parameter("property", "string", "SerializedProperty path", required: true),
         Parameter("value", "string", "New value", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("project-settings set");
 
     // Write API — Phase C-4: Material/Shader
+    public static readonly CommandDefinition MaterialCreateCmd = Define(
+        WellKnownCommands.MaterialCreate,
+        "Create a new Material asset with a specified shader",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "Material asset path (e.g. Assets/Materials/MyMat.mat)", required: true),
+        Parameter("shader", "string", "Shader name (default: Standard)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("material create");
+
     public static readonly CommandDefinition MaterialGetCmd = Define(
         WellKnownCommands.MaterialGet,
         "Get material properties",
@@ -444,7 +453,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Material asset path", required: true),
         Parameter("property", "string", "Property name (optional, returns all if omitted)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("material get");
 
     public static readonly CommandDefinition MaterialSetCmd = Define(
         WellKnownCommands.MaterialSet,
@@ -455,7 +464,7 @@ public static class CommandCatalog
         Parameter("property", "string", "Property name (e.g. _Color, _MainTex)", required: true),
         Parameter("propertyType", "string", "Property type: color, float, texture, vector, int", required: true),
         Parameter("value", "string", "New value (JSON for color/vector, path for texture, number for float/int)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("material set");
 
     public static readonly CommandDefinition MaterialSetShaderCmd = Define(
         WellKnownCommands.MaterialSetShader,
@@ -464,7 +473,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Material asset path", required: true),
         Parameter("shader", "string", "Shader name (e.g. Standard, Universal Render Pipeline/Lit)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("material set-shader");
 
     // Write API — Phase C-5: Animation + UI
     public static readonly CommandDefinition AnimationCreateClipCmd = Define(
@@ -473,7 +482,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Asset path for the clip (e.g. Assets/Animations/Walk.anim)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation create-clip");
 
     public static readonly CommandDefinition AnimationCreateControllerCmd = Define(
         WellKnownCommands.AnimationCreateController,
@@ -481,7 +490,7 @@ public static class CommandCatalog
         "action",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("path", "string", "Asset path (e.g. Assets/Animations/Player.controller)", required: true),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation create-controller");
 
     public static readonly CommandDefinition UiCanvasCreateCmd = Define(
         WellKnownCommands.UiCanvasCreate,
@@ -490,7 +499,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("name", "string", "Canvas GameObject name (default: Canvas)", required: false),
         Parameter("renderMode", "string", "Render mode: ScreenSpaceOverlay, ScreenSpaceCamera, WorldSpace (default: ScreenSpaceOverlay)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui canvas-create");
 
     public static readonly CommandDefinition UiElementCreateCmd = Define(
         WellKnownCommands.UiElementCreate,
@@ -500,7 +509,7 @@ public static class CommandCatalog
         Parameter("type", "string", "Element type: Button, Text, Image, Panel, InputField, Toggle, Slider, Dropdown, ScrollView", required: true),
         Parameter("name", "string", "Element name (optional)", required: false),
         Parameter("parent", "string", "GlobalObjectId of parent (Canvas or UI element)", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui element-create");
 
     public static readonly CommandDefinition UiSetRectCmd = Define(
         WellKnownCommands.UiSetRect,
@@ -513,7 +522,7 @@ public static class CommandCatalog
         Parameter("anchorMin", "string", "Anchor min as JSON [x,y]", required: false),
         Parameter("anchorMax", "string", "Anchor max as JSON [x,y]", required: false),
         Parameter("pivot", "string", "Pivot as JSON [x,y]", required: false),
-        Parameter("json", "bool", "Output as JSON", required: false));
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui set-rect");
 
     public static CommandDefinition[] All { get; } =
     [
@@ -571,6 +580,7 @@ public static class CommandCatalog
         ProjectSettingsGetCmd,
         ProjectSettingsSetCmd,
         // Phase C-4: Material/Shader
+        MaterialCreateCmd,
         MaterialGetCmd,
         MaterialSetCmd,
         MaterialSetShaderCmd,
@@ -606,10 +616,32 @@ public static class CommandCatalog
         return new CommandParameterDefinition
         {
             Name = name,
+            CliFlag = "--" + CamelToKebab(name),
             Type = type,
             Description = description,
             Required = required
         };
+    }
+
+    private static string CamelToKebab(string input)
+    {
+        if (string.IsNullOrEmpty(input) || input.Contains('-'))
+            return input;
+
+        var sb = new System.Text.StringBuilder(input.Length + 4);
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (char.IsUpper(input[i]) && i > 0)
+            {
+                sb.Append('-');
+                sb.Append(char.ToLowerInvariant(input[i]));
+            }
+            else
+            {
+                sb.Append(char.ToLowerInvariant(input[i]));
+            }
+        }
+        return sb.ToString();
     }
 }
 
@@ -617,6 +649,9 @@ public sealed class CommandDefinition
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("cliName")]
+    public string? CliName { get; set; }
 
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
@@ -626,12 +661,21 @@ public sealed class CommandDefinition
 
     [JsonPropertyName("parameters")]
     public CommandParameterDefinition[] Parameters { get; set; } = [];
+
+    public CommandDefinition WithCli(string cliName)
+    {
+        CliName = cliName;
+        return this;
+    }
 }
 
 public sealed class CommandParameterDefinition
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("cliFlag")]
+    public string CliFlag { get; set; } = string.Empty;
 
     [JsonPropertyName("type")]
     public string Type { get; set; } = string.Empty;

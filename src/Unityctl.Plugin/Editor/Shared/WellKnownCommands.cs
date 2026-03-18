@@ -60,6 +60,7 @@ namespace Unityctl.Plugin.Editor.Shared
         public const string ProjectSettingsSet = "project-settings-set";
 
         // Write API — Phase C-4: Material/Shader
+        public const string MaterialCreate = "material-create";
         public const string MaterialGet = "material-get";
         public const string MaterialSet = "material-set";
         public const string MaterialSetShader = "material-set-shader";
