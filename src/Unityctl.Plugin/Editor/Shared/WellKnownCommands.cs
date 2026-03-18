@@ -8,5 +8,6 @@ namespace Unityctl.Plugin.Editor.Shared
         public const string Test = "test";
         public const string Check = "check";
         public const string TestResult = "test-result";
+        public const string Watch = "watch";
     }
 }

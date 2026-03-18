@@ -26,11 +26,10 @@ log() { echo -e "${CYAN}[run-all]${NC} $1"; }
 ok()  { echo -e "${GREEN}[run-all]${NC} $1"; }
 err() { echo -e "${RED}[run-all]${NC} $1"; }
 
-# Phase 실행 순서 (3B, 3A 완료됨)
-PHASES=("4a" "3c" "4b" "5")
+# Phase 실행 순서 (3B, 3A, 4A 완료됨)
+PHASES=("3c" "4b" "5")
 
 PHASE_NAMES=(
-    "Ghost Mode"
     "Watch Mode"
     "Scene Diff"
     "Agent Layer"

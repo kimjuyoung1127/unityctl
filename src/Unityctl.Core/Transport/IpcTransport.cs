@@ -1,6 +1,10 @@
 using System.IO.Pipes;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Unityctl.Shared;
 using Unityctl.Shared.Protocol;
+using Unityctl.Shared.Serialization;
 using Unityctl.Shared.Transport;
 
 namespace Unityctl.Core.Transport;
@@ -21,6 +25,12 @@ public sealed class IpcTransport : ITransport
     public IpcTransport(string projectPath)
     {
         _pipeName = Constants.GetPipeName(projectPath);
+    }
+
+    /// <summary>Internal constructor for tests — uses raw pipe name instead of hashing projectPath.</summary>
+    internal IpcTransport(string pipeName, bool useRawPipeName)
+    {
+        _pipeName = useRawPipeName ? pipeName : Constants.GetPipeName(pipeName);
     }
 
     public async Task<CommandResponse> SendAsync(CommandRequest request, CancellationToken ct = default)
@@ -54,8 +64,81 @@ public sealed class IpcTransport : ITransport
 
     public IAsyncEnumerable<EventEnvelope>? SubscribeAsync(string channel, CancellationToken ct = default)
     {
-        // Phase 3C: streaming implementation
-        return null;
+        return SubscribeAsyncCore(channel, ct);
+    }
+
+    private async IAsyncEnumerable<EventEnvelope> SubscribeAsyncCore(
+        string channel,
+        [EnumeratorCancellation] CancellationToken ct)
+    {
+        var pipe = await ConnectAndHandshakeAsync(channel, ct).ConfigureAwait(false);
+        if (pipe == null) yield break;
+
+        await using (pipe)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                var json = await TryReadNextMessageAsync(pipe, ct).ConfigureAwait(false);
+                if (json == null) yield break;
+
+                EventEnvelope? envelope;
+                try
+                {
+                    envelope = JsonSerializer.Deserialize(json, UnityctlJsonContext.Default.EventEnvelope);
+                }
+                catch
+                {
+                    continue; // skip malformed messages
+                }
+
+                if (envelope == null) continue;
+                if (envelope.Channel == "_close") yield break;
+
+                yield return envelope;
+            }
+        }
+    }
+
+    private async Task<NamedPipeClientStream?> ConnectAndHandshakeAsync(string channel, CancellationToken ct)
+    {
+        NamedPipeClientStream? pipe = null;
+        try
+        {
+            pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+            await pipe.ConnectAsync(Constants.IpcConnectTimeoutMs, ct).ConfigureAwait(false);
+
+            var request = new CommandRequest
+            {
+                Command = WellKnownCommands.Watch,
+                Parameters = new JsonObject { ["channel"] = channel }
+            };
+            var requestJson = JsonSerializer.Serialize(request, UnityctlJsonContext.Default.CommandRequest);
+            await MessageFraming.WriteMessageAsync(pipe, requestJson, ct).ConfigureAwait(false);
+
+            var responseJson = await MessageFraming.ReadMessageAsync(pipe, ct).ConfigureAwait(false);
+            var response = JsonSerializer.Deserialize(responseJson, UnityctlJsonContext.Default.CommandResponse);
+            if (response?.Success == true) return pipe;
+
+            await pipe.DisposeAsync().ConfigureAwait(false);
+            return null;
+        }
+        catch
+        {
+            if (pipe != null) await pipe.DisposeAsync().ConfigureAwait(false);
+            return null;
+        }
+    }
+
+    private static async Task<string?> TryReadNextMessageAsync(NamedPipeClientStream pipe, CancellationToken ct)
+    {
+        try
+        {
+            return await MessageFraming.ReadMessageAsync(pipe, ct).ConfigureAwait(false);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task<bool> ProbeAsync(CancellationToken ct = default)

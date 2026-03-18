@@ -12,7 +12,7 @@ public class CommandCatalogTests
 
         Assert.Equal(
             ["init", "editor list", "ping", "status", "build", "test", "check", "tools", "log",
-             "session list", "session stop", "session clean"],
+             "session list", "session stop", "session clean", "watch"],
             names);
     }
 

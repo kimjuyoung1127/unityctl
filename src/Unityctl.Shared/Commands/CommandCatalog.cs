@@ -99,6 +99,15 @@ public static class CommandCatalog
         "Remove stale sessions and apply TTL retention policy",
         "action");
 
+    public static readonly CommandDefinition Watch = Define(
+        WellKnownCommands.Watch,
+        "Stream real-time events from a running Unity Editor",
+        "stream",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("channel", "string", "Event channel: console, hierarchy, compilation, all (default: all)", required: false),
+        Parameter("format", "string", "Output format: text, json (default: text)", required: false),
+        Parameter("no-color", "bool", "Disable colored output", required: false));
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -112,7 +121,8 @@ public static class CommandCatalog
         Log,
         SessionList,
         SessionStop,
-        SessionClean
+        SessionClean,
+        Watch
     ];
 
     private static CommandDefinition Define(

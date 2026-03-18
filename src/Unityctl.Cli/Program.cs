@@ -49,4 +49,7 @@ app.Add("session stop", (string id, bool json = false) =>
 app.Add("session clean", () =>
     SessionCommand.Clean());
 
+app.Add("watch", (string project, string channel = "all", string format = "text", bool noColor = false) =>
+    WatchCommand.Execute(project, channel, format, noColor));
+
 app.Run(args);

@@ -71,7 +71,11 @@ Plugin은 Unity 내부에서만 컴파일되며, `src/Unityctl.Plugin/Editor/Sha
 | 2A / 2A+ | ✅ 완료 | Payload 정리, Core 추출, tools metadata |
 | 2B | ✅ 완료 | IPC transport 구현, robotapp 수동 검증 완료 |
 | 2C | ✅ 완료 | Async Commands — polling, single-flight, ACCEPTED [104] |
-| 3A ~ 5 | 🔲 미착수 | 세션, 로그, watch, ghost, scene diff, agent layer |
+| 3B | ✅ 완료 | Flight Recorder (NDJSON 로깅, append-only, 예외 안전) |
+| 3A | ✅ 완료 | Session Layer (상태머신 6개, NDJSON 저장소, MCP Tasks 매핑) |
+| 4A | ✅ 완료 | Ghost Mode (--dry-run preflight, 3단계 검증) |
+| 3C | ✅ 완료 | Watch Mode (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
+| 4B, 5 | 🔲 미착수 | Scene Diff, Agent Layer |
 
 ---
 
@@ -134,12 +138,12 @@ dotnet test unityctl.slnx
 
 | 프로젝트 | 테스트 수 | 상태 |
 |----------|----------|------|
-| Unityctl.Shared.Tests | 19 | ✅ |
-| Unityctl.Core.Tests | 30 | ✅ |
-| Unityctl.Cli.Tests | 30 | ✅ |
-| Unityctl.Integration.Tests | 6 | ✅ |
+| Unityctl.Shared.Tests | 37 | ✅ |
+| Unityctl.Core.Tests | 96 | ✅ |
+| Unityctl.Cli.Tests | 82 | ✅ |
+| Unityctl.Integration.Tests | 14 | ✅ |
 
-**총 85개 테스트 통과**
+**총 229개 테스트 통과**
 
 ### robotapp 수동 검증
 
@@ -208,17 +212,34 @@ dotnet test unityctl.slnx
 
 ---
 
+## Phase 3C 실제 반영 내용
+
+- CLI `WatchCommand.cs` — `unityctl watch` 커맨드, 채널 구독 + Push 스트리밍 수신
+- Plugin `WatchEventSource.cs` — ConcurrentQueue 기반 Unity 이벤트 수집, IPC Push 전송
+- Plugin `EventEnvelope.cs` — Watch 이벤트 프레이밍 모델 (Shared 동기화)
+- Core `IpcTransport` — Watch 스트리밍 수신 지원 (영구 파이프 연결)
+- Core `MessageFraming` — Watch 스트리밍 프레임 지원
+- Plugin `IpcServer` — Watch 클라이언트 연결 관리
+- CLI `Program.cs` — `watch` 커맨드 등록
+- Shared `WellKnownCommands` — Watch 커맨드 상수 추가
+- Shared `CommandCatalog` — Watch 커맨드 메타데이터 추가
+- 신규 테스트: `WatchCommandTests.cs`, `IpcTransportWatchTests.cs`
+- `CommandCatalogTests` 업데이트
+
+---
+
 ## 다음 단계
 
 1. Phase 2B 후속 보강
    - domain reload 후 자동 IPC 복구 검증 강화
    - batch worker IPC 미기동 로그 검증
    - pure transport-only latency 측정
-2. Phase 3A Session Layer 착수
-3. Phase 1C 잔여
+2. Phase 4B Scene Diff
+3. Phase 5 Agent Layer
+4. Phase 1C 잔여
    - `release.yml`
    - README 정비
-4. 문서 드리프트 방지
+5. 문서 드리프트 방지
    - `docs/status/PROJECT-STATUS.md`
    - `docs/ref/phase-roadmap.md`
    - `CLAUDE.md`

@@ -13,33 +13,34 @@
 - **Phase 3B**: 완료
 - **Phase 3A**: 완료
 - **Phase 4A**: 완료
-- **Phase 3C, 4B, 5**: 미착수
+- **Phase 3C**: 완료
+- **Phase 4B, 5**: 미착수
 
 ## 이번 상태 반영 요약
 
-1. Phase 3A Session Layer 구현 완료 (Ralph Loop v2)
-2. SessionState 6개 상태 (Created/Running/Completed/Failed/Cancelled/TimedOut)
-3. NdjsonSessionStore (active.json + history.ndjson, TTL 7일)
-4. SessionManager 상태머신 + stale PID 감지
-5. `unityctl session list/stop/clean` CLI 커맨드
-6. CommandRunner/AsyncCommandRunner 세션 연동
+1. Phase 3C Watch Mode 구현 완료
+2. WatchCommand (CLI) — `unityctl watch` 커맨드, 채널 구독 + Push 스트리밍
+3. WatchEventSource (Plugin) — ConcurrentQueue 기반 Unity 이벤트 수집 + IPC Push
+4. EventEnvelope (Plugin Shared) — 이벤트 프레이밍 모델
+5. IpcTransport Watch 지원 — 영구 파이프 연결 스트리밍 수신
+6. MessageFraming 확장 — Watch 스트리밍 프레임 지원
 7. `dotnet build unityctl.slnx` 통과 (경고 0)
-8. `dotnet test unityctl.slnx` 통과 (184개)
+8. `dotnet test unityctl.slnx` 통과 (229개)
 
 ## 자동화 검증
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | `dotnet build unityctl.slnx` | ✅ | 경고/오류 없이 통과 |
-| `dotnet test unityctl.slnx` | ✅ | 총 201개 테스트 통과 |
+| `dotnet test unityctl.slnx` | ✅ | 총 229개 테스트 통과 |
 
 테스트 세부:
 
 | 프로젝트 | 통과 |
 |----------|------|
 | Unityctl.Shared.Tests | 37 |
-| Unityctl.Core.Tests | 89 |
-| Unityctl.Cli.Tests | 61 |
+| Unityctl.Core.Tests | 96 |
+| Unityctl.Cli.Tests | 82 |
 | Unityctl.Integration.Tests | 14 |
 
 ## 수동 검증
@@ -71,9 +72,6 @@
 
 ## 즉시 다음 작업
 
-1. Phase 3C Watch Mode
-2. Phase 4B Scene Diff
-3. Phase 3C Watch Mode
-4. Phase 4B Scene Diff
-5. Phase 5 Agent Layer
-6. Phase 1C 잔여 (release.yml, README)
+1. Phase 4B Scene Diff
+2. Phase 5 Agent Layer
+3. Phase 1C 잔여 (release.yml, README)

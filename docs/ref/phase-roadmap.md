@@ -13,10 +13,10 @@
 | tools/list | `unityctl tools --json` | 2A+ | ✅ |
 | Resources | flight log, scene snapshot | 3B, 4B | 3B ✅ / 4B 🔲 |
 | Prompts | `docs/ref/ai-quickstart.md` | 1C | ✅ |
-| Tasks | Session Layer | 3A | 🔲 |
-| Streaming | Watch Mode | 3C | 🔲 |
+| Tasks | Session Layer | 3A | ✅ |
+| Streaming | Watch Mode | 3C | ✅ |
 | Server | `Unityctl.Mcp` (C# SDK, stdio) | 5 | 🔲 |
-| Elicitation | Ghost Mode preflight 결과 | 4A | 🔲 |
+| Elicitation | Ghost Mode preflight 결과 | 4A | ✅ |
 
 unityctl은 MCP를 대체하는 동시에, Phase 5에서 네이티브 .NET MCP 서버를 직접 구현합니다.
 Python/TypeScript bridge가 아닌 `ModelContextProtocol` C# SDK 기반.
@@ -36,9 +36,9 @@ Phase 2A+ — Tools Metadata        ✅ 완료
 Phase 2B  — IPC Transport         ✅ 완료
 Phase 2C  — Async Commands        ✅ 완료
 Phase 3B  — Flight Recorder       ✅ 완료    ← 순서 변경: 3A보다 먼저
-Phase 3A  — Session Layer         🔲 미착수
-Phase 4A  — Ghost Mode            🔲 미착수  ← 순서 변경: 3C보다 먼저
-Phase 3C  — Watch Mode            🔲 미착수
+Phase 3A  — Session Layer         ✅ 완료
+Phase 4A  — Ghost Mode            ✅ 완료
+Phase 3C  — Watch Mode            ✅ 완료
 Phase 4B  — Scene Diff            🔲 미착수
 Phase 5   — Agent Layer           🔲 미착수
 ```
@@ -614,9 +614,6 @@ unityctl workflow run build-and-test.json
 ## 다음 우선순위
 
 1. Phase 2B 후속 보강 (domain reload, batch IPC 미기동 로그, latency 측정)
-2. **Phase 3A — Session Layer** (3B 위에 구축)
-3. **Phase 4A — Ghost Mode** (기존 코드 재활용, 범위 작음)
-4. **Phase 3C — Watch Mode** (IPC 스트리밍 확장)
-5. **Phase 4B — Scene Diff** (SerializedObject 순회)
-6. **Phase 5 — Agent Layer** (MCP 서버 + schema + exec)
-7. Phase 1C 잔여 (release.yml, README)
+2. **Phase 4B — Scene Diff** (SerializedObject 순회)
+3. **Phase 5 — Agent Layer** (MCP 서버 + schema + exec)
+4. Phase 1C 잔여 (release.yml, README)

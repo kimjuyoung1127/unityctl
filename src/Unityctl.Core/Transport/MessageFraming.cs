@@ -25,7 +25,7 @@ internal static class MessageFraming
         return response ?? CommandResponse.Fail(StatusCode.UnknownError, "Null response from IPC server");
     }
 
-    private static async Task WriteMessageAsync(Stream stream, string json, CancellationToken ct)
+    internal static async Task WriteMessageAsync(Stream stream, string json, CancellationToken ct)
     {
         var bodyBytes = Encoding.UTF8.GetBytes(json);
         if (bodyBytes.Length > MaxMessageSize)
@@ -37,7 +37,7 @@ internal static class MessageFraming
         await stream.FlushAsync(ct);
     }
 
-    private static async Task<string> ReadMessageAsync(Stream stream, CancellationToken ct)
+    internal static async Task<string> ReadMessageAsync(Stream stream, CancellationToken ct)
     {
         var headerBuf = new byte[4];
         await ReadExactAsync(stream, headerBuf.AsMemory(), ct);
