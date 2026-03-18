@@ -16,7 +16,7 @@
 | Tasks | Session Layer | 3A | ✅ |
 | Streaming | Watch Mode | 3C | ✅ |
 | Server | `Unityctl.Mcp` (C# SDK, stdio) | 5 | ✅ |
-| Write via MCP | `unityctl_run` (allowlist 35 write 명령) | MCP Hybrid + Write C | ✅ |
+| Write via MCP | `unityctl_run` (allowlist 44 write 명령) | MCP Hybrid + Write C + Script v1 | ✅ |
 | Elicitation | Ghost Mode preflight 결과 | 4A | ✅ |
 
 unityctl은 MCP를 대체하는 동시에, Phase 5에서 네이티브 .NET MCP 서버를 직접 구현합니다.
@@ -31,7 +31,7 @@ Phase 0   — 프로젝트 골격         ✅ 완료
 Phase 0.5 — Plugin 부트스트랩     ✅ 완료
 Phase 1A  — CLI 기본              ✅ 완료
 Phase 1B  — 핵심 기능             ✅ 완료
-Phase 1C  — 테스트 + 배포         ⚠️ 부분 완료
+Phase 1C  — 테스트 + 배포         ✅ 완료
 Phase 2A  — Foundation            ✅ 완료
 Phase 2A+ — Tools Metadata        ✅ 완료
 Phase 2B  — IPC Transport         ✅ 완료
@@ -43,7 +43,9 @@ Phase 3C  — Watch Mode            ✅ 완료
 Phase 4B  — Scene Diff            ✅ 완료
 Phase 5   — Agent Layer           ✅ 완료
 MCP Hybrid — unityctl_run + schema filter  ✅ 완료
-Write C   — 커버리지 확장 (23개 명령)     ✅ 완료
+Write C   — 커버리지 확장 (28개 명령)     ✅ 완료
+Script v1 — script create/edit/delete/validate  ✅ 완료
+Diagnostics — doctor + IPC 자동 진단     ✅ 완료
 ```
 
 ### 실행 순서 변경 근거
@@ -625,7 +627,7 @@ Write API (12개 write 명령)를 MCP에 노출할 때, 개별 tool로 펼치면
 
 - 기존 12개 read/meta/streaming MCP 도구 유지
 - write 계열은 `unityctl_run(project, command, parameters)` 하나로 접근
-- `unityctl_run`은 allowlist 기반 — 35개 허용 명령 실행:
+- `unityctl_run`은 allowlist 기반 — 44개 허용 명령 실행:
   Phase A/B/B.5: `play-mode`, `player-settings`, `asset-refresh`,
   `gameobject-create`, `gameobject-delete`, `gameobject-set-active`,
   `gameobject-move`, `gameobject-rename`, `scene-save`,
@@ -636,9 +638,11 @@ Write API (12개 write 명령)를 MCP에 노출할 때, 개별 tool로 펼치면
   `material-get`, `material-set`, `material-set-shader`,
   `animation-create-clip`, `animation-create-controller`,
   `ui-canvas-create`, `ui-element-create`, `ui-set-rect`
+  Script v1: `script-create`, `script-edit`, `script-delete`, `script-validate`, `script-validate-result`
+  Material: `material-create`
 - `unityctl_schema`에 `command` 파라미터 추가 — 단일 명령 스키마 온디맨드 조회
 - MCP tool 수: 12 → **13** (tools/list 크기 ~500B 증가, 8.3x 우위 유지)
-- Phase C 이후 allowlist: 12 → **39**개 (MCP tool 수 13개 유지)
+- 최종 allowlist: **44**개 (MCP tool 수 13개 유지)
 
 ### AI 에이전트 사용 흐름
 
@@ -665,7 +669,7 @@ Write API (12개 write 명령)를 MCP에 노출할 때, 개별 tool로 펼치면
 
 상태: **구현 완료**
 
-기존 Write API (12개 명령)에 23개 신규 명령 추가. 총 35개 write 명령.
+기존 Write API (12개 명령)에 28개 신규 명령 추가. 총 44개 write/action 명령 (Script v1 + material-create 포함).
 MCP 도구 수 13개 유지 — 모든 신규 명령은 `unityctl_run` allowlist 추가만.
 
 ### 산출물 (Phase별)
@@ -703,8 +707,23 @@ MCP 도구 수 13개 유지 — 모든 신규 명령은 `unityctl_run` allowlist
 
 ---
 
-## 다음 우선순위
+## 다음 개발 로드맵 (경쟁 분석 기반)
 
-1. Phase 2B 후속 보강 (domain reload, batch IPC 미기동 로그, latency 측정)
-2. Phase 1C 잔여 (release.yml, README)
-3. Write API 확장 Unity 실측 검증 (asset/prefab/package/material/animation/ui)
+> 최종 업데이트: 2026-03-19
+> 출처: `research.md` — CoplayDev/unity-mcp, unity-editor-mcp 경쟁 분석
+
+| 우선순위 | 영역 | 핵심 내용 |
+|---------|------|----------|
+| **P0** | 읽기/탐색 API 확장 | hierarchy 조회, gameobject find, component 값 조회, find by component, reference graph, asset dependency. 수정 전 상태 파악 필수 |
+| **P1** | 멀티 인스턴스 라우팅 | 여러 Unity Editor 동시 제어 + 에이전트 작업 고정 UX |
+| **P2** | 배치 편집/트랜잭션 | batch_execute, 부분 실패 롤백, 호출 수 감소 |
+| **P3** | 스크린샷/시각 피드백 | Game/Scene View 캡처, before/after 비교 |
+| **P4** | Graphics/Camera | URP/HDRP, Volume, light baking, Cinemachine |
+| **P5** | 고급 UI 자동화 | UI 찾기/읽기/클릭/입력 시퀀스 |
+| **P6** | 스크립트 편집 v2 | text edits, symbol-aware patch, find refs, compile error 자동 수정 |
+| **P7** | 전문화 도메인 | texture, shader graph, vfx, audio, terrain, probuilder |
+
+### 병행 과제
+- macOS / Linux 실제 테스트
+- `dotnet tool` NuGet 패키지 배포
+- write API property alias 개선

@@ -155,10 +155,20 @@ unityctl.slnx
 - `dotnet test unityctl.slnx` green 필수
 - Integration.Tests는 AppLocker 감지 + graceful skip
 
-## 즉시 다음 작업
-1. Profiling v1 (profiler start/stop/capture/analyze/hotspots)
-2. Animator State Machine v1 (add-layer/add-state/add-transition/set-parameter)
-3. exec 프로퍼티 체이닝 지원 개선
-4. write API property alias 개선 (`mass` → `m_Mass`)
-5. macOS / Linux 실제 테스트
-6. `dotnet tool` NuGet 패키지 배포
+## 다음 개발 로드맵 (경쟁 분석 기반)
+
+| 우선순위 | 영역 | 설명 | 참고 |
+|---------|------|------|------|
+| **P0** | 읽기/탐색 API 확장 | hierarchy 조회, gameobject find, component 값 조회, find by component, reference graph, asset dependency 분석. 수정 전 상태 파악 필수 | unity-editor-mcp |
+| **P1** | 멀티 인스턴스 라우팅 | 여러 Unity Editor 동시 제어, 에이전트가 특정 에디터에 작업 고정하는 UX | CoplayDev/unity-mcp |
+| **P2** | 배치 편집/트랜잭션 | batch_execute, 부분 실패 롤백, 호출 수 감소로 에이전트 완수율 향상 | CoplayDev/unity-mcp |
+| **P3** | 스크린샷/시각 피드백 | Game View/Scene View 캡처, before/after 비교, UI 레이아웃 검증 | unity-editor-mcp, Coplay |
+| **P4** | Graphics/Camera | URP/HDRP, Volume, renderer features, light baking, camera/Cinemachine | CoplayDev/unity-mcp |
+| **P5** | 고급 UI 자동화 | UI 찾기, 상태 읽기, 클릭, 값 입력, 입력 시퀀스 재생 | unity-editor-mcp |
+| **P6** | 스크립트 편집 v2 | text edits, symbol-aware patch, find refs, diff preview, compile error 자동 수정 루프 | 기존 Script v1 확장 |
+| **P7** | 전문화 도메인 | texture import, shader/shader graph, scriptable object 관리, vfx, audio, terrain, probuilder | CoplayDev/unity-mcp |
+
+### 병행 과제
+- macOS / Linux 실제 테스트
+- `dotnet tool` NuGet 패키지 배포
+- write API property alias 개선 (`mass` → `m_Mass`)
