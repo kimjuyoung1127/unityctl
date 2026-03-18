@@ -1,4 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Unityctl.Shared.Protocol;
+using Unityctl.Shared.Serialization;
 
 namespace Unityctl.Cli.Output;
 
@@ -36,9 +39,16 @@ public static class ConsoleOutput
 
         if (response.Data != null)
         {
-            foreach (var prop in response.Data)
+            if (response.Data["checks"] is JsonArray checksArray)
             {
-                Console.WriteLine($"  {prop.Key}: {prop.Value}");
+                PrintPreflightChecks(checksArray);
+            }
+            else
+            {
+                foreach (var prop in response.Data)
+                {
+                    Console.WriteLine($"  {prop.Key}: {prop.Value}");
+                }
             }
         }
 
@@ -51,6 +61,56 @@ public static class ConsoleOutput
             }
             Console.ResetColor();
         }
+    }
+
+    public static void PrintPreflightChecks(JsonArray checksArray)
+    {
+        var checks = JsonSerializer.Deserialize(checksArray, UnityctlJsonContext.Default.PreflightCheckArray);
+        if (checks == null || checks.Length == 0) return;
+
+        Console.WriteLine();
+        Console.WriteLine("Preflight Checks:");
+
+        foreach (var check in checks)
+        {
+            var (prefix, color) = GetCheckStyle(check);
+
+            Console.ForegroundColor = color;
+            Console.Write($"  {prefix} [{check.Category.ToUpperInvariant()}] {check.Check}");
+            Console.ResetColor();
+            Console.Write($": {check.Message}");
+            if (!string.IsNullOrEmpty(check.Details))
+                Console.Write($" ({check.Details})");
+            Console.WriteLine();
+        }
+
+        var errors = checks.Count(c => c.Category == "error" && !c.Passed);
+        var warnings = checks.Count(c => c.Category == "warning" && !c.Passed);
+        var passed = checks.Count(c => c.Passed);
+
+        Console.WriteLine();
+        Console.Write($"  {checks.Length} checks: ");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write($"{passed} passed");
+        Console.ResetColor();
+
+        if (errors > 0)
+        {
+            Console.Write(", ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write($"{errors} errors");
+            Console.ResetColor();
+        }
+
+        if (warnings > 0)
+        {
+            Console.Write(", ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"{warnings} warnings");
+            Console.ResetColor();
+        }
+
+        Console.WriteLine();
     }
 
     public static void PrintRecovery(StatusCode code)
@@ -66,5 +126,18 @@ public static class ConsoleOutput
         };
         if (hint != null) Console.Error.WriteLine(hint);
         Console.ResetColor();
+    }
+
+    private static (string Prefix, ConsoleColor Color) GetCheckStyle(PreflightCheck check)
+    {
+        return (check.Category, check.Passed) switch
+        {
+            ("error", false) => ("✗", ConsoleColor.Red),
+            ("error", true) => ("✓", ConsoleColor.Green),
+            ("warning", false) => ("⚠", ConsoleColor.Yellow),
+            ("warning", true) => ("✓", ConsoleColor.Green),
+            ("info", _) => ("ℹ", ConsoleColor.Cyan),
+            _ => ("·", ConsoleColor.Gray)
+        };
     }
 }

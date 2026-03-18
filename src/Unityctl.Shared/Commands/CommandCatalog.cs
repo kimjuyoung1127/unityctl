@@ -40,6 +40,7 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("target", "string", "Build target (StandaloneWindows64, OSX, Linux, Android, iOS, WebGL)", required: false),
         Parameter("output", "string", "Output path for build artifacts", required: false),
+        Parameter("dryRun", "bool", "Validate without building (preflight check)", required: false),
         Parameter("json", "bool", "Output as JSON", required: false));
 
     public static readonly CommandDefinition Test = Define(

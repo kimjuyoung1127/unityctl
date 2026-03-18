@@ -12,7 +12,8 @@
 - **Phase 2C**: 완료
 - **Phase 3B**: 완료
 - **Phase 3A**: 완료
-- **Phase 4A, 3C, 4B, 5**: 미착수
+- **Phase 4A**: 완료
+- **Phase 3C, 4B, 5**: 미착수
 
 ## 이번 상태 반영 요약
 
@@ -30,16 +31,16 @@
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | `dotnet build unityctl.slnx` | ✅ | 경고/오류 없이 통과 |
-| `dotnet test unityctl.slnx` | ✅ | 총 184개 테스트 통과 |
+| `dotnet test unityctl.slnx` | ✅ | 총 201개 테스트 통과 |
 
 테스트 세부:
 
 | 프로젝트 | 통과 |
 |----------|------|
-| Unityctl.Shared.Tests | 28 |
+| Unityctl.Shared.Tests | 37 |
 | Unityctl.Core.Tests | 89 |
-| Unityctl.Cli.Tests | 55 |
-| Unityctl.Integration.Tests | 12 |
+| Unityctl.Cli.Tests | 61 |
+| Unityctl.Integration.Tests | 14 |
 
 ## 수동 검증
 
@@ -70,8 +71,8 @@
 
 ## 즉시 다음 작업
 
-1. Phase 4A Ghost Mode
-2. Phase 3C Watch Mode
+1. Phase 3C Watch Mode
+2. Phase 4B Scene Diff
 3. Phase 3C Watch Mode
 4. Phase 4B Scene Diff
 5. Phase 5 Agent Layer

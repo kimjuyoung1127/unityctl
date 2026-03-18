@@ -34,4 +34,13 @@ public class CommandCatalogTests
         Assert.Contains(status.Parameters, parameter => parameter.Name == "project" && parameter.Required);
         Assert.DoesNotContain(status.Parameters, parameter => parameter.Name == "json" && parameter.Required);
     }
+
+    [Fact]
+    public void Build_HasDryRunParameter_AsOptional()
+    {
+        var build = CommandCatalog.All.Single(command => command.Name == "build");
+
+        Assert.Contains(build.Parameters, p => p.Name == "dryRun");
+        Assert.DoesNotContain(build.Parameters, p => p.Name == "dryRun" && p.Required);
+    }
 }

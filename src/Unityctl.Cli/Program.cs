@@ -17,8 +17,8 @@ app.Add("ping", (string project, bool json = false) =>
 app.Add("status", (string project, bool wait = false, bool json = false) =>
     StatusCommand.Execute(project, wait, json));
 
-app.Add("build", (string project, string target = "StandaloneWindows64", string? output = null, bool json = false) =>
-    BuildCommand.Execute(project, target, output, json));
+app.Add("build", (string project, string target = "StandaloneWindows64", string? output = null, bool dryRun = false, bool json = false) =>
+    BuildCommand.Execute(project, target, output, dryRun, json));
 
 app.Add("test", (string project, string mode = "edit", string? filter = null, bool noWait = false, int timeout = 300, bool json = false) =>
     TestCommand.Execute(project, mode, filter, !noWait, timeout, json));

@@ -6,18 +6,26 @@ namespace Unityctl.Cli.Commands;
 
 public static class BuildCommand
 {
-    public static void Execute(string project, string target = "StandaloneWindows64", string? output = null, bool json = false)
+    public static void Execute(string project, string target = "StandaloneWindows64", string? output = null, bool dryRun = false, bool json = false)
     {
-        var request = new CommandRequest
+        var request = CreateRequest(target, output, dryRun);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    internal static CommandRequest CreateRequest(string target, string? output, bool dryRun)
+    {
+        var parameters = new JsonObject
         {
-            Command = WellKnownCommands.Build,
-            Parameters = new JsonObject
-            {
-                ["target"] = target,
-                ["outputPath"] = output
-            }
+            ["target"] = target,
+            ["outputPath"] = output
         };
 
-        CommandRunner.Execute(project, request, json);
+        if (dryRun) parameters["dryRun"] = true;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.Build,
+            Parameters = parameters
+        };
     }
 }

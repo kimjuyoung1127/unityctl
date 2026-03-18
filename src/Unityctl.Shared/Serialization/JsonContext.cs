@@ -14,6 +14,8 @@ namespace Unityctl.Shared.Serialization;
 [JsonSerializable(typeof(JsonNode))]
 [JsonSerializable(typeof(FlightEntry))]
 [JsonSerializable(typeof(FlightEntry[]))]
+[JsonSerializable(typeof(PreflightCheck))]
+[JsonSerializable(typeof(PreflightCheck[]))]
 [JsonSerializable(typeof(Session))]
 [JsonSerializable(typeof(Session[]))]
 [JsonSerializable(typeof(SessionState))]

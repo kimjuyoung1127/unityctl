@@ -132,6 +132,37 @@ public class CliIntegrationTests
         Assert.Contains("Pruned", stdout);
     }
 
+    [Fact]
+    public async Task Build_WithDryRun_ParsesParameter()
+    {
+        if (!EnsureCanExecute()) return;
+
+        var (exitCode, stdout, stderr) = await RunCli("build", "--project", "/nonexistent_project_path", "--dry-run");
+        _output.WriteLine($"stdout: {stdout}");
+        _output.WriteLine($"stderr: {stderr}");
+
+        // --dry-run should parse without error (exit 1 = Unity not found, not a parse error)
+        Assert.DoesNotContain("unknown option", stderr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("unrecognized", stderr, StringComparison.OrdinalIgnoreCase);
+        // Unity not present so command fails (exit 1), but parameter parsing succeeded
+        Assert.Equal(1, exitCode);
+    }
+
+    [Fact]
+    public async Task Build_WithDryRunAndJson_ParsesParameter()
+    {
+        if (!EnsureCanExecute()) return;
+
+        var (exitCode, stdout, stderr) = await RunCli("build", "--project", "/nonexistent_project_path", "--dry-run", "--json");
+        _output.WriteLine($"stdout: {stdout}");
+        _output.WriteLine($"stderr: {stderr}");
+
+        // --dry-run --json should both parse without error
+        Assert.DoesNotContain("unknown option", stderr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("unrecognized", stderr, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, exitCode);
+    }
+
     /// <summary>
     /// Returns true if tests can proceed. If false, writes a diagnostic
     /// message explaining why the test is being skipped.

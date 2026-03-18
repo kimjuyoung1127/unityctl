@@ -94,7 +94,7 @@ unityctl.slnx
 | **2C** | ✅ 완료 | **Async Commands** (polling, single-flight, ACCEPTED) |
 | **3B** | ✅ 완료 | **Flight Recorder** (NDJSON 로깅, append-only, 예외 안전) |
 | **3A** | ✅ 완료 | **Session Layer** (상태머신 6개, NDJSON 저장소, MCP Tasks 매핑) |
-| **4A** | 🔲 | **Ghost Mode** (--dry-run preflight, 3단계 검증) — 3C보다 먼저 |
+| **4A** | ✅ 완료 | **Ghost Mode** (--dry-run preflight, 3단계 검증) |
 | **3C** | 🔲 | **Watch Mode** (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
 | **4B** | 🔲 | **Scene Diff** (SerializedObject, GlobalObjectId, propertyPath diff) |
 | **5** | 🔲 | **Agent Layer** (Unityctl.Mcp 네이티브 서버, schema, exec) |
@@ -122,7 +122,7 @@ unityctl.slnx
 7. 개발 진행 상세 이력: `docs/DEVELOPMENT.md`
 
 ## 테스트 표준
-- 총 184개 (Shared 28 + Core 89 + Cli 55 + Integration 12)
+- 총 201개 (Shared 37 + Core 89 + Cli 61 + Integration 14)
 - `dotnet test unityctl.slnx` green 필수
 - Integration.Tests는 AppLocker 감지 + graceful skip
 

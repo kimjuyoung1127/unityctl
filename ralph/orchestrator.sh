@@ -49,7 +49,8 @@ fi
 # 시작 전 테스트 수 기록
 cd "$ROOT_DIR"
 BASELINE_TEST_COUNT=$(dotnet test unityctl.slnx --nologo --no-build 2>&1 \
-    | grep -oE "(Passed|통과):[ ]*[0-9]+" | grep -oE "[0-9]+" | paste -sd+ | bc 2>/dev/null || echo "85")
+    | grep -oE "(Passed|통과):[ ]*[0-9]+" | grep -oE "[0-9]+" \
+    | awk '{s+=$1} END {print s+0}')
 log "기준 테스트 수: ${BASELINE_TEST_COUNT}"
 
 # workspace 초기화
@@ -173,10 +174,10 @@ step_sonnet_implement() {
     local label="${1:-구현}"
     log "Step: ${BOLD}Sonnet${NC} — ${label}"
 
-    # Sonnet 직전에 baseline 스냅샷 찍기
+    # Sonnet 직전에 baseline 스냅샷 (파일 수 기준)
     cd "$ROOT_DIR"
-    git ls-files --others --exclude-standard | sort > "$WORKSPACE/baseline-untracked.txt"
-    git diff --name-only | sort > "$WORKSPACE/baseline-modified.txt"
+    local before_count
+    before_count=$(( $(git diff --name-only -- src/ tests/ | wc -l) + $(git ls-files --others --exclude-standard -- src/ tests/ | wc -l) ))
 
     local review_ctx=""
     if [[ -f "$WORKSPACE/review.md" ]]; then
@@ -213,22 +214,11 @@ Read the files above, then implement the code AND tests."
 
     run_claude "sonnet" "Read,Write,Edit,Glob,Grep,Bash" "$prompt" "$WORKSPACE/impl-log.md"
 
-    # 코드 변경 검증 — 기준 스냅샷 대비 신규 변경만 카운트
+    # 코드 변경 검증 — Sonnet 전후 파일 수 비교
     cd "$ROOT_DIR"
-
-    # 신규 untracked (기준에 없던 것만)
-    local new_untracked
-    new_untracked=$(comm -13 "$WORKSPACE/baseline-untracked.txt" \
-        <(git ls-files --others --exclude-standard | sort) \
-        | grep -cE "^(src/|tests/)" || true)
-
-    # 신규 modified (기준에 없던 것만)
-    local new_modified
-    new_modified=$(comm -13 "$WORKSPACE/baseline-modified.txt" \
-        <(git diff --name-only | sort) \
-        | grep -cE "^(src/|tests/)" || true)
-
-    local src_changes=$((new_untracked + new_modified))
+    local after_count
+    after_count=$(( $(git diff --name-only -- src/ tests/ | wc -l) + $(git ls-files --others --exclude-standard -- src/ tests/ | wc -l) ))
+    local src_changes=$((after_count - before_count))
 
     if [[ "$src_changes" -eq 0 ]]; then
         err "Sonnet did not create/modify any src/ or tests/ files!"
@@ -286,7 +276,8 @@ step_test() {
     log "  [3/4] 테스트 수 검증"
     local current_count
     current_count=$(grep -oE "(Passed|통과):[ ]*[0-9]+" "$WORKSPACE/test-output.log" \
-        | grep -oE "[0-9]+" | paste -sd+ | bc 2>/dev/null || echo "0")
+        | grep -oE "[0-9]+" \
+        | awk '{s+=$1} END {print s+0}')
 
     if [[ "$current_count" -le "$BASELINE_TEST_COUNT" ]]; then
         err "테스트 수가 증가하지 않았습니다! (기준: ${BASELINE_TEST_COUNT}, 현재: ${current_count})"
