@@ -116,6 +116,7 @@ public sealed class IpcTransport : ITransport
             await MessageFraming.WriteMessageAsync(pipe, requestJson, ct).ConfigureAwait(false);
 
             var responseJson = await MessageFraming.ReadMessageAsync(pipe, ct).ConfigureAwait(false);
+            if (responseJson == null) { await pipe.DisposeAsync(); return null; }
             var response = JsonSerializer.Deserialize(responseJson, UnityctlJsonContext.Default.CommandResponse);
             if (response?.Success == true) return pipe;
 

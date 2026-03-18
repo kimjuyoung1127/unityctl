@@ -384,6 +384,16 @@ namespace Unityctl.Plugin.Editor.Ipc
         /// </summary>
         private void WatchWriterLoop(NamedPipeServerStream pipe)
         {
+            // Send immediate heartbeat so client knows connection is alive
+            try
+            {
+                WriteWatchEvent(pipe, EventEnvelope.Create("_heartbeat", "Ping"));
+            }
+            catch
+            {
+                goto cleanup;
+            }
+
             long lastHeartbeatMs = (long)Environment.TickCount;
 
             try
