@@ -76,7 +76,7 @@ Plugin은 Unity 내부에서만 컴파일되며, `src/Unityctl.Plugin/Editor/Sha
 | 4A | ✅ 완료 | Ghost Mode (--dry-run preflight, 3단계 검증) |
 | 3C | ✅ 완료 | Watch Mode (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
 | 4B | ✅ 완료 | Scene Diff (SerializedObject, GlobalObjectId, propertyPath diff) |
-| 5 | 🔲 미착수 | Agent Layer |
+| 5 | ✅ 완료 | Agent Layer (Unityctl.Mcp MCP 서버, schema, exec, workflow) |
 
 ---
 
@@ -139,12 +139,13 @@ dotnet test unityctl.slnx
 
 | 프로젝트 | 테스트 수 | 상태 |
 |----------|----------|------|
-| Unityctl.Shared.Tests | 49 | ✅ |
+| Unityctl.Shared.Tests | 60 | ✅ |
 | Unityctl.Core.Tests | 96 | ✅ |
-| Unityctl.Cli.Tests | 102 | ✅ |
-| Unityctl.Integration.Tests | 14 | ✅ |
+| Unityctl.Cli.Tests | 122 | ✅ |
+| Unityctl.Mcp.Tests | 7 | ✅ |
+| Unityctl.Integration.Tests | 19 | ✅ |
 
-**총 261개 테스트 통과**
+**총 304개 테스트 통과**
 
 ### robotapp 수동 검증
 
@@ -250,20 +251,39 @@ dotnet test unityctl.slnx
 
 ---
 
+## Phase 5 실제 반영 내용
+
+- `src/Unityctl.Mcp/` 프로젝트 신설 — ModelContextProtocol C# SDK v1.1.0, stdio transport
+- MCP 서버 11개 도구: ping, status, check, build, test, log, session, watch, scene-snapshot, scene-diff, exec
+- CLI `SchemaCommand.cs` — `unityctl schema --format json` (CommandSchema 기계 판독 스키마)
+- CLI `ExecCommand.cs` — `unityctl exec --project <path> --code <expr>` (C# 식 IPC 실행)
+- CLI `WorkflowCommand.cs` — `unityctl workflow run <file>` (순차 실행, continueOnError)
+- Plugin `ExecHandler.cs` — Reflection 기반 C# 식 실행 핸들러
+- Shared `CommandSchema.cs` — 스키마 프로토콜 모델
+- Shared `WorkflowDefinition.cs` — 워크플로 정의 모델
+- Shared `WellKnownCommands` — Schema, Exec, Workflow 상수 추가
+- Shared `CommandCatalog` — 3개 신규 커맨드 정의
+- Shared `JsonContext` — CommandSchema, WorkflowDefinition, WorkflowStep, EventEnvelope[] 등록
+- Plugin `WellKnownCommands` — Exec 동기화
+- CLI `Program.cs` — schema, exec, workflow 커맨드 등록
+- 신규 테스트: `SchemaCommandTests.cs`, `ExecCommandTests.cs`, `WorkflowCommandTests.cs`, `CommandSchemaTests.cs`, `SchemaIntegrationTests.cs`, `Unityctl.Mcp.Tests/`
+
+검증:
+
+- `dotnet build unityctl.slnx` 통과 (경고 0)
+- `dotnet test unityctl.slnx` 통과 (304개)
+
+---
+
 ## 다음 단계
 
 1. Phase 2B 후속 보강
    - domain reload 후 자동 IPC 복구 검증 강화
    - batch worker IPC 미기동 로그 검증
    - pure transport-only latency 측정
-2. Phase 5 Agent Layer
-4. Phase 1C 잔여
+2. Phase 1C 잔여
    - `release.yml`
    - README 정비
-5. 문서 드리프트 방지
-   - `docs/status/PROJECT-STATUS.md`
-   - `docs/ref/phase-roadmap.md`
-   - `CLAUDE.md`
 
 ---
 

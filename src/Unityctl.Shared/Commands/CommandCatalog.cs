@@ -127,6 +127,29 @@ public static class CommandCatalog
         Parameter("epsilon", "double", "Float comparison threshold (default: 1e-6)", required: false),
         Parameter("json", "bool", "Output as JSON", required: false));
 
+    public static readonly CommandDefinition Schema = Define(
+        WellKnownCommands.Schema,
+        "Output machine-readable JSON schema of all available commands",
+        "meta",
+        Parameter("format", "string", "Output format: json (default: json)", required: false));
+
+    public static readonly CommandDefinition Exec = Define(
+        WellKnownCommands.Exec,
+        "Execute a C# expression in the Unity Editor via reflection",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("code", "string", "C# expression to evaluate (e.g. 'EditorApplication.isPlaying = true')", required: false),
+        Parameter("file", "string", "Path to a .cs script file to execute", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition Workflow = Define(
+        WellKnownCommands.Workflow,
+        "Execute a sequential workflow of unityctl commands from a JSON file",
+        "action",
+        Parameter("file", "string", "Path to workflow JSON definition file", required: true),
+        Parameter("project", "string", "Default project path for steps that omit it", required: false),
+        Parameter("json", "bool", "Output results as JSON", required: false));
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -143,7 +166,10 @@ public static class CommandCatalog
         SessionClean,
         Watch,
         SceneSnapshot,
-        SceneDiff
+        SceneDiff,
+        Schema,
+        Exec,
+        Workflow
     ];
 
     private static CommandDefinition Define(

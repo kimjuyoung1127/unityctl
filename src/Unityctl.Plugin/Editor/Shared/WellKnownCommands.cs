@@ -11,5 +11,6 @@ namespace Unityctl.Plugin.Editor.Shared
         public const string Watch = "watch";
         public const string SceneSnapshot = "scene-snapshot";
         public const string SceneDiff = "scene-diff";
+        public const string Exec = "exec";
     }
 }

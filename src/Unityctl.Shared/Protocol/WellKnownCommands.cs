@@ -11,4 +11,7 @@ public static class WellKnownCommands
     public const string Watch = "watch";
     public const string SceneSnapshot = "scene-snapshot";
     public const string SceneDiff = "scene-diff";
+    public const string Schema = "schema";
+    public const string Exec = "exec";
+    public const string Workflow = "workflow";
 }

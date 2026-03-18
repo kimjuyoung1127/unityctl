@@ -15,34 +15,37 @@
 - **Phase 4A**: 완료
 - **Phase 3C**: 완료
 - **Phase 4B**: 완료
-- **Phase 5**: 미착수
+- **Phase 5**: 완료 (2026-03-18)
 
-## 이번 상태 반영 요약
+## 이번 상태 반영 요약 (Phase 5 — Agent Layer)
 
-1. Phase 4B Scene Diff 구현 완료
-2. SceneSnapshotHandler (Plugin) — SerializedObject 순회, GlobalObjectId 기반 스냅샷
-3. SceneDiffHandler (Plugin) — propertyPath 기반 diff
-4. SceneSnapshot / SceneDiffResult (Shared) — 프로토콜 모델
-5. SceneCommand (CLI) — `unityctl scene snapshot`, `unityctl scene diff`
-6. WellKnownCommands / CommandCatalog 확장 — scene 커맨드 등록
-7. `dotnet build unityctl.slnx` 통과 (경고 0)
-8. `dotnet test unityctl.slnx` 통과 (261개)
+1. **P0 Schema Command**: `unityctl schema --format json` → CommandSchema (version + commands[])
+2. **P1 MCP Server**: `src/Unityctl.Mcp/` 신설 — ModelContextProtocol v1.1.0, stdio transport, 11개 도구
+3. **P2 Exec Command**: `unityctl exec --project <path> --code <expr>` + ExecHandler (Plugin, Reflection 기반)
+4. **P3 Workflow Runner**: `unityctl workflow run <file>` — 순차 실행, continueOnError 지원
+5. WellKnownCommands 확장 (Schema, Exec, Workflow)
+6. CommandCatalog 확장 (3개 신규 정의)
+7. JsonContext 신규 타입 등록 (CommandSchema, WorkflowDefinition, WorkflowStep, EventEnvelope[])
+8. Plugin WellKnownCommands 동기화 (Exec 추가)
+9. `dotnet build unityctl.slnx` 통과 (경고 0)
+10. `dotnet test unityctl.slnx` 통과 (304개)
 
 ## 자동화 검증
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | `dotnet build unityctl.slnx` | ✅ | 경고/오류 없이 통과 |
-| `dotnet test unityctl.slnx` | ✅ | 총 261개 테스트 통과 |
+| `dotnet test unityctl.slnx` | ✅ | 총 304개 테스트 통과 |
 
 테스트 세부:
 
 | 프로젝트 | 통과 |
 |----------|------|
-| Unityctl.Shared.Tests | 49 |
+| Unityctl.Shared.Tests | 60 |
 | Unityctl.Core.Tests | 96 |
-| Unityctl.Cli.Tests | 102 |
-| Unityctl.Integration.Tests | 14 |
+| Unityctl.Cli.Tests | 122 |
+| Unityctl.Mcp.Tests | 7 |
+| Unityctl.Integration.Tests | 19 |
 
 ## 수동 검증
 
@@ -73,5 +76,5 @@
 
 ## 즉시 다음 작업
 
-1. Phase 5 Agent Layer
+1. Phase 2B 후속 보강 (domain reload, batch IPC 미기동 로그, latency 측정)
 2. Phase 1C 잔여 (release.yml, README)

@@ -24,10 +24,11 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Phase 4A (Ghost Mode): Done
 - Phase 3C (Watch Mode): Done
 - Phase 4B (Scene Diff): Done
-- Phase 5: Ready
+- Phase 5 (Agent Layer): Done
 
 최근 확정 사항:
-- Phase 4B Scene Diff 구현 완료 (2026-03-18): SceneSnapshotHandler, SceneDiffHandler, SceneCommand, SceneSnapshot/SceneDiffResult 프로토콜. 261개 dotnet 테스트 통과
+- Phase 5 Agent Layer 구현 완료 (2026-03-18): Unityctl.Mcp (MCP 서버, 11개 도구), SchemaCommand, ExecCommand, WorkflowCommand, ExecHandler(Plugin). 304개 dotnet 테스트 통과
+- Phase 4B Scene Diff 구현 완료 (2026-03-18): SceneSnapshotHandler, SceneDiffHandler, SceneCommand, SceneSnapshot/SceneDiffResult 프로토콜.
 - Phase 3C Watch Mode 구현 완료 (2026-03-18): WatchCommand, WatchEventSource, EventEnvelope, IPC Push 스트리밍
 - Phase 4A Ghost Mode 구현 완료 (2026-03-18)
 - Phase 3A Session Layer 구현 완료 (2026-03-18)
@@ -49,7 +50,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ```bash
 dotnet build unityctl.slnx                                          # 빌드
-dotnet test unityctl.slnx                                           # 전체 테스트 (261개)
+dotnet test unityctl.slnx                                           # 전체 테스트 (304개)
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # 유닛만
 dotnet run --project src/Unityctl.Cli -- <command> [options]         # CLI 실행
 ```
@@ -62,7 +63,7 @@ unityctl.slnx
 ├── src/Unityctl.Core      (net10.0)         비즈니스 로직 (transport, discovery, retry)
 ├── src/Unityctl.Cli       (net10.0)         얇은 CLI 셸 → Core에 위임
 ├── src/Unityctl.Plugin    (Unity UPM)       Editor 브릿지 (솔루션 빌드에 미포함)
-├── tests/*Tests           xUnit 테스트 (261개)
+├── tests/*Tests           xUnit 테스트 (304개)
 └── docs/                  ref/ + status/ + daily/ + weekly/
 ```
 
@@ -105,7 +106,7 @@ unityctl.slnx
 | **4A** | ✅ 완료 | **Ghost Mode** (--dry-run preflight, 3단계 검증) |
 | **3C** | ✅ 완료 | **Watch Mode** (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
 | **4B** | ✅ 완료 | **Scene Diff** (SerializedObject, GlobalObjectId, propertyPath diff) |
-| **5** | 🔲 | **Agent Layer** (Unityctl.Mcp 네이티브 서버, schema, exec) |
+| **5** | ✅ 완료 | **Agent Layer** (Unityctl.Mcp MCP 서버, schema, exec, workflow) |
 
 ## Source of Truth 문서
 - 탐색 인덱스: `AGENTS.md`
@@ -130,7 +131,7 @@ unityctl.slnx
 7. 개발 진행 상세 이력: `docs/DEVELOPMENT.md`
 
 ## 테스트 표준
-- 총 261개 (Shared 49 + Core 96 + Cli 102 + Integration 14)
+- 총 304개 (Shared 60 + Core 96 + Cli 122 + Mcp 7 + Integration 19)
 - `dotnet test unityctl.slnx` green 필수
 - Integration.Tests는 AppLocker 감지 + graceful skip
 
@@ -138,5 +139,4 @@ unityctl.slnx
 1. 도메인 리로드 후 IPC 자동 복구를 더 강하게 재현/종결 검증
 2. batch worker에서 IPC 서버 미기동 로그 검증
 3. pure transport-only latency 측정
-4. Phase 5 — Agent Layer (MCP 서버 + schema + exec)
-5. Phase 1C 잔여 (release.yml, README)
+4. Phase 1C 잔여 (release.yml, README)

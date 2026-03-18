@@ -64,4 +64,13 @@ app.Add("scene diff", (
         bool json = false) =>
     SceneCommand.Diff(snap1, snap2, project, live, epsilon, json));
 
+app.Add("schema", (string format = "json") =>
+    SchemaCommand.Execute(format));
+
+app.Add("exec", (string project, string? code = null, string? file = null, bool json = false) =>
+    ExecCommand.Execute(project, code, file, json));
+
+app.Add("workflow run", (string file, string? project = null, bool json = false) =>
+    WorkflowCommand.Run(file, project, json));
+
 app.Run(args);

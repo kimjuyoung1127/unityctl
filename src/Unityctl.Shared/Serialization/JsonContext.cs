@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using Unityctl.Shared.Commands;
 using Unityctl.Shared.Protocol;
 
 namespace Unityctl.Shared.Serialization;
@@ -8,6 +9,7 @@ namespace Unityctl.Shared.Serialization;
 [JsonSerializable(typeof(CommandRequest))]
 [JsonSerializable(typeof(CommandResponse))]
 [JsonSerializable(typeof(EventEnvelope))]
+[JsonSerializable(typeof(EventEnvelope[]))]
 [JsonSerializable(typeof(SessionInfo))]
 [JsonSerializable(typeof(StatusCode))]
 [JsonSerializable(typeof(JsonObject))]
@@ -43,6 +45,14 @@ namespace Unityctl.Shared.Serialization;
 [JsonSerializable(typeof(ComponentDiffEntry[]))]
 [JsonSerializable(typeof(PropertyChange))]
 [JsonSerializable(typeof(PropertyChange[]))]
+[JsonSerializable(typeof(CommandSchema))]
+[JsonSerializable(typeof(CommandDefinition))]
+[JsonSerializable(typeof(CommandDefinition[]))]
+[JsonSerializable(typeof(CommandParameterDefinition))]
+[JsonSerializable(typeof(CommandParameterDefinition[]))]
+[JsonSerializable(typeof(WorkflowDefinition))]
+[JsonSerializable(typeof(WorkflowStep))]
+[JsonSerializable(typeof(WorkflowStep[]))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     WriteIndented = true,
