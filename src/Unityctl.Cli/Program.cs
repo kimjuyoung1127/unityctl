@@ -40,4 +40,13 @@ app.Add("log", (
         bool stats = false) =>
     LogCommand.Execute(last, tail, op, level, since, json, prune, stats));
 
+app.Add("session list", (bool json = false) =>
+    SessionCommand.List(json));
+
+app.Add("session stop", (string id, bool json = false) =>
+    SessionCommand.Stop(id, json));
+
+app.Add("session clean", () =>
+    SessionCommand.Clean());
+
 app.Run(args);

@@ -20,7 +20,7 @@ public sealed class SessionInfo
     public string State { get; set; } = string.Empty;
 
     [JsonPropertyName("createdAt")]
-    public long CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = string.Empty;
 
     [JsonPropertyName("unityVersion")]
     public string? UnityVersion { get; set; }

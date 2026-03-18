@@ -14,6 +14,9 @@ namespace Unityctl.Shared.Serialization;
 [JsonSerializable(typeof(JsonNode))]
 [JsonSerializable(typeof(FlightEntry))]
 [JsonSerializable(typeof(FlightEntry[]))]
+[JsonSerializable(typeof(Session))]
+[JsonSerializable(typeof(Session[]))]
+[JsonSerializable(typeof(SessionState))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     WriteIndented = true,

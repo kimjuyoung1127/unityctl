@@ -11,7 +11,8 @@ public class CommandCatalogTests
         var names = CommandCatalog.All.Select(command => command.Name).ToArray();
 
         Assert.Equal(
-            ["init", "editor list", "ping", "status", "build", "test", "check", "tools", "log"],
+            ["init", "editor list", "ping", "status", "build", "test", "check", "tools", "log",
+             "session list", "session stop", "session clean"],
             names);
     }
 

@@ -57,10 +57,7 @@ mkdir -p "$WORKSPACE"
 rm -f "$WORKSPACE"/{context,design,review,plan,impl-log,docs-log}.md
 rm -f "$WORKSPACE"/*.log "$WORKSPACE"/*.txt
 
-# Sonnet 전 기준 스냅샷 (untracked 파일 목록)
-cd "$ROOT_DIR"
-git ls-files --others --exclude-standard | sort > "$WORKSPACE/baseline-untracked.txt"
-git diff --name-only | sort > "$WORKSPACE/baseline-modified.txt"
+# baseline 스냅샷은 각 Sonnet 호출 직전에 찍음 (step_sonnet_implement 내부)
 
 log "${BOLD}Phase ${PHASE_ID} 시작${NC} (최대 ${MAX_ITER}회 반복)"
 echo "=========================================="
@@ -80,17 +77,17 @@ run_claude() {
 
     local exit_code=0
     # --permission-mode acceptEdits: allow Write/Edit without interactive approval
-    # Use stdin (< file) instead of -p "$(cat file)" to avoid shell arg length limits
+    # Use -p with file content. For large prompts, reference files instead of inlining.
     if [[ -n "$tools" ]]; then
         claude --model "$model" --print \
             --permission-mode acceptEdits \
             --allowedTools "$tools" \
-            < "$prompt_file" \
+            -p "$(cat "$prompt_file")" \
             > "$output" 2>"$WORKSPACE/claude-stderr.log" || exit_code=$?
     else
         claude --model "$model" --print \
             --permission-mode acceptEdits \
-            < "$prompt_file" \
+            -p "$(cat "$prompt_file")" \
             > "$output" 2>"$WORKSPACE/claude-stderr.log" || exit_code=$?
     fi
 
@@ -176,23 +173,25 @@ step_sonnet_implement() {
     local label="${1:-구현}"
     log "Step: ${BOLD}Sonnet${NC} — ${label}"
 
+    # Sonnet 직전에 baseline 스냅샷 찍기
+    cd "$ROOT_DIR"
+    git ls-files --others --exclude-standard | sort > "$WORKSPACE/baseline-untracked.txt"
+    git diff --name-only | sort > "$WORKSPACE/baseline-modified.txt"
+
     local review_ctx=""
     if [[ -f "$WORKSPACE/review.md" ]]; then
         review_ctx="
-## 리뷰 피드백 (이 문제를 수정하세요)
+## Review feedback (fix these issues)
 $(cat "$WORKSPACE/review.md")"
     fi
 
-    local prompt="당신은 시니어 C# 개발자입니다. 설계 문서에 따라 코드를 구현하세요.
+    local prompt="You are a senior C# developer. Implement code according to the design document.
 
-## Phase 요구사항
-$(cat "$PHASE_FILE")
-
-## 설계
-$(cat "$WORKSPACE/design.md")
-
-## 코드베이스 맥락
-$(cat "$WORKSPACE/context.md")
+## FILES TO READ FIRST (use Read tool)
+1. Phase requirements: ${PHASE_FILE}
+2. Design document: ${WORKSPACE}/design.md
+3. Codebase context: ${WORKSPACE}/context.md
+4. Code patterns: docs/ref/code-patterns.md
 ${review_ctx}
 
 ## CRITICAL RULES
@@ -203,14 +202,14 @@ ${review_ctx}
 - Register new types in JsonContext
 - Run \`dotnet build unityctl.slnx\` after implementation and fix any errors
 
-## TEST REQUIREMENT (MANDATORY — build will fail validation without this)
+## TEST REQUIREMENT (MANDATORY — validation will fail without this)
 You MUST create new test files under tests/ directory. The test count MUST increase.
 - Create test files like: tests/Unityctl.Core.Tests/... and tests/Unityctl.Cli.Tests/...
 - Each new class/feature needs at least 3-5 test cases
 - Follow existing test patterns (xUnit, [Fact], [Theory])
 - Run \`dotnet test unityctl.slnx\` to verify all tests pass
 
-Implement the code AND tests now."
+Read the files above, then implement the code AND tests."
 
     run_claude "sonnet" "Read,Write,Edit,Glob,Grep,Bash" "$prompt" "$WORKSPACE/impl-log.md"
 
@@ -376,27 +375,20 @@ step_live_unity() {
 step_opus_review() {
     log "Step: ${BOLD}Opus${NC} — 리뷰"
 
-    local prompt="당신은 코드 리뷰어입니다. 테스트 실패를 분석하고 수정 방법을 제시하세요.
+    local prompt="You are a code reviewer. Analyze test failures and provide fix instructions.
 
-## Phase 요구사항
-$(cat "$PHASE_FILE")
+## FILES TO READ (use Read tool)
+1. Phase requirements: ${PHASE_FILE}
+2. Design document: ${WORKSPACE}/design.md
+3. Test errors: ${WORKSPACE}/test-errors.log
 
-## 설계
-$(cat "$WORKSPACE/design.md")
+## OUTPUT FORMAT
+1. Root cause analysis for each failed test/build error
+2. Fix instructions per file (with line numbers)
+3. Missing implementations
+4. Prevention tips
 
-## 테스트 에러
-$(cat "$WORKSPACE/test-errors.log" 2>/dev/null || echo '(에러 로그 없음)')
-
-## 현재 변경된 파일
-$(cd "$ROOT_DIR" && git diff --stat; git ls-files --others --exclude-standard | head -20)
-
-## 출력 형식
-1. **실패 원인 분석**: 각 실패한 테스트/빌드 에러의 근본 원인
-2. **수정 지침**: 파일별로 구체적인 수정 내용 (줄 번호 포함)
-3. **누락된 구현**: 아직 구현되지 않은 항목
-4. **재발 방지**: 같은 문제가 반복되지 않도록 주의할 점
-
-코드를 작성하지 마세요. 수정 지침만 출력하세요."
+Do NOT write code. Only output fix instructions."
 
     run_claude "opus" "Read,Glob,Grep" "$prompt" "$WORKSPACE/review.md"
     score "Opus     review.md   OK"
@@ -409,20 +401,19 @@ $(cd "$ROOT_DIR" && git diff --stat; git ls-files --others --exclude-standard | 
 step_opus_docs() {
     log "Step: ${BOLD}Opus${NC} — 문서 동기화"
 
-    local prompt="당신은 문서 관리자입니다. Phase ${PHASE_ID} 구현이 완료되었습니다.
-다음 문서를 현재 코드 상태에 맞게 업데이트하세요.
+    local prompt="You are a documentation manager. Phase ${PHASE_ID} implementation is complete.
+Update these documents to match current code state:
 
-## 업데이트 대상
-1. docs/status/PROJECT-STATUS.md — Phase ${PHASE_ID} 상태를 Done으로, 테스트 수 갱신
-2. docs/status/PHASE-EXECUTION-BOARD.md — Phase ${PHASE_ID} status를 Done으로
-3. CLAUDE.md — Phase Status 테이블 + 테스트 수 갱신
-4. docs/DEVELOPMENT.md — Phase ${PHASE_ID} 섹션 추가 (구현 내용 + 검증 현황)
-5. docs/ref/phase-roadmap.md — Phase ${PHASE_ID} 상태 갱신
+1. docs/status/PROJECT-STATUS.md — set Phase ${PHASE_ID} to Done, update test counts
+2. docs/status/PHASE-EXECUTION-BOARD.md — set Phase ${PHASE_ID} status to Done
+3. CLAUDE.md — update Phase Status table + test counts
+4. docs/DEVELOPMENT.md — add Phase ${PHASE_ID} section (implementation + verification)
+5. docs/ref/phase-roadmap.md — update Phase ${PHASE_ID} status
 
-## 규칙
-- dotnet test unityctl.slnx 를 실행해서 실제 테스트 수를 확인하세요
-- 문서 간 상태 불일치가 없도록 하세요
-- 코드를 수정하지 마세요, 문서만 업데이트하세요"
+Rules:
+- Run dotnet test unityctl.slnx to get actual test counts
+- Ensure no inconsistencies between documents
+- Do NOT modify code, only update documentation"
 
     run_claude "opus" "Read,Write,Edit,Glob,Grep,Bash" "$prompt" "$WORKSPACE/docs-log.md"
     score "Opus     docs-sync   OK"

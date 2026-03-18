@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
 using Unityctl.Core.FlightRecorder;
+using Unityctl.Core.Sessions;
 using Unityctl.Shared;
 using Unityctl.Shared.Protocol;
 
@@ -30,13 +31,27 @@ public static class AsyncCommandRunner
         int timeoutSeconds = 300,
         CancellationToken ct = default)
     {
+        SessionManager? sessionManager = null;
+        string? sessionId = null;
+        try
+        {
+            sessionManager = new SessionManager(new NdjsonSessionStore());
+            var session = await sessionManager.StartAsync(request.Command, project, ct: ct);
+            sessionId = session.Id;
+        }
+        catch
+        {
+            // Session tracking must never crash the CLI
+        }
+
         var sw = Stopwatch.StartNew();
         var response = await executor(project, request, ct);
 
         if (response.StatusCode != StatusCode.Accepted)
         {
             sw.Stop();
-            RecordEntry(project, request, response, sw.ElapsedMilliseconds);
+            await TryRecordSessionResultAsync(sessionManager, sessionId, response, ct);
+            RecordEntry(project, request, response, sw.ElapsedMilliseconds, sessionId);
             return response;
         }
 
@@ -75,7 +90,8 @@ public static class AsyncCommandRunner
                 if (pollResponse.StatusCode != StatusCode.Accepted)
                 {
                     sw.Stop();
-                    RecordEntry(project, request, pollResponse, sw.ElapsedMilliseconds);
+                    await TryRecordSessionResultAsync(sessionManager, sessionId, pollResponse, linkedCts.Token);
+                    RecordEntry(project, request, pollResponse, sw.ElapsedMilliseconds, sessionId);
                     return pollResponse;
                 }
 
@@ -88,7 +104,11 @@ public static class AsyncCommandRunner
             var timeoutResponse = CommandResponse.Fail(
                 StatusCode.TestFailed,
                 $"Test execution timed out after {timeoutSeconds}s");
-            RecordEntry(project, request, timeoutResponse, sw.ElapsedMilliseconds);
+            if (sessionManager != null && sessionId != null)
+            {
+                try { await sessionManager.TimeoutAsync(sessionId, ct); } catch { }
+            }
+            RecordEntry(project, request, timeoutResponse, sw.ElapsedMilliseconds, sessionId);
             return timeoutResponse;
         }
 
@@ -96,11 +116,32 @@ public static class AsyncCommandRunner
         throw new OperationCanceledException(ct);
     }
 
+    private static async Task TryRecordSessionResultAsync(
+        SessionManager? manager,
+        string? sessionId,
+        CommandResponse response,
+        CancellationToken ct)
+    {
+        if (manager == null || sessionId == null) return;
+        try
+        {
+            if (response.Success)
+                await manager.CompleteAsync(sessionId, response.Data, ct);
+            else
+                await manager.FailAsync(sessionId, response.Message ?? "Command failed", ct);
+        }
+        catch
+        {
+            // Session tracking must never crash the CLI
+        }
+    }
+
     private static void RecordEntry(
         string project,
         CommandRequest request,
         CommandResponse response,
-        long durationMs)
+        long durationMs,
+        string? sessionId = null)
     {
         try
         {
@@ -118,7 +159,7 @@ public static class AsyncCommandRunner
                 Machine = Environment.MachineName,
                 V = Constants.Version,
                 Args = request.Parameters?.ToJsonString(),
-                Sid = null
+                Sid = sessionId
             };
 
             new FlightLog().Record(entry);

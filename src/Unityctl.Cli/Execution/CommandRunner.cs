@@ -3,6 +3,7 @@ using Unityctl.Cli.Output;
 using Unityctl.Core.Discovery;
 using Unityctl.Core.FlightRecorder;
 using Unityctl.Core.Platform;
+using Unityctl.Core.Sessions;
 using Unityctl.Core.Transport;
 using Unityctl.Shared;
 using Unityctl.Shared.Protocol;
@@ -23,11 +24,39 @@ public static class CommandRunner
         var discovery = new UnityEditorDiscovery(platform);
         var executor = new CommandExecutor(platform, discovery);
 
+        SessionManager? sessionManager = null;
+        string? sessionId = null;
+        try
+        {
+            sessionManager = new SessionManager(new NdjsonSessionStore());
+            var session = await sessionManager.StartAsync(request.Command, project);
+            sessionId = session.Id;
+        }
+        catch
+        {
+            // Session tracking must never crash the CLI
+        }
+
         var sw = Stopwatch.StartNew();
         var response = await executor.ExecuteAsync(project, request, retry: retry);
         sw.Stop();
 
-        RecordEntry(project, request, response, sw.ElapsedMilliseconds);
+        if (sessionManager != null && sessionId != null)
+        {
+            try
+            {
+                if (response.Success)
+                    await sessionManager.CompleteAsync(sessionId, response.Data);
+                else
+                    await sessionManager.FailAsync(sessionId, response.Message ?? "Command failed");
+            }
+            catch
+            {
+                // Session tracking must never crash the CLI
+            }
+        }
+
+        RecordEntry(project, request, response, sw.ElapsedMilliseconds, sessionId);
 
         PrintResponse(response, json);
         return GetExitCode(response);
@@ -53,7 +82,8 @@ public static class CommandRunner
         string project,
         CommandRequest request,
         CommandResponse response,
-        long durationMs)
+        long durationMs,
+        string? sessionId = null)
     {
         try
         {
@@ -73,7 +103,7 @@ public static class CommandRunner
                 Machine = Environment.MachineName,
                 V = Constants.Version,
                 Args = request.Parameters?.ToJsonString(),
-                Sid = null
+                Sid = sessionId
             };
 
             new FlightLog().Record(entry);

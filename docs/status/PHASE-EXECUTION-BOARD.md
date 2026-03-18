@@ -14,7 +14,7 @@
 | Phase 2B | IPC Transport (Named Pipe) | P0 | Done | docs/ref/phase-2b-plan.md | 2026-03-17 |
 | Phase 2C | Async Commands (TestHandler) | P0 | Done | docs/ref/phase-roadmap.md | 2026-03-18 |
 | Phase 3B | Flight Recorder (NDJSON 로깅, CLI 쿼리) | P1 | Done | docs/ref/phase-roadmap.md | 2026-03-18 |
-| Phase 3A | Session Layer (상태머신 6개, MCP Tasks 매핑) | P1 | Ready | docs/ref/phase-roadmap.md | 2026-03-18 |
+| Phase 3A | Session Layer (상태머신 6개, MCP Tasks 매핑) | P1 | Done | docs/ref/phase-roadmap.md | 2026-03-18 |
 | Phase 4A | Ghost Mode (--dry-run preflight, 3단계 검증) | P1 | Ready | docs/ref/phase-roadmap.md | 2026-03-18 |
 | Phase 3C | Watch Mode (Push 스트리밍, ConcurrentQueue) | P1 | Ready | docs/ref/phase-roadmap.md | 2026-03-18 |
 | Phase 4B | Scene Diff (SerializedObject, GlobalObjectId) | P2 | Ready | docs/ref/phase-roadmap.md | 2026-03-18 |

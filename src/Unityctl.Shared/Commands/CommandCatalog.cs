@@ -80,6 +80,24 @@ public static class CommandCatalog
         Parameter("prune", "bool", "Apply retention policy (30 days / 50 MB)", required: false),
         Parameter("stats", "bool", "Show log statistics", required: false));
 
+    public static readonly CommandDefinition SessionList = Define(
+        "session list",
+        "List active and recent command execution sessions",
+        "meta",
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition SessionStop = Define(
+        "session stop",
+        "Cancel a running session",
+        "action",
+        Parameter("id", "string", "Session ID to cancel", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition SessionClean = Define(
+        "session clean",
+        "Remove stale sessions and apply TTL retention policy",
+        "action");
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -90,7 +108,10 @@ public static class CommandCatalog
         Test,
         Check,
         Tools,
-        Log
+        Log,
+        SessionList,
+        SessionStop,
+        SessionClean
     ];
 
     private static CommandDefinition Define(

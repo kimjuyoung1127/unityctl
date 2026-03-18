@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Unityctl.Cli.Tests;
 
+[Xunit.Collection("ConsoleOutput")]
 public sealed class LogCommandTests : IDisposable
 {
     private readonly string _tempDir;

@@ -103,13 +103,14 @@ public sealed class FlightLog
 
                     if (entry == null) continue;
 
-                    // Entry-level filters
+                    // Entry-level filters (use static string.Equals to avoid NullReferenceException
+                    // when Operation or Level is null from malformed NDJSON)
                     if (query.Op != null &&
-                        !entry.Operation.Equals(query.Op, StringComparison.OrdinalIgnoreCase))
+                        !string.Equals(entry.Operation, query.Op, StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     if (query.Level != null &&
-                        !entry.Level.Equals(query.Level, StringComparison.OrdinalIgnoreCase))
+                        !string.Equals(entry.Level, query.Level, StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     if (query.ProjectPath != null && entry.Project != query.ProjectPath)

@@ -16,6 +16,9 @@ public static class Constants
     public const string PluginPackageName = "com.unityctl.bridge";
     public const string BatchEntryMethod = "Unityctl.Plugin.Editor.BatchMode.UnityctlBatchEntry.Execute";
     public const string SessionsDirectory = "sessions";
+    public const string SessionActiveFile = "active.json";
+    public const string SessionHistoryFile = "history.ndjson";
+    public const int SessionTtlDays = 7;
     public const string FlightLogDirectory = "flight-log";
 
     /// <summary>

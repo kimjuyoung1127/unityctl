@@ -11,32 +11,35 @@
 - **Phase 2B**: 완료
 - **Phase 2C**: 완료
 - **Phase 3B**: 완료
-- **Phase 3A, 4A, 3C, 4B, 5**: 미착수
+- **Phase 3A**: 완료
+- **Phase 4A, 3C, 4B, 5**: 미착수
 
 ## 이번 상태 반영 요약
 
-1. Phase 3B Flight Recorder 구현 완료 (Ralph Loop v2)
-2. FlightEntry 15필드 NDJSON 레코드, FlightLog append-only 기록기
-3. `unityctl log` CLI 커맨드 (--last, --op, --level, --json, --stats, --prune)
-4. CommandRunner에서 자동 기록
-5. `dotnet build unityctl.slnx` 통과 (경고 0)
-6. `dotnet test unityctl.slnx` 통과 (116개)
+1. Phase 3A Session Layer 구현 완료 (Ralph Loop v2)
+2. SessionState 6개 상태 (Created/Running/Completed/Failed/Cancelled/TimedOut)
+3. NdjsonSessionStore (active.json + history.ndjson, TTL 7일)
+4. SessionManager 상태머신 + stale PID 감지
+5. `unityctl session list/stop/clean` CLI 커맨드
+6. CommandRunner/AsyncCommandRunner 세션 연동
+7. `dotnet build unityctl.slnx` 통과 (경고 0)
+8. `dotnet test unityctl.slnx` 통과 (184개)
 
 ## 자동화 검증
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | `dotnet build unityctl.slnx` | ✅ | 경고/오류 없이 통과 |
-| `dotnet test unityctl.slnx` | ✅ | 총 116개 테스트 통과 |
+| `dotnet test unityctl.slnx` | ✅ | 총 184개 테스트 통과 |
 
 테스트 세부:
 
 | 프로젝트 | 통과 |
 |----------|------|
-| Unityctl.Shared.Tests | 19 |
-| Unityctl.Core.Tests | 47 |
-| Unityctl.Cli.Tests | 41 |
-| Unityctl.Integration.Tests | 9 |
+| Unityctl.Shared.Tests | 28 |
+| Unityctl.Core.Tests | 89 |
+| Unityctl.Cli.Tests | 55 |
+| Unityctl.Integration.Tests | 12 |
 
 ## 수동 검증
 
@@ -67,8 +70,8 @@
 
 ## 즉시 다음 작업
 
-1. Phase 3A Session Layer
-2. Phase 4A Ghost Mode
+1. Phase 4A Ghost Mode
+2. Phase 3C Watch Mode
 3. Phase 3C Watch Mode
 4. Phase 4B Scene Diff
 5. Phase 5 Agent Layer
