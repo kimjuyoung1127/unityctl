@@ -13,7 +13,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 4. `docs/ref/phase-roadmap.md`
 5. `docs/ref/code-patterns.md` (코드 작성 전 필수)
 
-## 현재 상태 (2026-03-18)
+## 현재 상태 (2026-03-19)
 - Phase 0~1B: Done
 - Phase 1C (CI/CD): Done
 - Phase 2A/2A+: Done (Foundation + Tools Metadata)
@@ -30,8 +30,11 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Write API Phase B.5 (Component CRUD): Done
 - MCP Hybrid (unityctl_run + schema filter): Done
 - Write API 확장 (Scene open/create, Undo/Redo, Phase C): Done
+- Script Editing v1 (create/edit/delete/validate): Done
+- Diagnostics (doctor + IPC 실패 자동 진단): Done
 
 최근 확정 사항:
+- Script Editing v1 + Doctor 명령 (2026-03-19): script create/edit/delete/validate 4개 명령 구현. `unityctl doctor` 진단 명령 추가. IPC 실패 시 Editor.log 자동 진단. allowlist 44개. 377개 dotnet 테스트 (Core +12 진단 테스트). Unity 실측 완료.
 - Phase 2B 후속 검증 종결 (2026-03-18): IPC 도메인 리로드 자동 복구 실측 완료 (20회 연속 ping 무실패), batch worker IPC silent skip 확인, transport latency 측정 (ping median 528ms, MCP resident 100ms).
 - Schema 정합성 + Material Create (2026-03-18): schema에 `cliName`/`cliFlag` 필드 추가 (CLI 호출명 ↔ IPC 프로토콜명 불일치 근본 해결). `material create` 명령 추가. allowlist 40개. Phase C Unity 실측 완료 (asset/prefab/package/project-settings/animation/ui/material 전부 검증).
 - Write API 확장 구현 완료 (2026-03-18): 28개 신규 write 명령 (Asset CRUD 6 + Prefab 4 + Package/Settings 5 + Material 4 + Animation/UI 5 + Scene open/create 2 + Undo/Redo 2). 총 40개 write/action 명령. MCP 도구 13개 유지 (unityctl_run allowlist 40개). 388개 dotnet 테스트 (Integration 2개 환경 의존 실패 가능).
@@ -60,7 +63,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ```bash
 dotnet build unityctl.slnx                                          # 빌드
-dotnet test unityctl.slnx                                           # 전체 테스트 (388개)
+dotnet test unityctl.slnx                                           # 전체 테스트 (400개)
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # 유닛만
 dotnet run --project src/Unityctl.Cli -- <command> [options]         # CLI 실행
 ```
@@ -73,7 +76,7 @@ unityctl.slnx
 ├── src/Unityctl.Core      (net10.0)         비즈니스 로직 (transport, discovery, retry)
 ├── src/Unityctl.Cli       (net10.0)         얇은 CLI 셸 → Core에 위임
 ├── src/Unityctl.Plugin    (Unity UPM)       Editor 브릿지 (솔루션 빌드에 미포함)
-├── tests/*Tests           xUnit 테스트 (388개)
+├── tests/*Tests           xUnit 테스트 (400개)
 └── docs/                  ref/ + status/ + daily/ + weekly/
 ```
 
@@ -120,8 +123,10 @@ unityctl.slnx
 | **Write A** | ✅ 완료 | **PlayMode, PlayerSettings, AssetRefresh** (IPC write path) |
 | **Write B** | ✅ 완료 | **GameObject CRUD + Scene Save** (GlobalObjectId, Undo, PrefabGuard) |
 | **Write B.5** | ✅ 완료 | **Component CRUD** (add/remove/set-property, SerializedObject) |
-| **MCP Hybrid** | ✅ 완료 | **unityctl_run** (allowlist 40 write 명령) + **schema filter** (command 파라미터) |
+| **MCP Hybrid** | ✅ 완료 | **unityctl_run** (allowlist 44 명령) + **schema filter** (command 파라미터) |
 | **Write C** | ✅ 완료 | **커버리지 확장** (Asset 6 + Prefab 4 + Package/Settings 5 + Material 4 + Animation/UI 5 + Scene 2 + History 2 = 28개) |
+| **Script v1** | ✅ 완료 | **script create/edit/delete/validate** (템플릿 생성, whole-file replace, 비동기 컴파일 검증) |
+| **Diagnostics** | ✅ 완료 | **doctor** (IPC/Plugin/Editor 상태 진단) + IPC 실패 시 Editor.log 자동 진단 |
 
 ## Source of Truth 문서
 - 탐색 인덱스: `AGENTS.md`
@@ -146,13 +151,14 @@ unityctl.slnx
 7. 개발 진행 상세 이력: `docs/DEVELOPMENT.md`
 
 ## 테스트 표준
-- 총 388개 (Shared 60 + Core 96 + Cli 193 + Mcp 16 + Integration 23)
+- 총 400개 (Shared 60 + Core 108 + Cli 193 + Mcp 16 + Integration 23)
 - `dotnet test unityctl.slnx` green 필수
 - Integration.Tests는 AppLocker 감지 + graceful skip
 
 ## 즉시 다음 작업
-1. script editing 최소형 (create/delete/validate) 설계 및 구현
-2. exec 프로퍼티 체이닝 지원 개선
-3. write API property alias 개선 (`mass` → `m_Mass`)
-4. macOS / Linux 실제 테스트
-5. `dotnet tool` NuGet 패키지 배포
+1. Profiling v1 (profiler start/stop/capture/analyze/hotspots)
+2. Animator State Machine v1 (add-layer/add-state/add-transition/set-parameter)
+3. exec 프로퍼티 체이닝 지원 개선
+4. write API property alias 개선 (`mass` → `m_Mass`)
+5. macOS / Linux 실제 테스트
+6. `dotnet tool` NuGet 패키지 배포

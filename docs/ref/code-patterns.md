@@ -105,3 +105,16 @@ JsonConvert.DeserializeObject<CommandRequest>(json)
 | 테스트 | `tests/Unityctl.{Layer}.Tests/{Name}Tests.cs` |
 | 프로토콜 타입 | `src/Unityctl.Shared/Protocol/{Name}.cs` |
 | Plugin 프로토콜 복사 | `src/Unityctl.Plugin/Editor/Shared/{Name}.cs` |
+
+## §9. Plugin 디버깅
+
+IPC 실패(statusCode 201) 시 디버깅 절차:
+
+1. `unityctl doctor --project <path>` 실행 — IPC/Plugin/Editor 상태 한 방 확인
+2. Editor.log 직접 확인: `grep "error CS" "$LOCALAPPDATA/Unity/Editor/Editor.log" | tail -10`
+3. **추측 수정 최대 1회**, 그래도 안 되면 Editor.log 에러 메시지 기반으로 수정
+
+금지사항:
+- Plugin `.cs` 파일에 `touch` 명령 사용 금지 (파일 내용이 비워질 수 있음)
+- `.asmdef` 파일 수정/삭제 금지 (Plugin 전체 로드 불가)
+- Bee 캐시(`Library/Bee/`) 삭제는 최후 수단으로만

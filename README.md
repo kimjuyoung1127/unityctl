@@ -151,7 +151,7 @@ unityctl.slnx
 ├── src/Unityctl.Cli      (net10.0)         Thin CLI shell
 ├── src/Unityctl.Mcp      (net10.0)         MCP server (Claude/Cursor/VS Code)
 ├── src/Unityctl.Plugin   (Unity UPM)       Editor bridge
-└── tests/*                                 388 xUnit tests
+└── tests/*                                 400 xUnit tests
 ```
 
 ### Transport
@@ -198,10 +198,12 @@ Compatible with Claude Code, Cursor, VS Code, and any MCP client.
 | `project-settings` | Get/set editor, physics, graphics, quality settings |
 | `animation` | Create AnimationClip and AnimatorController assets |
 | `ui` | Create Canvas, UI elements, set RectTransform |
+| `script` | Create, edit, delete C# scripts and validate compilation |
 | `undo` / `redo` | Undo/redo Unity editor operations |
 | `scene` | Snapshot, diff, save, open, and create scenes |
 | `schema` | Output machine-readable command schema (with `cliName`/`cliFlag`) |
 | `workflow` | Run JSON workflow files |
+| `doctor` | Diagnose Unity connectivity, plugin health, and Editor.log errors |
 | `tools` | List available commands with metadata |
 
 ## Status Codes
@@ -219,7 +221,7 @@ Compatible with Claude Code, Cursor, VS Code, and any MCP client.
 ## Testing
 
 ```bash
-dotnet test unityctl.slnx                                            # All 388 tests
+dotnet test unityctl.slnx                                            # All 400 tests
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # Unit only
 
 ```

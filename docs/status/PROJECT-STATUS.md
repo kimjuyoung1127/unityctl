@@ -1,6 +1,6 @@
 # unityctl 프로젝트 상태
 
-최종 업데이트: 2026-03-18 (KST)
+최종 업데이트: 2026-03-19 (KST)
 기준 문서: `CLAUDE.md`, `docs/ref/phase-roadmap.md`, `docs/DEVELOPMENT.md`
 
 ## 현재 Phase
@@ -16,8 +16,10 @@
 
 - **MCP Hybrid (unityctl_run + schema filter)**: 완료
 - **Write API Phase C (커버리지 확장)**: 완료
+- **Script Editing v1 (create/edit/delete/validate)**: 완료
+- **Diagnostics (doctor + IPC 자동 진단)**: 완료
 
-**전체 Phase 완료. Write API 확장 (28개 신규 write 명령) 구현 완료. 총 40개 write/action 명령. 13개 MCP 도구 (allowlist 40개), 388개 dotnet 테스트 (Integration 2개 환경 의존 실패 가능). Schema에 `cliName`/`cliFlag` 필드 추가 — CLI 호출명과 IPC 프로토콜명 불일치 근본 해결. Phase C Unity 실측 완료.**
+**전체 Phase + Script v1 완료. 총 44개 allowlist 명령. 13개 MCP 도구. 400개 dotnet 테스트 (Core +12 진단 테스트). `unityctl doctor` 진단 명령 + IPC 실패 시 Editor.log 자동 진단 추가.**
 
 ## 라이브 검증 (robotapp2, Unity 6000.0.64f1)
 
