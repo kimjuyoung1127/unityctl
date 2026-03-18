@@ -12,7 +12,8 @@ public class CommandCatalogTests
 
         Assert.Equal(
             ["init", "editor list", "ping", "status", "build", "test", "check", "tools", "log",
-             "session list", "session stop", "session clean", "watch"],
+             "session list", "session stop", "session clean", "watch",
+             "scene snapshot", "scene diff"],
             names);
     }
 
@@ -42,5 +43,32 @@ public class CommandCatalogTests
 
         Assert.Contains(build.Parameters, p => p.Name == "dryRun");
         Assert.DoesNotContain(build.Parameters, p => p.Name == "dryRun" && p.Required);
+    }
+
+    [Fact]
+    public void SceneSnapshot_HasProjectParameter_AsRequired()
+    {
+        var sceneSnapshot = CommandCatalog.All.Single(command => command.Name == "scene snapshot");
+
+        Assert.Contains(sceneSnapshot.Parameters, p => p.Name == "project" && p.Required);
+        Assert.Contains(sceneSnapshot.Parameters, p => p.Name == "scenePath" && !p.Required);
+    }
+
+    [Fact]
+    public void SceneDiff_HasEpsilonParameter_AsOptional()
+    {
+        var sceneDiff = CommandCatalog.All.Single(command => command.Name == "scene diff");
+
+        Assert.Contains(sceneDiff.Parameters, p => p.Name == "epsilon");
+        Assert.DoesNotContain(sceneDiff.Parameters, p => p.Name == "epsilon" && p.Required);
+    }
+
+    [Fact]
+    public void SceneDiff_HasLiveParameter_AsOptional()
+    {
+        var sceneDiff = CommandCatalog.All.Single(command => command.Name == "scene diff");
+
+        Assert.Contains(sceneDiff.Parameters, p => p.Name == "live");
+        Assert.DoesNotContain(sceneDiff.Parameters, p => p.Name == "live" && p.Required);
     }
 }

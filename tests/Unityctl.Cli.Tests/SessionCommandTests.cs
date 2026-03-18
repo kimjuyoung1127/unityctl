@@ -36,7 +36,7 @@ public sealed class SessionCommandTests : IDisposable
 
     // ─── List ─────────────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void List_Empty_PrintsNoActiveSessions()
     {
         var output = CaptureConsole(() =>
@@ -45,7 +45,7 @@ public sealed class SessionCommandTests : IDisposable
         Assert.Contains("No active sessions", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void List_Json_Empty_PrintsJsonArray()
     {
         var output = CaptureConsole(() =>
@@ -60,7 +60,7 @@ public sealed class SessionCommandTests : IDisposable
         Assert.Empty(sessions);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task List_WithSessions_PrintsTable()
     {
         await _manager.StartAsync("build", "/my/project");
@@ -72,7 +72,7 @@ public sealed class SessionCommandTests : IDisposable
         Assert.Contains("Running", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task List_Json_WithSessions_PrintsJsonArray()
     {
         await _manager.StartAsync("test", "/proj");
@@ -91,7 +91,7 @@ public sealed class SessionCommandTests : IDisposable
 
     // ─── Stop ─────────────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public async Task Stop_ValidId_PrintsCancelledMessage()
     {
         var session = await _manager.StartAsync("build", "/proj");
@@ -102,7 +102,7 @@ public sealed class SessionCommandTests : IDisposable
         Assert.Contains("cancelled", output.ToLowerInvariant());
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task Stop_ValidId_Json_PrintsSuccess()
     {
         var session = await _manager.StartAsync("build", "/proj");
@@ -116,7 +116,7 @@ public sealed class SessionCommandTests : IDisposable
 
     // ─── Clean ────────────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void Clean_NothingToClean_PrintsZero()
     {
         var output = CaptureConsole(() =>
@@ -126,7 +126,7 @@ public sealed class SessionCommandTests : IDisposable
         Assert.Contains("0", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task Clean_WithDeadSessions_PrintsCount()
     {
         var deadManager = new SessionManager(_store, _ => false);

@@ -9,5 +9,7 @@ namespace Unityctl.Plugin.Editor.Shared
         public const string Check = "check";
         public const string TestResult = "test-result";
         public const string Watch = "watch";
+        public const string SceneSnapshot = "scene-snapshot";
+        public const string SceneDiff = "scene-diff";
     }
 }

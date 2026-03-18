@@ -108,6 +108,25 @@ public static class CommandCatalog
         Parameter("format", "string", "Output format: text, json (default: text)", required: false),
         Parameter("no-color", "bool", "Disable colored output", required: false));
 
+    public static readonly CommandDefinition SceneSnapshot = Define(
+        "scene snapshot",
+        "Capture a snapshot of all scene objects and their serialized properties",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("scenePath", "string", "Filter to a specific scene path", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
+    public static readonly CommandDefinition SceneDiff = Define(
+        "scene diff",
+        "Compare two scene snapshots and report property-level changes",
+        "query",
+        Parameter("snap1", "string", "Path to base snapshot JSON file", required: false),
+        Parameter("snap2", "string", "Path to head snapshot JSON file", required: false),
+        Parameter("project", "string", "Path to Unity project (for --live mode)", required: false),
+        Parameter("live", "bool", "Compare current scene against last snapshot", required: false),
+        Parameter("epsilon", "double", "Float comparison threshold (default: 1e-6)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false));
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -122,7 +141,9 @@ public static class CommandCatalog
         SessionList,
         SessionStop,
         SessionClean,
-        Watch
+        Watch,
+        SceneSnapshot,
+        SceneDiff
     ];
 
     private static CommandDefinition Define(

@@ -75,7 +75,8 @@ Plugin은 Unity 내부에서만 컴파일되며, `src/Unityctl.Plugin/Editor/Sha
 | 3A | ✅ 완료 | Session Layer (상태머신 6개, NDJSON 저장소, MCP Tasks 매핑) |
 | 4A | ✅ 완료 | Ghost Mode (--dry-run preflight, 3단계 검증) |
 | 3C | ✅ 완료 | Watch Mode (Push 스트리밍, ConcurrentQueue, 영구 파이프) |
-| 4B, 5 | 🔲 미착수 | Scene Diff, Agent Layer |
+| 4B | ✅ 완료 | Scene Diff (SerializedObject, GlobalObjectId, propertyPath diff) |
+| 5 | 🔲 미착수 | Agent Layer |
 
 ---
 
@@ -138,12 +139,12 @@ dotnet test unityctl.slnx
 
 | 프로젝트 | 테스트 수 | 상태 |
 |----------|----------|------|
-| Unityctl.Shared.Tests | 37 | ✅ |
+| Unityctl.Shared.Tests | 49 | ✅ |
 | Unityctl.Core.Tests | 96 | ✅ |
-| Unityctl.Cli.Tests | 82 | ✅ |
+| Unityctl.Cli.Tests | 102 | ✅ |
 | Unityctl.Integration.Tests | 14 | ✅ |
 
-**총 229개 테스트 통과**
+**총 261개 테스트 통과**
 
 ### robotapp 수동 검증
 
@@ -228,14 +229,34 @@ dotnet test unityctl.slnx
 
 ---
 
+## Phase 4B 실제 반영 내용
+
+- Shared `SceneSnapshot.cs` — 씬 스냅샷 프로토콜 모델 (SceneSnapshot, GameObjectSnapshot, ComponentSnapshot)
+- Shared `SceneDiffResult.cs` — diff 결과 프로토콜 모델 (SceneDiffResult, GameObjectDiff, ComponentDiff, PropertyDiff)
+- Shared `WellKnownCommands` — `SceneSnapshot`, `SceneDiff` 커맨드 상수 추가
+- Shared `CommandCatalog` — Scene 커맨드 메타데이터 등록
+- Shared `JsonContext` — SceneSnapshot, SceneDiffResult 직렬화 컨텍스트 추가
+- Plugin `SceneSnapshotHandler.cs` — SerializedObject 순회 + GlobalObjectId 배치 API 기반 스냅샷 캡처
+- Plugin `SceneDiffHandler.cs` — propertyPath 기반 diff (GlobalObjectId 매칭, epsilon float 비교)
+- CLI `SceneCommand.cs` — `unityctl scene snapshot`, `unityctl scene diff` 커맨드
+- CLI `Program.cs` — scene 커맨드 등록
+- 신규 테스트: `SceneSnapshotTests.cs` (Shared), `SceneCommandTests.cs` (Cli)
+- `CommandCatalogTests` 업데이트
+
+검증:
+
+- `dotnet build unityctl.slnx` 통과 (경고 0)
+- `dotnet test unityctl.slnx` 통과 (261개)
+
+---
+
 ## 다음 단계
 
 1. Phase 2B 후속 보강
    - domain reload 후 자동 IPC 복구 검증 강화
    - batch worker IPC 미기동 로그 검증
    - pure transport-only latency 측정
-2. Phase 4B Scene Diff
-3. Phase 5 Agent Layer
+2. Phase 5 Agent Layer
 4. Phase 1C 잔여
    - `release.yml`
    - README 정비

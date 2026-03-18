@@ -14,33 +14,34 @@
 - **Phase 3A**: 완료
 - **Phase 4A**: 완료
 - **Phase 3C**: 완료
-- **Phase 4B, 5**: 미착수
+- **Phase 4B**: 완료
+- **Phase 5**: 미착수
 
 ## 이번 상태 반영 요약
 
-1. Phase 3C Watch Mode 구현 완료
-2. WatchCommand (CLI) — `unityctl watch` 커맨드, 채널 구독 + Push 스트리밍
-3. WatchEventSource (Plugin) — ConcurrentQueue 기반 Unity 이벤트 수집 + IPC Push
-4. EventEnvelope (Plugin Shared) — 이벤트 프레이밍 모델
-5. IpcTransport Watch 지원 — 영구 파이프 연결 스트리밍 수신
-6. MessageFraming 확장 — Watch 스트리밍 프레임 지원
+1. Phase 4B Scene Diff 구현 완료
+2. SceneSnapshotHandler (Plugin) — SerializedObject 순회, GlobalObjectId 기반 스냅샷
+3. SceneDiffHandler (Plugin) — propertyPath 기반 diff
+4. SceneSnapshot / SceneDiffResult (Shared) — 프로토콜 모델
+5. SceneCommand (CLI) — `unityctl scene snapshot`, `unityctl scene diff`
+6. WellKnownCommands / CommandCatalog 확장 — scene 커맨드 등록
 7. `dotnet build unityctl.slnx` 통과 (경고 0)
-8. `dotnet test unityctl.slnx` 통과 (229개)
+8. `dotnet test unityctl.slnx` 통과 (261개)
 
 ## 자동화 검증
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
 | `dotnet build unityctl.slnx` | ✅ | 경고/오류 없이 통과 |
-| `dotnet test unityctl.slnx` | ✅ | 총 229개 테스트 통과 |
+| `dotnet test unityctl.slnx` | ✅ | 총 261개 테스트 통과 |
 
 테스트 세부:
 
 | 프로젝트 | 통과 |
 |----------|------|
-| Unityctl.Shared.Tests | 37 |
+| Unityctl.Shared.Tests | 49 |
 | Unityctl.Core.Tests | 96 |
-| Unityctl.Cli.Tests | 82 |
+| Unityctl.Cli.Tests | 102 |
 | Unityctl.Integration.Tests | 14 |
 
 ## 수동 검증
@@ -72,6 +73,5 @@
 
 ## 즉시 다음 작업
 
-1. Phase 4B Scene Diff
-2. Phase 5 Agent Layer
-3. Phase 1C 잔여 (release.yml, README)
+1. Phase 5 Agent Layer
+2. Phase 1C 잔여 (release.yml, README)

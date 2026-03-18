@@ -7,7 +7,7 @@ namespace Unityctl.Cli.Tests;
 
 public sealed class BuildCommandDryRunTests
 {
-    [Fact]
+    [CliTestFact]
     public void DryRun_True_AddsParameterToRequest()
     {
         var request = BuildCommand.CreateRequest("StandaloneWindows64", null, dryRun: true);
@@ -16,7 +16,7 @@ public sealed class BuildCommandDryRunTests
         Assert.True(request.Parameters!["dryRun"]?.GetValue<bool>());
     }
 
-    [Fact]
+    [CliTestFact]
     public void DryRun_False_OmitsParameter()
     {
         var request = BuildCommand.CreateRequest("StandaloneWindows64", null, dryRun: false);
@@ -25,7 +25,7 @@ public sealed class BuildCommandDryRunTests
         Assert.Null(request.Parameters!["dryRun"]);
     }
 
-    [Fact]
+    [CliTestFact]
     public void CreateRequest_SetsCorrectCommand()
     {
         var request = BuildCommand.CreateRequest("Android", "/output/path", dryRun: false);
@@ -33,7 +33,7 @@ public sealed class BuildCommandDryRunTests
         Assert.Equal(WellKnownCommands.Build, request.Command);
     }
 
-    [Fact]
+    [CliTestFact]
     public void CreateRequest_SetsTargetAndOutputPath()
     {
         var request = BuildCommand.CreateRequest("Android", "/output/build", dryRun: false);
@@ -42,7 +42,7 @@ public sealed class BuildCommandDryRunTests
         Assert.Equal("/output/build", request.Parameters["outputPath"]?.GetValue<string>());
     }
 
-    [Fact]
+    [CliTestFact]
     public void CreateRequest_NullOutput_IsAllowed()
     {
         var request = BuildCommand.CreateRequest("WebGL", null, dryRun: true);
@@ -52,7 +52,7 @@ public sealed class BuildCommandDryRunTests
         Assert.True(request.Parameters["dryRun"]?.GetValue<bool>());
     }
 
-    [Fact]
+    [CliTestFact]
     public void CreateRequest_DryRun_DoesNotAffectTargetOrOutput()
     {
         var withDryRun = BuildCommand.CreateRequest("iOS", "/out", dryRun: true);

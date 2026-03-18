@@ -52,7 +52,7 @@ public sealed class LogCommandTests : IDisposable
 
     // ─── stats ────────────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void Stats_EmptyLog_PrintsZeroes()
     {
         var output = CaptureConsole(() =>
@@ -63,7 +63,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Contains("size:", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void Stats_WithEntries_PrintsCorrectCounts()
     {
         _log.Record(MakeEntry());
@@ -80,7 +80,7 @@ public sealed class LogCommandTests : IDisposable
 
     // ─── prune ────────────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void Prune_PrintsResult()
     {
         var output = CaptureConsole(() =>
@@ -90,7 +90,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Contains("freed", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void Prune_WithOldFile_ReportsDeletedCount()
     {
         // Create a 31-day-old file manually
@@ -107,7 +107,7 @@ public sealed class LogCommandTests : IDisposable
 
     // ─── json output ──────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void Json_EmptyLog_OutputsEmptyArray()
     {
         var output = CaptureConsole(() =>
@@ -122,7 +122,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Empty(entries);
     }
 
-    [Fact]
+    [CliTestFact]
     public void Json_WithEntries_OutputsValidJsonArray()
     {
         _log.Record(MakeEntry("build"));
@@ -139,7 +139,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Equal(2, entries!.Length);
     }
 
-    [Fact]
+    [CliTestFact]
     public void Json_EntryHasExpectedFields()
     {
         _log.Record(MakeEntry("ping", "info"));
@@ -154,7 +154,7 @@ public sealed class LogCommandTests : IDisposable
 
     // ─── default query ────────────────────────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public void Default_EmptyLog_PrintsNoEntriesMessage()
     {
         var output = CaptureConsole(() =>
@@ -163,7 +163,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Contains("No log entries found", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void Default_WithEntries_PrintsTable()
     {
         _log.Record(MakeEntry("build"));
@@ -174,7 +174,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.Contains("build", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void FilterByOp_OnlyShowsMatchingEntries()
     {
         _log.Record(MakeEntry("build"));
@@ -189,7 +189,7 @@ public sealed class LogCommandTests : IDisposable
         Assert.DoesNotContain("ping", output);
     }
 
-    [Fact]
+    [CliTestFact]
     public void FilterByLevel_OnlyShowsMatchingEntries()
     {
         _log.Record(MakeEntry("build", "info"));

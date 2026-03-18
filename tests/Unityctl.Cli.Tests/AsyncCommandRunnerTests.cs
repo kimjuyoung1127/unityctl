@@ -24,7 +24,7 @@ public class AsyncCommandRunnerTests
     private static CommandResponse FailedResponse() =>
         CommandResponse.Fail(StatusCode.TestFailed, "1 test failed");
 
-    [Fact]
+    [CliTestFact]
     public async Task ImmediateResult_NonAccepted_ReturnsDirectly()
     {
         var ok = CommandResponse.Ok("pong");
@@ -45,7 +45,7 @@ public class AsyncCommandRunnerTests
         Assert.Equal(1, callCount);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task WaitSuccess_PollsUntilComplete()
     {
         var pollCount = 0;
@@ -73,7 +73,7 @@ public class AsyncCommandRunnerTests
         Assert.Equal(3, pollCount);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task WaitSuccess_FailedTests_ReturnsFail()
     {
         const string requestId = "fail1";
@@ -93,7 +93,7 @@ public class AsyncCommandRunnerTests
         Assert.Equal(StatusCode.TestFailed, result.StatusCode);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task WaitTimeout_ReturnsTimeoutError()
     {
         const string requestId = "timeout1";
@@ -114,7 +114,7 @@ public class AsyncCommandRunnerTests
         Assert.Contains("timed out", result.Message);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task WaitCancel_ThrowsOperationCancelled()
     {
         const string requestId = "cancel1";
@@ -141,7 +141,7 @@ public class AsyncCommandRunnerTests
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task NoRequestId_ReturnsAcceptedDirectly()
     {
         var noIdResponse = new CommandResponse
@@ -161,7 +161,7 @@ public class AsyncCommandRunnerTests
         Assert.Equal(StatusCode.Accepted, result.StatusCode);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task PollRequest_UsesTestResultCommand()
     {
         const string requestId = "cmd1";

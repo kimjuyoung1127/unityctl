@@ -52,4 +52,16 @@ app.Add("session clean", () =>
 app.Add("watch", (string project, string channel = "all", string format = "text", bool noColor = false) =>
     WatchCommand.Execute(project, channel, format, noColor));
 
+app.Add("scene snapshot", (string project, string? scenePath = null, bool json = false) =>
+    SceneCommand.Snapshot(project, scenePath, json));
+
+app.Add("scene diff", (
+        string snap1 = "",
+        string snap2 = "",
+        string? project = null,
+        bool live = false,
+        double epsilon = 1e-6,
+        bool json = false) =>
+    SceneCommand.Diff(snap1, snap2, project, live, epsilon, json));
+
 app.Run(args);

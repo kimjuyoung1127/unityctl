@@ -38,7 +38,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
 
     // ─── Synchronous (non-Accepted) path ──────────────────────────────────────
 
-    [Fact]
+    [CliTestFact]
     public async Task ImmediateSuccess_RecordsInfoEntry()
     {
         var request = MakeRequest("build");
@@ -60,7 +60,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
         Assert.Equal(StatusCode.Ready, response.StatusCode);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task ImmediateFailure_ReturnsFailResponse()
     {
         var request = MakeRequest("build");
@@ -74,7 +74,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
         Assert.Equal(StatusCode.BuildFailed, response.StatusCode);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task AcceptedWithNoRequestId_ReturnsAcceptedResponse()
     {
         // If Accepted but no requestId, returns the Accepted response directly
@@ -93,7 +93,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
         Assert.Equal(StatusCode.Accepted, response.StatusCode);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task PollLoop_ReturnsWhenNonAccepted()
     {
         var callCount = 0;
@@ -123,7 +123,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
         Assert.True(callCount >= 2); // at least initial + one poll
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task Timeout_ReturnsTestFailedResponse()
     {
         var request = MakeRequest("test");
@@ -144,7 +144,7 @@ public sealed class AsyncCommandRunnerFlightTests : IDisposable
         Assert.Contains("timed out", response.Message, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Fact]
+    [CliTestFact]
     public async Task CancellationByCallerThrows()
     {
         var request = MakeRequest("test");
