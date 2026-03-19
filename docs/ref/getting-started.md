@@ -4,6 +4,7 @@
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Unity 2021.3+](https://unity.com/download)
+- macOS is validated on Apple silicon with Homebrew + Unity Hub
 
 ## Installation
 
@@ -19,6 +20,7 @@ Important today:
 - `dotnet tool install` gives you the CLI and MCP entrypoints.
 - `unityctl init` supports either a local `Unityctl.Plugin` source checkout or an explicit Git URL source. When `--source` is omitted, it still falls back to local workspace discovery.
 - GitHub Release CLI archives are framework-dependent publishes (`self-contained false`), not self-contained single-file binaries.
+- The validated Apple silicon macOS path is Homebrew `.NET 10` + `dotnet tool install -g unityctl` + Unity Hub.
 
 ### Option B: Build from source
 
@@ -29,6 +31,38 @@ dotnet build unityctl.slnx
 ```
 
 > When building from source, replace `unityctl` with `dotnet run --project src/Unityctl.Cli --` in all examples below.
+>
+> The 2026-03-19 macOS smoke test used the published `dotnet tool` install path plus a local plugin checkout. Treat source-build validation as a separate contributor workflow.
+
+## Apple Silicon macOS Smoke Test
+
+Manual validation was completed on an Apple silicon MacBook Air with:
+
+- Homebrew
+- `.NET SDK 10.0.105`
+- Unity Hub
+- Unity `6000.0.64f1`
+- Unity `6000.3.11f1`
+
+Verified commands:
+
+```bash
+unityctl editor list --json
+unityctl init --project /path/to/project --source /path/to/unityctl/src/Unityctl.Plugin
+unityctl ping --project /path/to/project --json
+unityctl doctor --project /path/to/project --json
+unityctl status --project /path/to/project --json
+unityctl check --project /path/to/project --json
+```
+
+Observed result on the Unity `6000.0.64f1` validation project:
+
+- `ping` returned `pong`
+- `doctor` reported IPC connected
+- `status` returned `Ready`
+- `check` reported `Compilation check passed`
+
+Important caveat: one validation project depended on a third-party Unity package that explicitly supports Unity `6.0 LTS` only. Opening that project in `6000.3.11f1` produced a project-side render pipeline failure, while reopening it in `6000.0.64f1` removed the error. That issue was project/version compatibility, not a macOS-specific `unityctl` transport failure.
 
 ## Quick Start
 

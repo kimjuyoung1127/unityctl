@@ -79,6 +79,25 @@ Current bootstrap caveats:
 - `--source` now accepts either a local `Unityctl.Plugin` folder or a Unity-compatible Git URL such as `https://github.com/kimjuyoung1127/unityctl.git?path=/src/Unityctl.Plugin#v0.2.0`.
 - GitHub Release CLI archives are framework-dependent publishes today (`self-contained false`), not self-contained single-file builds.
 
+### Apple Silicon macOS Validation
+
+Manual validation was completed on an Apple silicon MacBook Air using Homebrew, .NET SDK `10.0.105`, Unity Hub, and Unity editors `6000.0.64f1` and `6000.3.11f1`.
+
+Validated path:
+
+- `dotnet tool install -g unityctl`
+- `dotnet tool install -g unityctl-mcp`
+- `unityctl editor list`
+- `unityctl init --project <project> --source /path/to/unityctl/src/Unityctl.Plugin`
+- `unityctl ping --project <project> --json`
+- `unityctl doctor --project <project> --json`
+- `unityctl status --project <project> --json`
+- `unityctl check --project <project> --json`
+
+Observed result on a Unity `6000.0.64f1` project: `ping` returned `pong`, `doctor` reported IPC connected, `status` returned `Ready`, and `check` passed on macOS.
+
+Project compatibility note: if a Unity project or third-party package is pinned to Unity `6.0 LTS`, opening that same project in `6000.3+` can fail before `unityctl` is involved. During validation, reopening the project in its pinned `6000.0.64f1` editor resolved the project-side render pipeline error.
+
 ## Quick Start
 
 ```bash

@@ -223,6 +223,62 @@
 - 생성 결과는 scene dirty로 표시되고 Undo 그룹명은 `unityctl: mesh-create-primitive: <name>` 형태다.
 - unsaved scratch scene에서는 반환 `globalObjectId`가 `GlobalObjectId_V1-0-...-0-0`로 보였다. stable target이 필요하면 저장된 scene asset에서 후속 작업하는 편이 낫다.
 
+### Apple silicon macOS 검증 (2026-03-19)
+
+검증 환경:
+
+- 장비: Apple silicon MacBook Air
+- 셸: `zsh`
+- 패키지 매니저: Homebrew `5.1.0`
+- .NET SDK: `10.0.105`
+- Unity Hub 설치 완료
+- Unity Editor 설치본:
+  - `6000.0.64f1`
+  - `6000.3.11f1`
+- 검증 프로젝트:
+  - `/Users/family/jason/robotapp-6000`
+  - 원본 `ProjectVersion.txt` 기준 `6000.0.64f1`
+
+검증에 사용한 경로:
+
+- CLI / MCP:
+  - `dotnet tool install -g unityctl`
+  - `dotnet tool install -g unityctl-mcp`
+- Plugin source:
+  - `/Users/family/jason/unityctl/src/Unityctl.Plugin`
+
+실측:
+
+- `unityctl editor list --json`
+  - macOS에서 설치된 Unity Editor `6000.3.11f1`, `6000.0.64f1` 탐지 성공
+- `unityctl init --project /Users/family/jason/robotapp-6000 --source /Users/family/jason/unityctl/src/Unityctl.Plugin`
+  - manifest에 `com.unityctl.bridge` 기록 성공
+- `unityctl ping --project /Users/family/jason/robotapp-6000 --json`
+  - 성공, `pong`
+- `unityctl doctor --project /Users/family/jason/robotapp-6000`
+  - IPC connected 확인
+- `unityctl status --project /Users/family/jason/robotapp-6000 --json`
+  - Ready 확인
+- `unityctl check --project /Users/family/jason/robotapp-6000 --json`
+  - Compilation check passed 확인
+
+관찰:
+
+- `Blitter is already initialized` 예외는 `unityctl` 자체가 아니라 검증 프로젝트의 Unity 버전 호환 이슈였다.
+- `realvirtual` 에디터 스크립트가 Unity `6.0 LTS only`를 명시하고 있었고, 같은 프로젝트를 `6000.3.11f1`로 열면 render pipeline 관련 예외가 발생했다.
+- 같은 프로젝트를 원래 버전인 `6000.0.64f1`로 다시 열면 해당 예외는 재현되지 않았다.
+- 따라서 이번 macOS 검증 결론은:
+  - `unityctl`의 macOS Apple silicon 기본 경로는 동작함
+  - Unity 프로젝트/서드파티 패키지의 버전 pinning은 별도 리스크임
+
+추가 메모:
+
+- 현재 repo HEAD는 macOS에서도 `dotnet build unityctl.slnx -c Release`가 그대로 통과하지 않았다.
+- 실패 지점:
+  - `src/Unityctl.Cli/Program.cs(303,15): error CS0117: 'UiCommand' does not contain a definition for 'Find'`
+  - `src/Unityctl.Cli/Program.cs(306,15): error CS0117: 'UiCommand' does not contain a definition for 'Get'`
+- 즉 이번 macOS 호환성 검증의 source of truth는 "source build 성공"이 아니라 "published dotnet tool + local plugin source + real Unity project smoke"였다.
+
 ---
 
 ## 아키텍처
