@@ -68,6 +68,7 @@ internal sealed class RunTool(CommandExecutor executor)
         WellKnownCommands.ScriptDelete,
         WellKnownCommands.ScriptValidate,
         WellKnownCommands.ScriptPatch,
+        WellKnownCommands.ScriptRenameSymbol,
         // Tags & Layers
         WellKnownCommands.TagAdd,
         WellKnownCommands.LayerSet,

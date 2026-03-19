@@ -58,7 +58,9 @@ public class CommandCatalogTests
              "script-list",
              // Physics
              "physics-get-settings", "physics-set-settings",
-             "physics-get-collision-matrix", "physics-set-collision-matrix"],
+             "physics-get-collision-matrix", "physics-set-collision-matrix",
+             // Script v2: diagnostics + refactoring
+             "script-get-errors", "script-find-refs", "script-rename-symbol"],
             names);
     }
 

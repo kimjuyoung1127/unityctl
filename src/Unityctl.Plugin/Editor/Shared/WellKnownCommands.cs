@@ -103,6 +103,11 @@ namespace Unityctl.Plugin.Editor.Shared
         // Script Editing 확장
         public const string ScriptList = "script-list";
 
+        // Script v2: diagnostics + refactoring
+        public const string ScriptGetErrors = "script-get-errors";
+        public const string ScriptFindRefs = "script-find-refs";
+        public const string ScriptRenameSymbol = "script-rename-symbol";
+
         // P0 잔여분: Asset Labels + Build Settings
         public const string AssetGetLabels = "asset-get-labels";
         public const string AssetSetLabels = "asset-set-labels";

@@ -42,7 +42,7 @@ For AI agents, the companion MCP server exposes **12 top-level tools** and keeps
 | Domain Reload | Named Pipe — **no disconnection** | WebSocket drops, reconnect needed |
 | CLI without MCP | Full CLI standalone, CI/CD ready | MCP client required |
 | Preflight | `--dry-run` with **19 checks** | — |
-| Diagnostics | `doctor` — IPC/Plugin/Editor auto-diagnosis | — |
+| Diagnostics | `doctor` — classification + recent failures + next-step guidance | — |
 | Flight Recorder | NDJSON audit log | — |
 | Real-time | `watch` console / hierarchy / compilation | — |
 | Scene Diff | Property-level diff with epsilon | — |
@@ -59,7 +59,7 @@ Other Unity MCP servers focus on **tool count**. unityctl focuses on **reliabili
 - **No disconnection on Play Mode** — Named Pipe transport survives Unity's Domain Reload. WebSocket-based competitors lose connection every time you press Play.
 - **Batch fallback for selected workflows** — `check`, `test`, and `build --dry-run` can run without an already-open Editor, but startup latency and project-specific batch behavior still apply.
 - **Smaller top-level tool surface** — 12 MCP tools plus on-demand schema lookup keeps agent setup lighter than large multi-tool Unity servers.
-- **Built-in diagnostics** — `doctor` reports IPC state, project lock state, and the configured plugin source (`file:` vs Git URL) instead of stopping at a generic "connection failed" error.
+- **Built-in diagnostics** — `doctor` stays read-only and now combines IPC state, plugin source, recent failures, active sessions, and recommended next steps instead of stopping at a generic "connection failed" error.
 
 ---
 
@@ -132,7 +132,7 @@ The MCP server currently exposes 12 top-level tools, including `unityctl_query`,
 | `check` | Verify script compilation (headless) |
 | `build` | Build player with `--dry-run` preflight |
 | `test` | Run EditMode / PlayMode tests |
-| `doctor` | Diagnose connectivity and plugin health |
+| `doctor` | Diagnose connectivity, recent failures, and recovery steps |
 | `init` | Install plugin to Unity project |
 | `editor list` | List installed Unity editors |
 

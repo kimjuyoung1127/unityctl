@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="unityctl" />
+    <InternalsVisibleTo Include="Unityctl.Cli.Tests" />
     <InternalsVisibleTo Include="Unityctl.Core.Tests" />
   </ItemGroup>
 

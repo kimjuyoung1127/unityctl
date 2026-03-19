@@ -141,6 +141,48 @@
 
 ---
 
+### 후속 구현: doctor 가치 상승 (2026-03-19)
+
+- 목표:
+  - `doctor`를 단순 상태 출력기가 아니라 문제 분류 + 최근 실패 요약 + 다음 액션 추천 명령으로 확장
+- 구현 포인트:
+  - 새 `DoctorAnalyzer`를 추가해 `doctor`의 판정 로직과 렌더링을 분리
+  - 분류값 추가: `healthy`, `plugin-missing`, `editor-missing`, `starting-or-reloading`, `transport-degraded`, `plugin-mismatch-suspected`
+  - recent activity는 flight log 최근 200개에서 project path 정규화 매칭으로 집계
+  - active session은 read-only로만 요약하고 stale suspicion만 표시 (`session clean` 자동 실행 안 함)
+  - `CommandRunner.RecordEntry`는 새 flight log부터 `Constants.NormalizeProjectPath(project)` 기준으로 저장
+
+실측 3: `robotapp` (fresh publish artifact 기준)
+
+- `doctor --json`
+  - 결과:
+    - `summary.classification = healthy`
+    - `summary.lockSeverity = informational`
+    - `recentActivity.repeatedStatusCodes`에 `103 x7`
+    - `recentActivity.pipeErrorsDetected = true`
+    - `recommendations[0] = "The latest diagnostics suggest the Editor has recovered; retry the original command first."`
+- `status --json`
+  - 결과: `Ready`
+- `check --json`
+  - 결과: `Compilation check passed`
+
+실측 4: repo-contained `tests/Unityctl.Integration/SampleUnityProject` (fresh publish artifact 기준)
+
+- `doctor --json`
+  - 결과:
+    - `summary.classification = transport-degraded`
+    - `recentActivity.batchFallbackSignature = true`
+    - `recentActivity.repeatedStatusCodes`에 `500 x11`
+    - `recommendations`가 "running Editor + IPC" 우선, Editor.log 확인을 안내
+
+메모:
+
+- text `doctor`는 실행 시점에 따라 IPC probe가 흔들릴 수 있어서 `robotapp`에서 `healthy`와 `starting-or-reloading`이 교차할 수 있었다.
+- 하지만 같은 시점의 `status --json` / `check --json` 성공과 `doctor --json` 결과를 함께 보면, IPC 연결이 살아 있는 정상 상태에서 lockfile 자체를 fatal로 보면 안 된다는 결론은 유지됐다.
+- 전용 서브에이전트 도구는 현재 세션에 없어서 별도 호출은 하지 못했고, fresh publish artifact 기준 독립 재검토 패스로 출력/문서 불일치를 다시 확인했다.
+
+---
+
 ## 아키텍처
 
 ```text
@@ -588,6 +630,38 @@ CoplayDev 대비 추정 대체율:
 - AI 에이전트 일상 작업: **high-80s%** (추정, scene/undo 실측 반영)
 - CoplayDev 기능 패리티: **~60%** (추정)
 - 상세 비교: `docs/status/PROJECT-STATUS.md` 참조
+
+### 2026-03-19 command sync guardrail + script 계열 spot-check
+
+정적 guardrail:
+
+- `tests/Unityctl.Shared.Tests/CommandSyncGuardrailTests.cs` 추가
+- 검증 범위:
+  - Shared `WellKnownCommands` ↔ Plugin `Editor/Shared/WellKnownCommands.cs` transport subset 동기화
+  - Plugin `*Handler.cs`가 transport command set을 빠짐없이 커버하는지
+  - `watch`는 `CommandRegistry`가 아니라 `IpcServer`의 dedicated path라는 점
+  - `script get-errors` / `script find-refs` / `script rename-symbol`이 CLI `Program.cs`, MCP allowlist, Plugin handler에 모두 등록됐는지
+- 실행:
+  - `dotnet test tests/Unityctl.Shared.Tests -c Release --filter CommandSyncGuardrailTests`
+  - 결과: **4 passed**
+
+Unity 실측 (fresh published CLI: `artifacts/investigation/cli/unityctl.exe`):
+
+- `doctor --project C:\Users\gmdqn\robotapp --json`
+  - plugin installed, Editor.log에 `Registered 106 commands`
+  - 하지만 같은 시점 `ipc.connected=false`, `classification=starting-or-reloading`
+  - `recentActivity.repeatedStatusCodes`: `103` 14회 (`editor-focus-sceneview`, `ping`, `script-get-errors`, `status`)
+- `script find-refs --project C:\Users\gmdqn\robotapp --symbol Player --limit 5 --json`
+  - 실패: `103 Busy`
+  - 메시지: `Unity Editor is running but IPC is not ready yet...`
+- `script get-errors --project C:\Users\gmdqn\unityagent\tests\Unityctl.Integration\SampleUnityProject --json`
+  - 실패: `500`
+  - batch fallback 메시지: `Unity exited with code 1 but no response file was written.`
+
+판정:
+
+- 현재 script diagnostics/refactor 계열의 체감 안정성은 `running Editor + IPC ready` 상태에 가장 크게 의존한다.
+- 이번 guardrail은 “새 명령이 한 레이어에만 추가되는 실수”는 줄여주지만, Unity domain reload / IPC readiness / batch fallback 한계까지 해결해 주는 것은 아니다.
 
 ### 2026-03-18 scene / undo / redo 실측
 

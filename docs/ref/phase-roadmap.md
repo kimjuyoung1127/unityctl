@@ -59,6 +59,7 @@ Physics Settings — physics get-settings/set-settings/get-collision-matrix/set-
 Editor Utility 확장 + Script List — editor pause/focus-gameview/focus-sceneview + script list 4개 명령 ✅ 완료
 MCP Context Optimization — C1 QueryTool + C2 Schema Category + C3 Description 경량화 (33→12 MCP 도구) ✅ 완료
 Script Patch v2 — script patch (줄 단위 삽입/삭제/교체) ✅ 완료
+Script v2 — script-get-errors/find-refs/rename-symbol (진단+리팩터링) ✅ 완료
 ```
 
 ### 실행 순서 변경 근거
@@ -108,10 +109,11 @@ Script Patch v2 — script patch (줄 단위 삽입/삭제/교체) ✅ 완료
 | **P0** | 읽기/탐색 API 잔여분 | asset labels, build-settings set-scenes. `gameobject find/get`, `component get`, `asset find/get-info/get-dependencies`, `scene hierarchy`, `build-settings get-scenes`, `asset reference graph`는 완료 |
 | **P1** | 멀티 인스턴스 라우팅 | 여러 Unity Editor 동시 제어 + 에이전트 작업 고정 UX |
 | ~~**P2**~~ | ~~배치 편집/트랜잭션~~ | ✅ 완료. `batch execute` (IPC-only v1), 부분 실패 rollback, IPC 왕복 수 감소 |
+| ~~**P6**~~ | ~~스크립트 편집 v2~~ | ✅ 완료. `script-get-errors` (CompilerMessage 구조화), `script-find-refs` (단어 경계 텍스트 탐색), `script-rename-symbol` (일괄 리네이밍+dryRun) |
 | ~~**P3**~~ | ~~스크린샷/시각 피드백~~ | ✅ 완료. `screenshot capture` (Scene/Game View, base64, PNG/JPG, MCP 전용 도구) |
 | ~~**P4**~~ | ~~Graphics/Camera~~ | ✅ 부분 완료. Lighting 5개 + NavMesh 3개 + Physics 4개 = 12개 명령. URP/HDRP Volume, Cinemachine은 미구현 |
 | **P5** | 고급 UI 자동화 | UI 찾기/읽기/클릭/입력 시퀀스 |
-| **P6** | 스크립트 편집 v2 | text edits, symbol-aware patch, find refs, compile error 자동 수정 |
+| ~~**P6**~~ | ~~스크립트 편집 v2~~ | ✅ 완료. get-errors (구조화 진단) + find-refs (단어 경계 탐색) + rename-symbol (일괄 리네이밍) |
 | **P7** | 전문화 도메인 | texture, shader graph, vfx, audio, terrain, probuilder |
 
 ### 병행 과제

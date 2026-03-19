@@ -32,6 +32,9 @@ internal sealed class QueryTool(CommandExecutor executor)
         WellKnownCommands.ScriptList,
         WellKnownCommands.PhysicsGetSettings,
         WellKnownCommands.PhysicsGetCollisionMatrix,
+        // Script v2
+        WellKnownCommands.ScriptGetErrors,
+        WellKnownCommands.ScriptFindRefs,
         // Scene (was SceneTool)
         WellKnownCommands.SceneSnapshot,
         WellKnownCommands.SceneHierarchy,

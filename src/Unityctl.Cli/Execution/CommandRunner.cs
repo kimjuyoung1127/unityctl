@@ -126,7 +126,7 @@ public static class CommandRunner
             {
                 Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 Operation = request.Command,
-                Project = project,
+                Project = Constants.NormalizeProjectPath(project),
                 Transport = null, // Transport selection is opaque; filled in a future phase
                 StatusCode = (int)response.StatusCode,
                 DurationMs = durationMs,

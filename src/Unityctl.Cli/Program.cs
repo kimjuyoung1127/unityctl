@@ -311,6 +311,16 @@ app.Add("script patch", (string project, string path, int startLine, int deleteC
 app.Add("script validate", (string project, string? path = null, bool wait = true, int timeout = 300, bool json = false) =>
     ScriptCommand.Validate(project, path, wait, timeout, json));
 
+// Script v2: diagnostics + refactoring
+app.Add("script get-errors", (string project, string? path = null, bool json = false) =>
+    ScriptCommand.GetErrors(project, path, json));
+
+app.Add("script find-refs", (string project, string symbol, string? folder = null, int? limit = null, bool json = false) =>
+    ScriptCommand.FindRefs(project, symbol, folder, limit, json));
+
+app.Add("script rename-symbol", (string project, string oldName, string newName, string? folder = null, bool dryRun = false, bool json = false) =>
+    ScriptCommand.RenameSymbol(project, oldName, newName, folder, dryRun, json));
+
 // Tags & Layers
 app.Add("tag list", (string project, bool json = false) =>
     TagCommand.List(project, json));

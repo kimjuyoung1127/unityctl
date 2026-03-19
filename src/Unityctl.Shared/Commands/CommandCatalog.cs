@@ -708,6 +708,36 @@ public static class CommandCatalog
         Parameter("insertContent", "string", "Content to insert at startLine (newline-separated, optional)", required: false),
         Parameter("json", "bool", "Output as JSON", required: false)).WithCli("script patch");
 
+    // Script v2: diagnostics + refactoring
+    public static readonly CommandDefinition ScriptGetErrorsCmd = Define(
+        WellKnownCommands.ScriptGetErrors,
+        "Get structured compile errors and warnings from last compilation",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "Filter results to a specific script path", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("script get-errors");
+
+    public static readonly CommandDefinition ScriptFindRefsCmd = Define(
+        WellKnownCommands.ScriptFindRefs,
+        "Find text references to a symbol in C# scripts (word-boundary matching)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("symbol", "string", "Symbol name to search for (class, method, field, etc.)", required: true),
+        Parameter("folder", "string", "Root folder to search (default: Assets)", required: false),
+        Parameter("limit", "int", "Maximum number of results (default: 500)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("script find-refs");
+
+    public static readonly CommandDefinition ScriptRenameSymbolCmd = Define(
+        WellKnownCommands.ScriptRenameSymbol,
+        "Rename a symbol across all C# scripts (word-boundary text replacement)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("oldName", "string", "Current symbol name", required: true),
+        Parameter("newName", "string", "New symbol name", required: true),
+        Parameter("folder", "string", "Root folder to search (default: Assets)", required: false),
+        Parameter("dryRun", "bool", "Preview changes without writing (default: false)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("script rename-symbol");
+
     // P0 잔여분: Asset Labels
     public static readonly CommandDefinition AssetGetLabels = Define(
         WellKnownCommands.AssetGetLabels,
@@ -1085,7 +1115,11 @@ public static class CommandCatalog
         PhysicsGetSettings,
         PhysicsSetSettings,
         PhysicsGetCollisionMatrix,
-        PhysicsSetCollisionMatrix
+        PhysicsSetCollisionMatrix,
+        // Script v2: diagnostics + refactoring
+        ScriptGetErrorsCmd,
+        ScriptFindRefsCmd,
+        ScriptRenameSymbolCmd
     ];
 
     private static CommandDefinition Define(

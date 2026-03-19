@@ -92,8 +92,9 @@ unityctl build --project /path/to/project --dry-run --json
 unityctl doctor --project /path/to/project --json
 ```
 
-`doctor` checks IPC connectivity, plugin health, Editor log errors, and build state — useful as a first step when something fails.
-It also reports the configured plugin source and whether a Unity project lock is currently detected.
+`doctor` checks IPC connectivity, plugin health, Editor log errors, build state, and recent project-specific failures — useful as a first step when something fails.
+It also reports the configured plugin source, active session hints, recommended next steps, and whether a Unity project lock is currently detected.
+When IPC is already healthy, a detected Unity lockfile is treated as informational rather than an automatic failure signal.
 
 ## Common Workflows
 
@@ -225,7 +226,7 @@ If a command fails:
 1. `unityctl editor list` — is Unity installed?
 2. `unityctl init --project <path>` — is the plugin installed?
 3. `unityctl ping --project <path>` — is the Editor reachable?
-4. `unityctl doctor --project <path> --json` — diagnose IPC, plugin, and Editor state
+4. `unityctl doctor --project <path> --json` — diagnose IPC, plugin, recent failures, and suggested recovery steps
 5. Check the Unity Editor log path shown in error output
 
 ## Running Tests (for contributors)

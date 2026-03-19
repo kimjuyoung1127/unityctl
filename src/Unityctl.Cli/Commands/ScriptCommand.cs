@@ -9,6 +9,9 @@ namespace Unityctl.Cli.Commands;
 
 public static class ScriptCommand
 {
+    private const int InteractiveScriptProbeAttempts = 12;
+    private const int InteractiveScriptProbeDelayMs = 1000;
+
     public static void Create(string project, string path, string className, string? ns = null, string baseType = "MonoBehaviour", bool json = false)
     {
         // CLI-side validation: filename must match className
@@ -242,4 +245,175 @@ public static class ScriptCommand
             Parameters = parameters
         };
     }
+
+    public static void GetErrors(string project, string? path = null, bool json = false)
+    {
+        var request = CreateGetErrorsRequest(path);
+        var exitCode = ExecuteInteractiveAsync(project, request, json).GetAwaiter().GetResult();
+        Environment.Exit(exitCode);
+    }
+
+    internal static CommandRequest CreateGetErrorsRequest(string? path = null)
+    {
+        var parameters = new JsonObject();
+        if (!string.IsNullOrWhiteSpace(path)) parameters["path"] = path;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.ScriptGetErrors,
+            Parameters = parameters
+        };
+    }
+
+    public static void FindRefs(string project, string symbol, string? folder = null, int? limit = null, bool json = false)
+    {
+        var request = CreateFindRefsRequest(symbol, folder, limit);
+        var exitCode = ExecuteInteractiveAsync(project, request, json).GetAwaiter().GetResult();
+        Environment.Exit(exitCode);
+    }
+
+    internal static CommandRequest CreateFindRefsRequest(string symbol, string? folder = null, int? limit = null)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new ArgumentException("symbol must not be empty", nameof(symbol));
+
+        var parameters = new JsonObject { ["symbol"] = symbol };
+        if (!string.IsNullOrWhiteSpace(folder)) parameters["folder"] = folder;
+        if (limit.HasValue) parameters["limit"] = limit.Value;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.ScriptFindRefs,
+            Parameters = parameters
+        };
+    }
+
+    public static void RenameSymbol(string project, string oldName, string newName, string? folder = null, bool dryRun = false, bool json = false)
+    {
+        var request = CreateRenameSymbolRequest(oldName, newName, folder, dryRun);
+        var exitCode = ExecuteInteractiveAsync(project, request, json).GetAwaiter().GetResult();
+        Environment.Exit(exitCode);
+    }
+
+    internal static CommandRequest CreateRenameSymbolRequest(string oldName, string newName, string? folder = null, bool dryRun = false)
+    {
+        if (string.IsNullOrWhiteSpace(oldName))
+            throw new ArgumentException("oldName must not be empty", nameof(oldName));
+        if (string.IsNullOrWhiteSpace(newName))
+            throw new ArgumentException("newName must not be empty", nameof(newName));
+
+        var parameters = new JsonObject
+        {
+            ["oldName"] = oldName,
+            ["newName"] = newName
+        };
+        if (!string.IsNullOrWhiteSpace(folder)) parameters["folder"] = folder;
+        if (dryRun) parameters["dryRun"] = true;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.ScriptRenameSymbol,
+            Parameters = parameters
+        };
+    }
+
+    internal static async Task<int> ExecuteInteractiveAsync(
+        string project,
+        CommandRequest request,
+        bool json,
+        Func<string, bool>? isProjectLocked = null,
+        Func<string, CancellationToken, Task<bool>>? probeIpcAsync = null,
+        Func<string, CommandRequest, bool, bool, Task<int>>? executeAsync = null,
+        CancellationToken ct = default)
+    {
+        var readiness = await EnsureInteractiveEditorReadyAsync(
+            project,
+            isProjectLocked ?? (path => PlatformFactory.Create().IsProjectLocked(path)),
+            probeIpcAsync ?? ProbeIpcAsync,
+            InteractiveScriptProbeAttempts,
+            InteractiveScriptProbeDelayMs,
+            ct);
+
+        if (readiness == ScriptInteractiveReadinessResult.TimedOut)
+        {
+            var response = CreateInteractiveReadinessFailureResponse(project, request.Command);
+            CommandRunner.PrintResponse(project, response, json);
+            return CommandRunner.GetExitCode(response);
+        }
+
+        return await (executeAsync ?? CommandRunner.ExecuteAsync)(project, request, json, false);
+    }
+
+    internal static async Task<ScriptInteractiveReadinessResult> EnsureInteractiveEditorReadyAsync(
+        string project,
+        Func<string, bool> isProjectLocked,
+        Func<string, CancellationToken, Task<bool>> probeIpcAsync,
+        int maxAttempts,
+        int delayMs,
+        CancellationToken ct = default)
+    {
+        if (!isProjectLocked(project))
+            return ScriptInteractiveReadinessResult.ContinueWithoutReadyIpc;
+
+        for (var attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            if (await probeIpcAsync(project, ct).ConfigureAwait(false))
+                return ScriptInteractiveReadinessResult.Ready;
+
+            if (!isProjectLocked(project))
+                return ScriptInteractiveReadinessResult.ContinueWithoutReadyIpc;
+
+            if (attempt < maxAttempts - 1)
+                await Task.Delay(delayMs, ct).ConfigureAwait(false);
+        }
+
+        return ScriptInteractiveReadinessResult.TimedOut;
+    }
+
+    internal static CommandResponse CreateInteractiveReadinessFailureResponse(string project, string command)
+    {
+        var cliCommand = GetCliCommandName(command);
+        var primaryAction = $"Run `unityctl status --project \"{project}\" --wait` and retry `{cliCommand}` after the Editor reports Ready.";
+        var followUpAction = command == WellKnownCommands.ScriptGetErrors
+            ? $"If compilation diagnostics are still missing after Ready, run `unityctl script validate --project \"{project}\" --wait` once to populate the latest compile cache."
+            : "Keep the Unity Editor open and let IPC reconnect before retrying this script command. Batch fallback is less reliable for script diagnostics/refactors.";
+
+        return new CommandResponse
+        {
+            StatusCode = StatusCode.Busy,
+            Success = false,
+            Message = $"Unity Editor is still compiling or reloading. `{cliCommand}` works best with a running Editor and IPC ready.",
+            Data = new JsonObject
+            {
+                ["command"] = cliCommand,
+                ["requiresIpcReady"] = true,
+                ["recommendedAction"] = primaryAction,
+                ["followUpAction"] = followUpAction
+            }
+        };
+    }
+
+    private static async Task<bool> ProbeIpcAsync(string project, CancellationToken ct)
+    {
+        await using var ipc = new IpcTransport(project);
+        return await ipc.ProbeAsync(ct).ConfigureAwait(false);
+    }
+
+    private static string GetCliCommandName(string command)
+    {
+        return command switch
+        {
+            WellKnownCommands.ScriptGetErrors => "script get-errors",
+            WellKnownCommands.ScriptFindRefs => "script find-refs",
+            WellKnownCommands.ScriptRenameSymbol => "script rename-symbol",
+            _ => command
+        };
+    }
+}
+
+internal enum ScriptInteractiveReadinessResult
+{
+    Ready,
+    ContinueWithoutReadyIpc,
+    TimedOut
 }

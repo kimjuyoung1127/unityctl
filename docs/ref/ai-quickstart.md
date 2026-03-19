@@ -198,9 +198,10 @@ unityctl auto-selects transport:
 
 If a command fails:
 
-1. `unityctl doctor --project <path> --json` — diagnose IPC, plugin, and Editor state
+1. `unityctl doctor --project <path> --json` — diagnose IPC, plugin, recent failures, and recovery steps
 2. `unityctl ping --project <path>` — verify Editor connectivity
 3. `unityctl init --project <path>` — reinstall plugin if missing
 4. Check the Unity Editor log path shown in error output
 
-`doctor` now includes the configured plugin source (`file:` vs Git URL) and project lock detection, which helps separate install problems from IPC/domain reload problems.
+`doctor` now includes the configured plugin source (`file:` vs Git URL), project lock detection, recent failure summaries, active session hints, and recommended next actions.
+When IPC is healthy, a detected lockfile is informational rather than an automatic error by itself.
