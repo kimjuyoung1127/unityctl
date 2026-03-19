@@ -41,9 +41,9 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Script List (script list 1개 명령): Done
 
 최근 확정 사항 (최신 3개만 표시, 전체 이력은 `docs/DEVELOPMENT.md` "슬라이스 이력" 참조):
-- Editor Utility 확장 + Script List (2026-03-19): editor pause/focus-gameview/focus-sceneview + script list = 4개 명령. 515개 dotnet 테스트 통과. Unity 실측 8/8 통과.
-- Physics Settings (2026-03-19): physics 4개 명령. DynamicsManager iterator + 32×32 collision matrix. 500개 dotnet 테스트 통과. Unity 실측 9/9 통과.
-- Lighting & NavMesh (2026-03-19): lighting 5개 + navmesh 3개 = 8개 명령. 비동기 bake 폴링, SerializedObject settings. 491개 dotnet 테스트 통과.
+- NuGet v0.2.0 배포 완료 (2026-03-19): `dotnet tool install -g unityctl` + `unityctl-mcp`. GitHub Actions release.yml 자동 배포 파이프라인 (4플랫폼 빌드 + NuGet push + GitHub Release).
+- Editor Utility 확장 + Script List (2026-03-19): editor pause/focus-gameview/focus-sceneview + script list 4개 명령. Unity 실측 8/8 통과.
+- Physics Settings (2026-03-19): physics 4개 명령. DynamicsManager iterator + 32×32 collision matrix. Unity 실측 9/9 통과.
 
 ## 실행 규칙 (MUST)
 1. 기존 코드/타입/유틸 우선 재사용, 중복 구현 금지

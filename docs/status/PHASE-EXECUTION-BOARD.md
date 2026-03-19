@@ -31,7 +31,7 @@
 | Lighting & NavMesh | lighting bake/cancel/clear/get-settings/set-settings + navmesh bake/clear/get-settings (8개 명령) | P4 | Done | docs/ref/phase-roadmap.md | 2026-03-19 |
 | Physics Settings | physics get-settings/set-settings/get-collision-matrix/set-collision-matrix (4개 명령) | P4 | Done | docs/ref/phase-roadmap.md | 2026-03-19 |
 | Editor Utility 확장 + Script List | editor pause/focus-gameview/focus-sceneview + script list (4개 명령) | P0 | Done | docs/ref/phase-roadmap.md | 2026-03-19 |
-| Editor Utility 확장 + Script List | editor pause/focus-gameview/focus-sceneview + script list (4개 명령) | P0 | Done | docs/ref/phase-roadmap.md | 2026-03-19 |
+| NuGet v0.2.0 배포 | dotnet tool install -g unityctl/unityctl-mcp + GitHub Release 자동화 | P0 | Done | release.yml | 2026-03-19 |
 
 ## Zero-Drift 규칙
 1. `src/` 구조를 코드 모듈 Source of Truth로 간주한다.
