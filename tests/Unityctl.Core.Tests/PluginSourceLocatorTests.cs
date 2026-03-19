@@ -39,12 +39,15 @@ public class PluginSourceLocatorTests
         Directory.CreateDirectory(pluginDirectory);
         File.WriteAllText(Path.Combine(pluginDirectory, "package.json"), "{}");
 
+        var workspaceDir = Path.Combine(repoRoot, "workspace");
+        Directory.CreateDirectory(workspaceDir);
+
         var success = PluginSourceLocator.TryResolvePackageSource(
-            source: @"..\custom-plugin",
+            source: ".." + Path.DirectorySeparatorChar + "custom-plugin",
             packageSource: out var packageSource,
             resolvedDirectory: out var resolvedDirectory,
             error: out var error,
-            baseDirectory: Path.Combine(repoRoot, "workspace"));
+            baseDirectory: workspaceDir);
 
         Assert.True(success, error);
         Assert.Equal(Path.GetFullPath(pluginDirectory), resolvedDirectory);
