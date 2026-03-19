@@ -129,9 +129,14 @@ unityctl component add --project "/path/to/project" --target "Enemy" --component
 # Set a component property
 unityctl component set-property --project "/path/to/project" --target "Enemy" --component "BoxCollider" --property "m_Size" --value "[2,2,2]" --json
 
+# Create a primitive mesh
+unityctl mesh create-primitive --project "/path/to/project" --type Cube --name "EnemyBlockout" --position "[0,1,0]" --json
+
 # Save scene
 unityctl scene save --project "/path/to/project" --json
 ```
+
+For quick blockouts or test geometry, `mesh create-primitive` creates Unity built-in primitives (`Cube`, `Sphere`, `Plane`, `Cylinder`, `Capsule`, `Quad`) and returns the created scene object metadata. This is a deterministic scene edit, not a mesh modeling workflow.
 
 ### Script management
 

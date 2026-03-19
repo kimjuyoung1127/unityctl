@@ -110,6 +110,9 @@ unityctl gameobject create --project /path/to/project --name "Player" --json
 # Add a component
 unityctl component add --project /path/to/project --target "Player" --component "Rigidbody" --json
 
+# Create a primitive mesh
+unityctl mesh create-primitive --project /path/to/project --type Cube --name "FloorBlock" --position "[0,0,0]" --json
+
 # Save the scene
 unityctl scene save --project /path/to/project --json
 ```
@@ -126,6 +129,15 @@ unityctl asset get-info --project /path/to/project --path "Assets/Materials/Grou
 # View dependency graph
 unityctl asset reference-graph --project /path/to/project --path "Assets/Prefabs/Player.prefab" --json
 ```
+
+### Mesh primitives
+
+```bash
+# Create a Cube primitive
+unityctl mesh create-primitive --project /path/to/project --type Cube --name "DebugCube" --position "[1,2,3]" --scale "[2,1,2]" --json
+```
+
+`mesh create-primitive` currently targets Unity's built-in primitive set (`Cube`, `Sphere`, `Plane`, `Cylinder`, `Capsule`, `Quad`). Like other scene write commands, it is most reliable with a running Editor and IPC ready.
 
 ### UI inspection
 

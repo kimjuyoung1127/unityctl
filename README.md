@@ -9,7 +9,7 @@
 Let AI agents build scenes, manage assets, and run builds — without ever opening the GUI.
 
 ```
-108 CLI commands · 12 MCP tools · 538 tests · Windows / macOS / Linux
+118 CLI commands · 12 MCP tools · 538 tests · Windows / macOS / Linux
 ```
 
 <p align="center">
@@ -92,6 +92,7 @@ unityctl status --project /path/to/project --json    # editor state
 # 3. Start working
 unityctl gameobject create --name "Player" --project /path/to/project
 unityctl component add --target "Player" --type "Rigidbody" --project /path/to/project
+unityctl mesh create-primitive --project /path/to/project --type Cube --name "FloorBlock" --position "[0,0,0]"
 unityctl scene save --project /path/to/project
 
 # 4. CI/CD / batch fallback
@@ -246,6 +247,7 @@ The MCP server currently exposes 12 top-level tools, including `unityctl_query`,
 | `package list/add/remove` | Package management |
 | `animation create-clip/create-controller` | Animation assets |
 | `ui canvas-create/element-create/set-rect/find/get/toggle/input` | UGUI creation + read + deterministic state set |
+| `mesh create-primitive` | Create Cube/Sphere/Plane/Cylinder/Capsule/Quad primitives |
 
 </details>
 

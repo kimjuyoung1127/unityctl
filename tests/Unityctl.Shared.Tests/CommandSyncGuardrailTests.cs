@@ -103,6 +103,19 @@ public class CommandSyncGuardrailTests
         Assert.Contains(nameof(WellKnownCommands.UiInput), pluginHandlers);
     }
 
+    [Fact]
+    public void MeshCreatePrimitive_IsRegisteredAcrossCliMcpAndPlugin()
+    {
+        var cliCommands = ParseCliCommands();
+        Assert.Contains("mesh create-primitive", cliCommands);
+
+        var runAllowlist = ParseWellKnownFieldReferences(@"src\Unityctl.Mcp\Tools\RunTool.cs");
+        Assert.Contains(nameof(WellKnownCommands.MeshCreatePrimitive), runAllowlist);
+
+        var pluginHandlers = ParsePluginHandlerFieldNames();
+        Assert.Contains(nameof(WellKnownCommands.MeshCreatePrimitive), pluginHandlers);
+    }
+
     private static string ReadRepoFile(string relativePath)
     {
         var normalized = relativePath.Replace('\\', Path.DirectorySeparatorChar);

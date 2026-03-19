@@ -34,8 +34,37 @@
 - **Script v2 (script-get-errors, script-find-refs, script-rename-symbol)**: 완료
 - **UI Read Slice 1 (`ui find`, `ui get`, UGUI-first)**: 구현 완료
 - **UI Interaction Slice 1 (`ui toggle`, `ui input`, deterministic state set)**: 구현 완료
+- **Mesh Primitive Create (`mesh create-primitive`)**: 구현 완료
 
-**전체 Phase 완료. 총 68개 write allowlist 명령, 117개 CLI 명령, 12개 MCP 도구 (33→12 통합).**
+**전체 Phase 완료. 총 69개 write allowlist 명령, 118개 CLI 명령, 12개 MCP 도구 (33→12 통합).**
+
+## Mesh Primitive Create 라이브 검증 (2026-03-19)
+
+구현 범위:
+
+- `mesh create-primitive` — Unity built-in primitive 생성 (`Cube`, `Sphere`, `Plane`, `Cylinder`, `Capsule`, `Quad`)
+- 선택 파라미터: `name`, `position`, `rotation`, `scale`, `material`, `parent`
+- MCP `unityctl_run` allowlist에 `mesh-create-primitive` 추가
+
+자동 검증:
+
+- `dotnet build unityctl.slnx -c Release -m:1 /p:UseSharedCompilation=false` ✅
+- `dotnet test tests/Unityctl.Cli.Tests -c Release --filter MeshCommandTests` ✅ 11 통과
+- `dotnet test tests/Unityctl.Shared.Tests -c Release --filter "CommandCatalogTests|CommandSyncGuardrailTests"` ✅ 17 통과
+- `unityctl tools --json` 기준 총 **118**개 명령, `mesh create-primitive` 노출 확인 ✅
+
+실측 메모:
+
+- 초기에는 `robotapp` live Editor가 stale compile state를 잡고 있어 `Unknown command [501]`와 `Busy[103]`가 교차했다.
+- `MeshCreatePrimitiveHandler`의 `GlobalObjectIdResolver` import 수정 후, `doctor --json`은 `classification=healthy`, `ipc.connected=true`, Editor.log compile error 없음으로 회복됐다.
+- 같은 상태에서 `mesh create-primitive --type Cube --name "CodexMeshProbe" --position "[1,2,3]" --scale "[2,1,2]" --json` 성공
+- 직후 `gameobject find --name "CodexMeshProbe" --json`으로 생성된 `MeshFilter`, `MeshRenderer`, `BoxCollider` 포함 객체 확인
+- unsaved scratch scene에서는 생성 결과의 `globalObjectId`가 `GlobalObjectId_V1-0-...-0-0`로 보였다. 이건 mesh 전용 문제가 아니라 저장되지 않은 scene object targeting 한계로 기록한다.
+
+해석:
+
+- `mesh create-primitive`는 현재 **running Editor + IPC ready** 경로에서 실측 검증 완료로 문서화할 수 있다.
+- built-in primitive blockout 용도로는 충분하지만, custom mesh authoring이나 modeling workflow까지 의미하진 않는다.
 
 ## Project Validate 라이브 검증 (robotapp, Unity 6000.0.64f1)
 

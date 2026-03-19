@@ -183,6 +183,48 @@
 
 ---
 
+### 후속 구현: mesh create-primitive (2026-03-19)
+
+- 구현 범위:
+  - 새 CLI 명령 `mesh create-primitive`
+  - plugin `MeshCreatePrimitiveHandler`로 Unity built-in primitive 생성
+  - 지원 primitive: `Cube`, `Sphere`, `Plane`, `Cylinder`, `Capsule`, `Quad`
+  - 선택 파라미터: `name`, `position`, `rotation`, `scale`, `material`, `parent`
+- 코드 동기화:
+  - `WellKnownCommands.MeshCreatePrimitive`
+  - `CommandCatalog.MeshCreatePrimitiveCmd`
+  - CLI `Program.cs` 등록
+  - MCP `RunTool` allowlist 추가
+  - Shared guardrail에 mesh registration 검증 추가
+- 참고한 Unity 공식 문서:
+  - `PrimitiveType` API: https://docs.unity3d.com/ScriptReference/PrimitiveType.html
+  - `ObjectFactory` API: https://docs.unity3d.com/ScriptReference/ObjectFactory.html
+
+실측 5: `robotapp` (Unity `6000.0.64f1`, running Editor + IPC ready)
+
+- 초기 상태:
+  - `doctor --json`에 `MeshCreatePrimitiveHandler.cs` compile error (`GlobalObjectIdResolver` using 누락) 기록
+  - `mesh-create-primitive`는 `Unknown command [501]` 또는 `Busy [103]`
+- 수정:
+  - `src/Unityctl.Plugin/Editor/Commands/MeshCreatePrimitiveHandler.cs`에 `using Unityctl.Plugin.Editor.Utilities;` 추가
+- 자동 검증:
+  - `dotnet build unityctl.slnx -c Release -m:1 /p:UseSharedCompilation=false` ✅
+  - `dotnet test tests/Unityctl.Cli.Tests -c Release --filter MeshCommandTests` ✅ 11 통과
+  - `dotnet test tests/Unityctl.Shared.Tests -c Release --filter "CommandCatalogTests|CommandSyncGuardrailTests"` ✅ 17 통과
+- 회복 후 실측:
+  - `doctor --json` → `classification=healthy`, `ipc.connected=true`, Editor.log compile error 없음
+  - `mesh create-primitive --type Cube --name "CodexMeshProbe" --position "[1,2,3]" --scale "[2,1,2]" --json`
+    - 결과: `success=true`, `message="Created Cube primitive 'CodexMeshProbe'"`
+  - `gameobject find --name "CodexMeshProbe" --json`
+    - 결과: `MeshFilter`, `MeshRenderer`, `BoxCollider` 포함 객체 1개 확인
+
+메모:
+
+- 생성 결과는 scene dirty로 표시되고 Undo 그룹명은 `unityctl: mesh-create-primitive: <name>` 형태다.
+- unsaved scratch scene에서는 반환 `globalObjectId`가 `GlobalObjectId_V1-0-...-0-0`로 보였다. stable target이 필요하면 저장된 scene asset에서 후속 작업하는 편이 낫다.
+
+---
+
 ## 아키텍처
 
 ```text
