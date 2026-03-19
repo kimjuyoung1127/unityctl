@@ -27,8 +27,12 @@ jobs:
       - name: Build
         run: dotnet build --no-restore -c Release
 
-      - name: Test
-        run: dotnet test --no-build -c Release --verbosity normal
+      - name: Test (unit + MCP, excluding Integration)
+        run: |
+          dotnet test tests/Unityctl.Shared.Tests --no-build -c Release --verbosity normal
+          dotnet test tests/Unityctl.Core.Tests --no-build -c Release --verbosity normal
+          dotnet test tests/Unityctl.Cli.Tests --no-build -c Release --verbosity normal
+          dotnet test tests/Unityctl.Mcp.Tests --no-build -c Release --verbosity normal
 
       - name: Publish CLI
         run: >

@@ -39,8 +39,12 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Test
-        run: dotnet test unityctl.slnx -c Release --verbosity normal --filter "FullyQualifiedName!~Integration"
+      - name: Test (unit + MCP)
+        run: |
+          dotnet test tests/Unityctl.Shared.Tests -c Release --verbosity normal
+          dotnet test tests/Unityctl.Core.Tests -c Release --verbosity normal
+          dotnet test tests/Unityctl.Cli.Tests -c Release --verbosity normal
+          dotnet test tests/Unityctl.Mcp.Tests -c Release --verbosity normal
 
       - name: Publish
         run: >
