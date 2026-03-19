@@ -69,7 +69,7 @@ The MCP server currently exposes 12 top-level tools, including `unityctl_query`,
 # Human-readable list
 unityctl tools
 
-# Machine-readable JSON (all 114 commands with parameter schemas)
+# Machine-readable JSON (all 118 commands with parameter schemas)
 unityctl tools --json
 
 # Schema for a specific command

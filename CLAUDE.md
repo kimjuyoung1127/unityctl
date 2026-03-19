@@ -64,7 +64,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ```bash
 dotnet build unityctl.slnx                                          # 빌드
-dotnet test unityctl.slnx                                           # 전체 테스트 (520+개)
+dotnet test unityctl.slnx                                           # 전체 테스트 (624개)
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # 유닛만
 dotnet run --project src/Unityctl.Cli -- <command> [options]         # CLI 실행
 ```
@@ -77,7 +77,7 @@ unityctl.slnx
 ├── src/Unityctl.Core      (net10.0)         비즈니스 로직 (transport, discovery, retry)
 ├── src/Unityctl.Cli       (net10.0)         얇은 CLI 셸 → Core에 위임
 ├── src/Unityctl.Plugin    (Unity UPM)       Editor 브릿지 (솔루션 빌드에 미포함)
-├── tests/*Tests           xUnit 테스트 (520+개)
+├── tests/*Tests           xUnit 테스트 (624개)
 └── docs/                  ref/ + status/ + daily/ + weekly/
 ```
 
