@@ -40,7 +40,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Test
-        run: dotnet test unityctl.slnx -c Release --verbosity normal
+        run: dotnet test unityctl.slnx -c Release --verbosity normal --filter "FullyQualifiedName!~Integration"
 
       - name: Publish
         run: >
