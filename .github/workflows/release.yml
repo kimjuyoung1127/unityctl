@@ -65,8 +65,28 @@ jobs:
           name: ${{ matrix.rid }}
           path: ${{ matrix.artifact }}
 
-  release:
+  nuget:
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Pack CLI
+        run: dotnet pack src/Unityctl.Cli/Unityctl.Cli.csproj -c Release -o nupkgs
+
+      - name: Pack MCP
+        run: dotnet pack src/Unityctl.Mcp/Unityctl.Mcp.csproj -c Release -o nupkgs
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push "nupkgs/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  release:
+    needs: [build, nuget]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
