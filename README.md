@@ -160,10 +160,26 @@ See [Showcase Roadmap](docs/ref/showcase-roadmap.md) for:
 AI agent costs are dominated by tool schemas sent every turn. unityctl uses **on-demand schema loading**:
 
 <p align="center">
-  <img src="docs/assets/token-efficiency.svg" alt="83x less tokens per turn" width="600">
+  <img src="docs/assets/token-efficiency.svg" alt="Measured token cost: unityctl via Bash = 0 overhead, 6.8x cheaper than CoplayDev MCP" width="620">
 </p>
 
 The 12 MCP tools cover the full 131-command surface through `unityctl_query` (read), `unityctl_run` (write), and `unityctl_schema` (lookup).
+
+#### Measured: Claude Code Token Cost (2026-03-20)
+
+When Claude Code runs 5 read-only QA operations (compile check, scene hierarchy, robot catalog, DH table, build settings), the **cumulative token cost** differs dramatically:
+
+| Stack | Schema (once) | 5 ops x 1 | 5 ops x 10 |
+|---|---:|---:|---:|
+| **unityctl via Bash** | **0 tok** | **1,780 tok** | **17,800 tok** |
+| unityctl MCP (12 tools) | 1,256 tok | 2,957 tok | 18,261 tok |
+| CoplayDev MCP (30 tools) | 11,427 tok | 12,158 tok | 18,742 tok |
+
+Key findings:
+- **unityctl via Bash has zero schema overhead** — the Bash tool is already in Claude Code's system prompt, so no additional tokens are spent on tool definitions
+- CoplayDev MCP loads **45 KB of schemas** (30 tools), but only **1 out of 5** QA operations has a matching tool
+- In a typical short session, unityctl via Bash uses **6.8x fewer tokens** than CoplayDev MCP
+- Full benchmark methodology and raw data: [`docs/benchmark/`](docs/benchmark/)
 
 ---
 
@@ -509,7 +525,7 @@ unityctl.slnx
 </p>
 
 <p align="center">
-  <img src="docs/assets/tools.svg" alt="unityctl tools" width="654">
+  <img src="docs/assets/tools.svg" alt="unityctl tools — 131 commands across 9 categories" width="654">
 </p>
 
 ## Documentation

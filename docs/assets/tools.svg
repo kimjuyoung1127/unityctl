@@ -1,40 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="653.6" height="488">
+<svg xmlns="http://www.w3.org/2000/svg" width="654" height="560">
   <style>
     .terminal { font-family: 'Cascadia Code', 'JetBrains Mono', 'Fira Code', monospace; font-size: 14px; }
     .terminal span { white-space: pre; }
   </style>
   <rect width="100%" height="100%" rx="8" fill="#1e1e2e"/>
-  
+
     <g>
       <circle cx="20" cy="18" r="6" fill="#f38ba8"/>
       <circle cx="38" cy="18" r="6" fill="#f9e2af"/>
       <circle cx="56" cy="18" r="6" fill="#a6e3a1"/>
-      <text x="326.8" y="22" text-anchor="middle"
-            font-family="monospace" font-size="13" fill="#6c7086">unityctl tools (preview)</text>
+      <text x="327" y="22" text-anchor="middle"
+            font-family="monospace" font-size="13" fill="#6c7086">unityctl tools</text>
     </g>
-  <foreignObject x="16" y="52" width="621.6" height="436">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="terminal" style="color: #cdd6f4; line-height: 20px; white-space: pre-wrap; word-break: break-all;">
-<b>unityctl</b> v0.2.0 — 18 tools
-├── <span style="color:#94e2d5">init</span>  Install the unityctl plugin into a Unity project
-│   ├── <span style="color:#585b70">--project</span>  string  Path to Unity project <span style="color:#f38ba8">(required)</span>
-│   └── <span style="color:#585b70">--source</span>  string  Custom local plugin source path
-├── <span style="color:#94e2d5">editor list</span>  Discover installed Unity editors
-│   └── <span style="color:#585b70">--json</span>  bool  Output as JSON
-├── <span style="color:#94e2d5">ping</span>  Verify unityctl connectivity to a Unity project
-│   ├── <span style="color:#585b70">--project</span>  string  Path to Unity project <span style="color:#f38ba8">(required)</span>
-│   └── <span style="color:#585b70">--json</span>  bool  Output as JSON
-├── <span style="color:#94e2d5">status</span>  Check Unity editor and project status
-│   ├── <span style="color:#585b70">--project</span>  string  Path to Unity project <span style="color:#f38ba8">(required)</span>
-│   ├── <span style="color:#585b70">--wait</span>  bool  Retry until editor responds
-│   └── <span style="color:#585b70">--json</span>  bool  Output as JSON
-├── <span style="color:#94e2d5">build</span>  Build a Unity project for a target platform
-│   ├── <span style="color:#585b70">--project</span>  string  Path to Unity project <span style="color:#f38ba8">(required)</span>
-│   ├── <span style="color:#585b70">--target</span>  string  Build target (StandaloneWindows64, OSX, Linux, 
-│   │   Android, iOS, WebGL)
-│   ├── <span style="color:#585b70">--output</span>  string  Output path for build artifacts
-│   ├── <span style="color:#585b70">--dryRun</span>  bool  Validate without building (preflight check)
-│   └── <span style="color:#585b70">--json</span>  bool  Output as JSON
+  <foreignObject x="16" y="44" width="622" height="516">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="terminal" style="color: #cdd6f4; line-height: 19px; white-space: pre-wrap; word-break: break-all;">
+<b>unityctl</b> — 131 commands · 12 MCP tools
 
+<span style="color:#6c7086">  Core (13)</span>
+  <span style="color:#94e2d5">ping</span>               Verify connectivity to Unity
+  <span style="color:#94e2d5">status</span>             Editor state (with --wait smart polling)
+  <span style="color:#94e2d5">check</span>              Verify script compilation (headless)
+  <span style="color:#94e2d5">build</span>              Build player with --dry-run preflight
+  <span style="color:#94e2d5">test</span>               Run EditMode / PlayMode tests
+  <span style="color:#94e2d5">doctor</span>             Diagnose connectivity + suggest recovery
+  <span style="color:#94e2d5">project validate</span>   Game readiness check (6 checks)
+  <span style="color:#94e2d5">exec</span>               Execute C# expression in Unity
+
+<span style="color:#6c7086">  Scene &amp; GameObject (19)</span>
+  <span style="color:#94e2d5">scene hierarchy</span>    Scene hierarchy tree
+  <span style="color:#94e2d5">scene diff</span>         Property-level scene diff with epsilon
+  <span style="color:#94e2d5">gameobject create</span>  Create / delete / rename / find
+  <span style="color:#94e2d5">component add</span>      Add / remove / get / set-property
+
+<span style="color:#6c7086">  Assets &amp; Materials (21)</span>
+  <span style="color:#94e2d5">asset find</span>         Search by type/label/path
+  <span style="color:#94e2d5">material create</span>    Create / get / set / set-shader
+  <span style="color:#94e2d5">prefab create</span>      Create / unpack / apply / edit
+
+<span style="color:#6c7086">  Scripting (10)</span>
+  <span style="color:#94e2d5">script create</span>      Create C# script from template
+  <span style="color:#94e2d5">script patch</span>       Line-level insert/delete/replace
+  <span style="color:#94e2d5">script get-errors</span>  Structured errors (file/line/column)
+
+<span style="color:#6c7086">  + Editor Control (18) · Build (6) · Physics/Lighting (12)</span>
+<span style="color:#6c7086">    UI/Mesh (8) · Automation (15)</span>
+
+<span style="color:#f9e2af">  → unityctl tools --json</span> <span style="color:#6c7086">for full list</span>
     </div>
   </foreignObject>
 </svg>
