@@ -39,8 +39,15 @@
 - **Production Domain Expansion (camera list/get, texture get/set-import-settings, scriptableobject find/get/set-property, shader find/get-properties — 9개 명령)**: 구현 완료
 - **Visual Verification v2 Phase 1 (`workflow verify` — `projectValidate` + `capture` + `imageDiff` + `consoleWatch` + `uiAssert`)**: 구현 완료
 - **Visual Verification v2 Phase 1.5 (`playSmoke` — play start/settle + console evidence + game-camera capture)**: 구현 완료
+- **Phase G: Asset Import/Export Extension (asset-export, model-get-import-settings, audio-get-import-settings — 3개 명령)**: 구현 완료
+- **Phase H: Animation Workflow Extension (animation-list-clips/get-clip/get-controller/add-curve — 4개 명령)**: 구현 완료
+- **Phase C: Profiler Commands (profiler-get-stats/start/stop — 3개 명령)**: 구현 완료
+- **Phase I-1: UGUI Enhancement (ui-scroll/slider-set/dropdown-set — 3개 명령)**: 구현 완료
+- **Phase D: Volume/PostProcessing (volume-list/get/set-override/get-overrides, renderer-feature-list — 5개 명령)**: 구현 완료
+- **Phase E: Cinemachine (cinemachine-list/get/set-property — 3개 명령, capability gating)**: 구현 완료
+- **Phase I-2: UI Toolkit (uitk-find/get/set-value — 3개 명령, runtime capability check)**: 구현 완료
 
-**전체 Phase 완료. 총 71개 write allowlist 명령, 131개 CLI 명령, 12개 MCP 도구 (33→12 통합).**
+**전체 Phase 완료. 총 83개 write allowlist 명령, 155개 CLI 명령, 12개 MCP 도구 (33→12 통합).**
 
 ## Visual Verification v2 Phase 1 라이브 검증 (My project, Unity 6000.0.64f1)
 

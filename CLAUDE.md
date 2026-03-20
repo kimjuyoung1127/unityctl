@@ -50,11 +50,18 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 - Production Domain Expansion (camera list/get, texture get/set-import-settings, scriptableobject find/get/set-property, shader find/get-properties — 9개 명령): Done
 - Visual Verification v2 Phase 1 (`workflow verify` + artifact-first verification bundle): Done
 - Visual Verification v2 Phase 1.5 (`playSmoke` + game-camera capture after settle): Done
+- Phase G: Asset Import/Export Extension (`asset-export`, `model-get-import-settings`, `audio-get-import-settings` — 3개 명령): Done
+- Phase H: Animation Workflow Extension (`animation-list-clips/get-clip/get-controller/add-curve` — 4개 명령): Done
+- Phase C: Profiler Commands (`profiler-get-stats/start/stop` — 3개 명령): Done
+- Phase I-1: UGUI Enhancement (`ui-scroll/slider-set/dropdown-set` — 3개 명령): Done
+- Phase D: Volume/PostProcessing (`volume-list/get/set-override/get-overrides`, `renderer-feature-list` — 5개 명령, Reflection capability gating): Done
+- Phase E: Cinemachine (`cinemachine-list/get/set-property` — 3개 명령, 2.x/3.x 런타임 감지): Done
+- Phase I-2: UI Toolkit (`uitk-find/get/set-value` — 3개 명령, runtime UIDocument 체크): Done
 
 최근 확정 사항 (최신 3개만 표시, 전체 이력은 `docs/internal/DEVELOPMENT.md` "슬라이스 이력" 참조):
+- Next-Gen Extension Phases (2026-03-20): Phase G/H/C/I-1/D/E/I-2 — 24개 신규 명령, 82+ 신규 테스트 (726 total). Unity 6 라이브 테스트 통과.
 - Production Domain Expansion (2026-03-20): `camera-list/get`, `texture-get/set-import-settings`, `scriptableobject-find/get/set-property`, `shader-find/get-properties` (9개 명령, 4개 슬라이스). 45개 신규 테스트.
-- Multi-Instance Routing Phase 1 (2026-03-20): `editor current/select` + `editor instances` + project-path selection fallback + target metadata.
-- Mesh Create Primitive (2026-03-19): `mesh-create-primitive` (Cube/Sphere/Plane/Cylinder/Capsule/Quad + position/rotation/scale/material/parent). ObjectFactory 기반 자동 Undo.
+- Visual Verification v2 Phase 1.5 (2026-03-20): `playSmoke` + play settle + console evidence + game-camera capture.
 
 ## 실행 규칙 (MUST)
 1. 기존 코드/타입/유틸 우선 재사용, 중복 구현 금지
@@ -70,7 +77,7 @@ unityctl 작업 시작 시 가장 먼저 읽는 진입 문서입니다.
 
 ```bash
 dotnet build unityctl.slnx                                          # 빌드
-dotnet test unityctl.slnx                                           # 전체 테스트 (624개)
+dotnet test unityctl.slnx                                           # 전체 테스트 (726개)
 dotnet test unityctl.slnx --filter "FullyQualifiedName!~Integration" # 유닛만
 dotnet run --project src/Unityctl.Cli -- <command> [options]         # CLI 실행
 ```
@@ -83,7 +90,7 @@ unityctl.slnx
 ├── src/Unityctl.Core      (net10.0)         비즈니스 로직 (transport, discovery, retry)
 ├── src/Unityctl.Cli       (net10.0)         얇은 CLI 셸 → Core에 위임
 ├── src/Unityctl.Plugin    (Unity UPM)       Editor 브릿지 (솔루션 빌드에 미포함)
-├── tests/*Tests           xUnit 테스트 (624개)
+├── tests/*Tests           xUnit 테스트 (726개)
 └── docs/                  ref/ + status/ + daily/ + weekly/
 ```
 
@@ -152,6 +159,13 @@ unityctl.slnx
 | **Production Domain Expansion** | ✅ 완료 | **camera list/get** + **texture get/set-import-settings** + **scriptableobject find/get/set-property** + **shader find/get-properties** (9개 명령) |
 | **Visual Verification v2 Phase 1** | ✅ 완료 | **workflow verify** + `projectValidate` + `capture` + `imageDiff` + `consoleWatch` + `uiAssert` |
 | **Visual Verification v2 Phase 1.5** | ✅ 완료 | **playSmoke** + play settle + console evidence + game-camera capture |
+| **Phase G: Asset Import/Export** | ✅ 완료 | **asset-export** + **model-get-import-settings** + **audio-get-import-settings** (3개 명령) |
+| **Phase H: Animation Workflow** | ✅ 완료 | **animation-list-clips/get-clip/get-controller/add-curve** (4개 명령) |
+| **Phase C: Profiler** | ✅ 완료 | **profiler-get-stats/start/stop** (3개 명령, Play Mode 컨텍스트 제공) |
+| **Phase I-1: UGUI Enhancement** | ✅ 완료 | **ui-scroll/slider-set/dropdown-set** (3개 명령) |
+| **Phase D: Volume/PostProcessing** | ✅ 완료 | **volume-list/get/set-override/get-overrides** + **renderer-feature-list** (5개 명령, Reflection capability gating) |
+| **Phase E: Cinemachine** | ✅ 완료 | **cinemachine-list/get/set-property** (3개 명령, 2.x/3.x 런타임 감지) |
+| **Phase I-2: UI Toolkit** | ✅ 완료 | **uitk-find/get/set-value** (3개 명령, runtime UIDocument 체크) |
 
 ## Source of Truth 문서
 - 탐색 인덱스: `AGENTS.md`
