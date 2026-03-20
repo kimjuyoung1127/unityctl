@@ -132,6 +132,7 @@ namespace Unityctl.Plugin.Editor.Shared
         // Editor Utility
         public const string ConsoleClear = "console-clear";
         public const string ConsoleGetCount = "console-get-count";
+        public const string ConsoleGetEntries = "console-get-entries";
         public const string DefineSymbolsGet = "define-symbols-get";
         public const string DefineSymbolsSet = "define-symbols-set";
         public const string EditorPause = "editor-pause";

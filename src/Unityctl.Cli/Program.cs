@@ -87,8 +87,8 @@ app.Add("watch", (string project, string channel = "all", string format = "text"
 app.Add("scene snapshot", (string project, string? scenePath = null, bool includeInactive = false, bool json = false) =>
     SceneCommand.Snapshot(project, scenePath, includeInactive, json));
 
-app.Add("scene hierarchy", (string project, string? scenePath = null, bool includeInactive = false, bool json = false) =>
-    SceneCommand.Hierarchy(project, scenePath, includeInactive, json));
+app.Add("scene hierarchy", (string project, string? scenePath = null, bool includeInactive = false, int maxDepth = -1, bool summary = false, bool json = false) =>
+    SceneCommand.Hierarchy(project, scenePath, includeInactive, maxDepth, summary, json));
 
 app.Add("scene diff", (
         string snap1 = "",
@@ -217,8 +217,8 @@ app.Add("scene create", (
 app.Add("component add", (string project, string id, string type, bool json = false) =>
     ComponentCommand.Add(project, id, type, json));
 
-app.Add("component get", (string project, string componentId, string? property = null, bool json = false) =>
-    ComponentCommand.Get(project, componentId, property, json));
+app.Add("component get", (string project, string componentId, string? property = null, bool full = false, bool json = false) =>
+    ComponentCommand.Get(project, componentId, property, full, json));
 
 app.Add("component remove", (string project, string componentId, bool json = false) =>
     ComponentCommand.Remove(project, componentId, json));
@@ -402,6 +402,9 @@ app.Add("console clear", (string project, bool json = false) =>
 
 app.Add("console get-count", (string project, bool json = false) =>
     ConsoleCommand.GetCount(project, json));
+
+app.Add("console get-entries", (string project, int limit = 50, string? filter = null, bool json = false) =>
+    ConsoleCommand.GetEntries(project, limit, filter, json));
 
 app.Add("define-symbols get", (string project, string? target = null, bool json = false) =>
     DefineSymbolsCommand.Get(project, target, json));

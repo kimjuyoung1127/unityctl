@@ -122,41 +122,73 @@ namespace Unityctl.Plugin.Editor.Utilities
 
         public static JObject? CreateHierarchyNode(GameObject gameObject, string parentPath, bool includeInactive)
         {
+            return CreateHierarchyNode(gameObject, parentPath, includeInactive, -1, 0, false);
+        }
+
+        public static JObject? CreateHierarchyNode(GameObject gameObject, string parentPath, bool includeInactive, int maxDepth, int currentDepth, bool summary)
+        {
             if (!includeInactive && !gameObject.activeSelf)
             {
                 return null;
             }
 
             var hierarchyPath = GetHierarchyPath(gameObject, parentPath);
-            var children = new JArray();
-            for (var i = 0; i < gameObject.transform.childCount; i++)
-            {
-                var childNode = CreateHierarchyNode(gameObject.transform.GetChild(i).gameObject, hierarchyPath, includeInactive);
-                if (childNode != null)
-                {
-                    children.Add(childNode);
-                }
-            }
 
-            return new JObject
+            var node = new JObject
             {
                 ["globalObjectId"] = GlobalObjectIdResolver.GetId(gameObject),
                 ["name"] = gameObject.name,
                 ["activeSelf"] = gameObject.activeSelf,
-                ["layer"] = gameObject.layer,
-                ["tag"] = gameObject.tag,
-                ["scenePath"] = hierarchyPath,
-                ["componentTypes"] = GetComponentTypeNames(gameObject),
-                ["children"] = children
             };
+
+            if (!summary)
+            {
+                node["layer"] = gameObject.layer;
+                node["tag"] = gameObject.tag;
+                node["scenePath"] = hierarchyPath;
+                node["componentTypes"] = GetComponentTypeNames(gameObject);
+            }
+            else
+            {
+                node["componentCount"] = gameObject.GetComponents<Component>().Length;
+            }
+
+            int childCount = gameObject.transform.childCount;
+            bool atDepthLimit = maxDepth >= 0 && currentDepth >= maxDepth;
+
+            if (atDepthLimit)
+            {
+                if (childCount > 0)
+                    node["childCount"] = childCount;
+            }
+            else
+            {
+                var children = new JArray();
+                for (var i = 0; i < childCount; i++)
+                {
+                    var childNode = CreateHierarchyNode(gameObject.transform.GetChild(i).gameObject, hierarchyPath, includeInactive, maxDepth, currentDepth + 1, summary);
+                    if (childNode != null)
+                    {
+                        children.Add(childNode);
+                    }
+                }
+                node["children"] = children;
+            }
+
+            return node;
         }
 
         public static JArray BuildHierarchyRoots(Scene scene, bool includeInactive)
         {
+            return BuildHierarchyRoots(scene, includeInactive, -1, false);
+        }
+
+        public static JArray BuildHierarchyRoots(Scene scene, bool includeInactive, int maxDepth, bool summary)
+        {
             var roots = new JArray();
             foreach (var root in scene.GetRootGameObjects())
             {
-                var node = CreateHierarchyNode(root, string.Empty, includeInactive);
+                var node = CreateHierarchyNode(root, string.Empty, includeInactive, maxDepth, 0, summary);
                 if (node != null)
                 {
                     roots.Add(node);

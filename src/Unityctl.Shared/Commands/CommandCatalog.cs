@@ -178,11 +178,13 @@ public static class CommandCatalog
 
     public static readonly CommandDefinition SceneHierarchy = Define(
         WellKnownCommands.SceneHierarchy,
-        "Capture a lightweight nested hierarchy tree for loaded scenes",
+        "Capture a lightweight nested hierarchy tree for loaded scenes. Use --summary --maxDepth 1 for token-efficient overview.",
         "query",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("scenePath", "string", "Filter to a specific scene path", required: false),
         Parameter("includeInactive", "bool", "Include inactive GameObjects in the hierarchy", required: false),
+        Parameter("maxDepth", "int", "Maximum tree depth (-1 = unlimited, 0 = roots only, 1 = roots + direct children)", required: false),
+        Parameter("summary", "bool", "Summary mode: componentCount instead of componentTypes, childCount at depth limit", required: false),
         Parameter("json", "bool", "Output as JSON", required: false)).WithCli("scene hierarchy");
 
     public static readonly CommandDefinition SceneDiff = Define(
@@ -338,11 +340,12 @@ public static class CommandCatalog
 
     public static readonly CommandDefinition ComponentGet = Define(
         WellKnownCommands.ComponentGet,
-        "Get summary or serialized property details for a single component",
+        "Get component details. Default returns summary (property names only). Use --full for all values, or --property for one field.",
         "query",
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("componentId", "string", "GlobalObjectId of the component", required: true),
-        Parameter("property", "string", "SerializedProperty path to read (optional, returns all if omitted)", required: false),
+        Parameter("property", "string", "SerializedProperty path to read (optional)", required: false),
+        Parameter("full", "bool", "Return all serialized property values (default: summary with names only)", required: false),
         Parameter("json", "bool", "Output as JSON", required: false)).WithCli("component get");
 
     public static readonly CommandDefinition GameObjectCreate = Define(
@@ -955,6 +958,15 @@ public static class CommandCatalog
         Parameter("project", "string", "Path to Unity project", required: true),
         Parameter("json", "bool", "Output as JSON", required: false)).WithCli("console get-count");
 
+    public static readonly CommandDefinition ConsoleGetEntriesDef = Define(
+        WellKnownCommands.ConsoleGetEntries,
+        "Get deduplicated console entries (message, type, count, first/last index). Collapses repeated warnings/errors.",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("limit", "int", "Max unique entries to return (default: 50)", required: false),
+        Parameter("filter", "string", "Filter by type: error, warning, log (default: all)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("console get-entries");
+
     public static readonly CommandDefinition DefineSymbolsGetDef = Define(
         WellKnownCommands.DefineSymbolsGet,
         "Get scripting define symbols for the active build target",
@@ -1516,6 +1528,7 @@ public static class CommandCatalog
         // Editor Utility
         ConsoleClear,
         ConsoleGetCount,
+        ConsoleGetEntriesDef,
         DefineSymbolsGetDef,
         DefineSymbolsSetDef,
         // Lighting

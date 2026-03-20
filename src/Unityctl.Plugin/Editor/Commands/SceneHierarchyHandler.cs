@@ -13,6 +13,11 @@ namespace Unityctl.Plugin.Editor.Commands
 #if UNITY_EDITOR
             var scenePath = request.GetParam("scenePath", null);
             var includeInactive = request.GetParam<bool>("includeInactive");
+            var maxDepthStr = request.GetParam("maxDepth", null);
+            var summary = request.GetParam<bool>("summary");
+            int maxDepth = -1;
+            if (!string.IsNullOrEmpty(maxDepthStr) && int.TryParse(maxDepthStr, out var parsedDepth))
+                maxDepth = parsedDepth;
 
             var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             var sceneSetup = SceneExplorationUtility.BuildSceneSetup(activeScene);
@@ -40,7 +45,7 @@ namespace Unityctl.Plugin.Editor.Commands
                     ["isActive"] = scene.path == activeScene.path,
                     ["isDirty"] = scene.isDirty,
                     ["rootCount"] = scene.rootCount,
-                    ["roots"] = SceneExplorationUtility.BuildHierarchyRoots(scene, includeInactive)
+                    ["roots"] = SceneExplorationUtility.BuildHierarchyRoots(scene, includeInactive, maxDepth, summary)
                 });
             }
 

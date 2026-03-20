@@ -14,6 +14,7 @@ namespace Unityctl.Plugin.Editor.Commands
 #if UNITY_EDITOR
             var componentId = request.GetParam("componentId", null);
             var property = request.GetParam("property", null);
+            var full = request.GetParam<bool>("full");
 
             if (string.IsNullOrEmpty(componentId))
             {
@@ -55,7 +56,31 @@ namespace Unityctl.Plugin.Editor.Commands
                 return Ok($"Component property '{property}'", data);
             }
 
-            data["properties"] = SerializedPropertyJsonUtility.GetVisibleProperties(component);
+            if (full)
+            {
+                data["properties"] = SerializedPropertyJsonUtility.GetVisibleProperties(component);
+            }
+            else
+            {
+                // Summary mode: property count + key field names only
+                using (var so = new SerializedObject(component))
+                {
+                    var iter = so.GetIterator();
+                    var names = new JArray();
+                    int count = 0;
+                    if (iter.NextVisible(true))
+                    {
+                        do
+                        {
+                            names.Add(iter.name);
+                            count++;
+                        }
+                        while (iter.NextVisible(false));
+                    }
+                    data["propertyCount"] = count;
+                    data["propertyNames"] = names;
+                }
+            }
             return Ok($"Component '{component.GetType().Name}'", data);
 #else
             return NotInEditor();

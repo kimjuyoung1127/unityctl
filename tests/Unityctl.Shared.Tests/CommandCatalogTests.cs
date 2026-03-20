@@ -45,7 +45,7 @@ public class CommandCatalogTests
              "tag-list", "tag-add", "layer-list", "layer-set",
              "gameobject-set-tag", "gameobject-set-layer",
              // Editor Utility
-             "console-clear", "console-get-count",
+             "console-clear", "console-get-count", "console-get-entries",
              "define-symbols-get", "define-symbols-set",
              // Lighting
              "lighting-bake", "lighting-cancel", "lighting-clear",

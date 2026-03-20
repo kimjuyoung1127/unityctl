@@ -28,6 +28,7 @@ internal sealed class QueryTool(CommandExecutor executor)
         WellKnownCommands.TagList,
         WellKnownCommands.LayerList,
         WellKnownCommands.ConsoleGetCount,
+        WellKnownCommands.ConsoleGetEntries,
         WellKnownCommands.DefineSymbolsGet,
         WellKnownCommands.LightingGetSettings,
         WellKnownCommands.NavMeshGetSettings,

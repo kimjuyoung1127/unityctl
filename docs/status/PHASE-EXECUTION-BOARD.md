@@ -52,6 +52,7 @@
 | Marketplace Registration | mcp.so + PulseMCP 등록 | P0 | Done | — | 2026-03-20 |
 | MCP Prompts | create_game_scene/debug_game/iterate_gameplay/setup_project (4개 AI 워크플로우) | P1 | Done | docs/ref/phase-roadmap.md | 2026-03-20 |
 | CLI Feedback Fixes | prefab-instantiate + asset copy 외부 경로 + IPC 30초 메시지 타임아웃 (CLI-012/014/000) | P0 | Done | docs/status/FEATURE-BACKLOG.md | 2026-03-20 |
+| Token Optimization | status state 구분 + hierarchy summary/maxDepth + component get summary + console-get-entries dedupe | P0 | Done | — | 2026-03-20 |
 
 ## Zero-Drift 규칙
 1. `src/` 구조를 코드 모듈 Source of Truth로 간주한다.

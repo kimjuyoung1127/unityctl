@@ -128,9 +128,10 @@ public static class SceneCommand
         Environment.Exit(exitCode);
     }
 
-    public static void Hierarchy(string project, string? scenePath = null, bool includeInactive = false, bool json = false)
+    public static void Hierarchy(string project, string? scenePath = null, bool includeInactive = false,
+        int maxDepth = -1, bool summary = false, bool json = false)
     {
-        var request = CreateHierarchyRequest(scenePath, includeInactive);
+        var request = CreateHierarchyRequest(scenePath, includeInactive, maxDepth, summary);
         CommandRunner.Execute(project, request, json);
     }
 
@@ -591,13 +592,18 @@ public static class SceneCommand
         };
     }
 
-    internal static CommandRequest CreateHierarchyRequest(string? scenePath, bool includeInactive = false)
+    internal static CommandRequest CreateHierarchyRequest(string? scenePath, bool includeInactive = false,
+        int maxDepth = -1, bool summary = false)
     {
         var parameters = new JsonObject();
         if (!string.IsNullOrEmpty(scenePath))
             parameters["scenePath"] = scenePath;
         if (includeInactive)
             parameters["includeInactive"] = true;
+        if (maxDepth >= 0)
+            parameters["maxDepth"] = maxDepth;
+        if (summary)
+            parameters["summary"] = true;
 
         return new CommandRequest
         {
