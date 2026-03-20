@@ -69,7 +69,7 @@ The MCP server currently exposes 12 top-level tools, including `unityctl_query`,
 # Human-readable list
 unityctl tools
 
-# Machine-readable JSON (all 131 commands with parameter schemas)
+# Machine-readable JSON (all 155 commands with parameter schemas)
 unityctl tools --json
 
 # Full CLI schema
@@ -85,6 +85,12 @@ For CLI routing, `editor select` pins a project locally so `ping`, `status`, `ch
 When you already know a running Unity PID, `editor select --pid <pid>` can pin that process only when it maps to a single project path.
 Use `editor instances` when you need visibility into currently running Unity processes before pinning or diagnosing routing.
 For small artifact-first verification bundles, `workflow verify` now supports `projectValidate`, `capture`, `imageDiff`, `consoleWatch`, `uiAssert`, and `playSmoke`.
+For UGUI interactions beyond toggle/input, use `ui scroll`, `ui slider-set`, `ui dropdown-set` to set ScrollRect/Slider/Dropdown values deterministically.
+For URP/HDRP projects, `volume list/get/get-overrides/set-override` and `renderer-feature list` inspect and modify Volume overrides via Reflection (no hard dependency on URP/HDRP).
+For Cinemachine, `cinemachine list/get/set-property` supports both 2.x and 3.x with runtime auto-detection.
+For UI Toolkit, `uitk find/get/set-value` queries and modifies UIDocument elements at runtime.
+For animation workflows, `animation list-clips/get-clip/get-controller/add-curve` inspect and edit AnimationClips and AnimatorControllers.
+For profiling, `profiler get-stats/start/stop` provides memory and performance statistics (full rendering stats require Play Mode).
 
 ## Common Workflows
 
@@ -143,6 +149,33 @@ unityctl shader get-properties --project "/path/to/project" --name "Standard" --
 
 # Get texture import settings
 unityctl texture get-import-settings --project "/path/to/project" --path "Assets/Textures/icon.png" --json
+
+# Get model import settings
+unityctl model get-import-settings --project "/path/to/project" --path "Assets/Models/character.fbx" --json
+
+# Get audio import settings
+unityctl audio get-import-settings --project "/path/to/project" --path "Assets/Audio/bgm.wav" --json
+
+# List animation clips
+unityctl animation list-clips --project "/path/to/project" --json
+
+# Get animation clip details (curves, events)
+unityctl animation get-clip --project "/path/to/project" --path "Assets/Animations/walk.anim" --json
+
+# Get animator controller structure
+unityctl animation get-controller --project "/path/to/project" --path "Assets/Animations/Player.controller" --json
+
+# Profiler stats
+unityctl profiler get-stats --project "/path/to/project" --json
+
+# List URP/HDRP volumes
+unityctl volume list --project "/path/to/project" --json
+
+# List Cinemachine cameras
+unityctl cinemachine list --project "/path/to/project" --json
+
+# Find UI Toolkit elements
+unityctl uitk find --project "/path/to/project" --type Button --json
 ```
 
 ### Create and modify

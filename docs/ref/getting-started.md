@@ -254,6 +254,99 @@ unityctl ui input --project /path/to/project --id "<GlobalObjectId>" --text "Alp
 
 `ui find`/`ui get` are currently UGUI-first (`Canvas`, `RectTransform`, `Selectable`, `Text`, `InputField`, `Toggle`, `Slider`, `Dropdown`, `ScrollRect`). `ui toggle` and `ui input` extend that slice with deterministic state changes for `Toggle.isOn` and `InputField.text`. These are not real click or typing simulation yet, and in practice they are most reliable with a running Editor and IPC ready.
 
+```bash
+# Set a ScrollRect position
+unityctl ui scroll --project /path/to/project --id "<GlobalObjectId>" --x 0.5 --y 1.0 --json
+
+# Set a Slider value
+unityctl ui slider-set --project /path/to/project --id "<GlobalObjectId>" --value 0.75 --json
+
+# Set a Dropdown index
+unityctl ui dropdown-set --project /path/to/project --id "<GlobalObjectId>" --value 2 --json
+```
+
+### Animation
+
+```bash
+# List animation clips
+unityctl animation list-clips --project /path/to/project --json
+
+# Get clip details (curves, events, length)
+unityctl animation get-clip --project /path/to/project --path "Assets/Animations/walk.anim" --json
+
+# Get animator controller structure (layers, states, transitions)
+unityctl animation get-controller --project /path/to/project --path "Assets/Animations/Player.controller" --json
+
+# Add a curve to a clip
+unityctl animation add-curve --project /path/to/project --path "Assets/Animations/walk.anim" --binding '{"path":"","type":"UnityEngine.Transform","propertyName":"m_LocalPosition.x"}' --keys '[{"time":0,"value":0},{"time":1,"value":1}]' --json
+```
+
+### Import Settings
+
+```bash
+# Model import settings (FBX, OBJ, etc.)
+unityctl model get-import-settings --project /path/to/project --path "Assets/Models/character.fbx" --json
+
+# Audio import settings
+unityctl audio get-import-settings --project /path/to/project --path "Assets/Audio/bgm.wav" --json
+
+# Export assets as .unitypackage
+unityctl asset export --project /path/to/project --paths "Assets/Prefabs/Player.prefab" --output "C:/temp/export.unitypackage" --json
+```
+
+### Profiler
+
+```bash
+# Get memory/performance stats (full rendering stats require Play Mode)
+unityctl profiler get-stats --project /path/to/project --json
+
+# Enable/disable profiler
+unityctl profiler start --project /path/to/project --json
+unityctl profiler stop --project /path/to/project --json
+```
+
+### URP/HDRP Volume (requires URP or HDRP)
+
+```bash
+# List Volume components in the scene
+unityctl volume list --project /path/to/project --json
+
+# Get Volume details and overrides
+unityctl volume get --project /path/to/project --id "<GlobalObjectId>" --json
+
+# Get all parameters of a VolumeComponent
+unityctl volume get-overrides --project /path/to/project --id "<GlobalObjectId>" --component Bloom --json
+
+# Set a Volume override parameter
+unityctl volume set-override --project /path/to/project --id "<GlobalObjectId>" --component Bloom --property intensity --value 0.5 --json
+```
+
+### Cinemachine (requires Cinemachine package)
+
+```bash
+# List virtual cameras (auto-detects 2.x vs 3.x)
+unityctl cinemachine list --project /path/to/project --json
+
+# Get virtual camera details
+unityctl cinemachine get --project /path/to/project --id "<GlobalObjectId>" --json
+
+# Set a camera property
+unityctl cinemachine set-property --project /path/to/project --id "<GlobalObjectId>" --property "m_Lens.FieldOfView" --value 60 --json
+```
+
+### UI Toolkit (requires Unity 2021.2+)
+
+```bash
+# Find UI Toolkit elements
+unityctl uitk find --project /path/to/project --type Button --json
+
+# Get element details
+unityctl uitk get --project /path/to/project --name "myButton" --json
+
+# Set element value
+unityctl uitk set-value --project /path/to/project --name "myTextField" --value "hello" --json
+```
+
 ### Script Management
 
 ```bash

@@ -67,6 +67,14 @@ Mesh Primitive Create — mesh create-primitive (built-in primitives) ✅ 완료
 Multi-Instance Routing Phase 1 — editor current/select (`--project`, `--pid`) + editor instances + project-path selection fallback + target metadata ✅ 완료
 Production Domain Expansion — camera list/get + texture get/set-import-settings + scriptableobject find/get/set-property + shader find/get-properties (9개 명령) ✅ 완료
 Visual Verification v2 Phase 1 — workflow verify + projectValidate/capture/imageDiff/consoleWatch/uiAssert/playSmoke ✅ 완료
+Phase G  — Asset Import/Export Extension (asset-export, model/audio-get-import-settings 3개 명령) ✅ 완료
+Phase H  — Animation Workflow Extension (list-clips/get-clip/get-controller/add-curve 4개 명령) ✅ 완료
+Phase C  — Profiler Commands (get-stats/start/stop 3개 명령) ✅ 완료
+Phase I-1 — UGUI Enhancement (ui-scroll/slider-set/dropdown-set 3개 명령) ✅ 완료
+Phase D  — Volume/PostProcessing (volume 4개 + renderer-feature 1개 = 5개 명령, Reflection) ✅ 완료
+Phase E  — Cinemachine (list/get/set-property 3개 명령, 2.x/3.x auto-detect) ✅ 완료
+Phase I-2 — UI Toolkit (uitk-find/get/set-value 3개 명령, runtime capability) ✅ 완료
+Marketplace — mcp.so + PulseMCP 등록 ✅ 완료
 ```
 
 ### 실행 순서 변경 근거
@@ -109,6 +117,14 @@ Visual Verification v2 Phase 1 — workflow verify + projectValidate/capture/ima
 | **Multi-Instance Routing Phase 1** | editor current/select (`--project`, `--pid`), editor instances, project-path selection fallback, target project/pipe/editor metadata | — |
 | **Production Domain Expansion** | camera list/get, texture get/set-import-settings, scriptableobject find/get/set-property, shader find/get-properties (9개 명령) | — |
 | **Visual Verification v2 Phase 1** | workflow verify, artifact-first output, projectValidate + capture + imageDiff + consoleWatch + uiAssert + playSmoke | — |
+| **Phase G: Asset Import/Export** | asset-export (ExportPackage), model-get-import-settings (ModelImporter), audio-get-import-settings (AudioImporter) | — |
+| **Phase H: Animation Workflow** | animation-list-clips (FindAssets), get-clip (curves/events), get-controller (layers/states/transitions), add-curve (SetEditorCurve+Undo) | — |
+| **Phase C: Profiler** | profiler-get-stats (memory/Profiler API), start/stop (Profiler.enabled), Play Mode context | — |
+| **Phase I-1: UGUI Enhancement** | ui-scroll (ScrollRect), slider-set (Slider), dropdown-set (Dropdown), PrefabGuard+UndoScope | — |
+| **Phase D: Volume/PostProcessing** | volume-list/get/set-override/get-overrides (Reflection, no URP/HDRP hard dep), renderer-feature-list | — |
+| **Phase E: Cinemachine** | cinemachine-list/get/set-property, 2.x/3.x auto-detect, SerializedObject property editing | — |
+| **Phase I-2: UI Toolkit** | uitk-find/get/set-value, runtime UIDocument capability check, element tree traversal | — |
+| **Marketplace** | mcp.so + PulseMCP 등록 완료 | — |
 
 ---
 
@@ -124,7 +140,7 @@ Visual Verification v2 Phase 1 — workflow verify + projectValidate/capture/ima
 | **P0** | 멀티 인스턴스 라우팅 Phase 2 | running process inventory, true editor-instance identity, session/task별 editor pin 고도화, response metadata 확장 |
 | **P0** | Workflow 번들 도구 | raw command 위에 `workflow compile-fix`, `workflow ui-smoke`, `workflow build-verify` 같은 멀티스텝 자동화 계층 추가 |
 | **P0** | Visual Verification v2 Phase 2 | play-mode end-of-frame capture/diff, UI click helper, richer console/hierarchy delta evidence 묶음 |
-| **P1** | 제작 도메인 확장 | ~~packages~~ ✅, ~~camera~~ ✅, ~~ScriptableObject~~ ✅, ~~texture import~~ ✅, ~~shader~~ ✅ / 남은 영역: Cinemachine, URP/HDRP volume + renderer features, shader graph |
+| **P1** | 제작 도메인 확장 | ~~packages~~ ✅, ~~camera~~ ✅, ~~ScriptableObject~~ ✅, ~~texture import~~ ✅, ~~shader~~ ✅, ~~Cinemachine~~ ✅, ~~URP/HDRP volume~~ ✅, ~~renderer features~~ ✅, ~~model/audio import~~ ✅, ~~animation workflow~~ ✅, ~~profiler~~ ✅, ~~UGUI enhancement~~ ✅, ~~UI Toolkit~~ ✅ / 남은 영역: shader graph |
 | **P1** | 배포/온보딩 단순화 | plugin release artifact 중심 설치, `init` 자동화 강화, `doctor` 연계 one-shot onboarding, sample workflow/config 보강 |
 | **P1** | CI / Cloud bridge | Unity Build Automation, GitHub Actions 등 외부 빌드 시스템과 연계하는 local-to-CI workflow 정리 |
 | **P2** | 고급 UI 자동화 | 현재 `ui find/get`, `ui toggle/input` 이후 단계로 실제 click, 검증 assertion, 런타임 시나리오 재생 지원 |
