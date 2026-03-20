@@ -56,6 +56,26 @@ internal sealed class QueryTool(CommandExecutor executor)
         // Shader
         WellKnownCommands.ShaderFind,
         WellKnownCommands.ShaderGetProperties,
+        // UI Toolkit — Phase I-2
+        WellKnownCommands.UitkFind,
+        WellKnownCommands.UitkGet,
+        // Cinemachine — Phase E
+        WellKnownCommands.CinemachineList,
+        WellKnownCommands.CinemachineGet,
+        // Volume/PostProcessing — Phase D
+        WellKnownCommands.VolumeList,
+        WellKnownCommands.VolumeGet,
+        WellKnownCommands.VolumeGetOverrides,
+        WellKnownCommands.RendererFeatureList,
+        // Profiler — Phase C
+        WellKnownCommands.ProfilerGetStats,
+        // Animation Workflow — Phase H
+        WellKnownCommands.AnimationListClips,
+        WellKnownCommands.AnimationGetClip,
+        WellKnownCommands.AnimationGetController,
+        // Model/Audio Import Settings — Phase G
+        WellKnownCommands.ModelGetImportSettings,
+        WellKnownCommands.AudioGetImportSettings,
         // Additional reads
         WellKnownCommands.BuildProfileList,
         WellKnownCommands.BuildProfileGetActive,

@@ -72,7 +72,21 @@ public class CommandCatalogTests
              // ScriptableObject
              "scriptableobject-find", "scriptableobject-get", "scriptableobject-set-property",
              // Shader
-             "shader-find", "shader-get-properties"],
+             "shader-find", "shader-get-properties",
+             // UI Toolkit — Phase I-2
+             "uitk-find", "uitk-get", "uitk-set-value",
+             // Cinemachine — Phase E
+             "cinemachine-list", "cinemachine-get", "cinemachine-set-property",
+             // Volume/PostProcessing — Phase D
+             "volume-list", "volume-get", "volume-set-override", "volume-get-overrides", "renderer-feature-list",
+             // UGUI Enhancement — Phase I-1
+             "ui-scroll", "ui-slider-set", "ui-dropdown-set",
+             // Profiler — Phase C
+             "profiler-get-stats", "profiler-start", "profiler-stop",
+             // Animation Workflow Extension — Phase H
+             "animation-list-clips", "animation-get-clip", "animation-get-controller", "animation-add-curve",
+             // Asset Import/Export Extension — Phase G
+             "asset-export", "model-get-import-settings", "audio-get-import-settings"],
             names);
     }
 

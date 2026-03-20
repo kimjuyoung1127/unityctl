@@ -476,6 +476,85 @@ app.Add("shader find", (string project, string? filter = null, bool includeBuilt
 app.Add("shader get-properties", (string project, string name, bool json = false) =>
     ShaderCommand.GetProperties(project, name, json));
 
+// UI Toolkit — Phase I-2
+app.Add("uitk find", (string project, string? name = null, string? className = null, string? type = null, int? limit = null, bool json = false) =>
+    UitkCommand.Find(project, name, className, type, limit, json));
+
+app.Add("uitk get", (string project, string name, bool json = false) =>
+    UitkCommand.Get(project, name, json));
+
+app.Add("uitk set-value", (string project, string name, string value, bool json = false) =>
+    UitkCommand.SetValue(project, name, value, json));
+
+// Cinemachine — Phase E
+app.Add("cinemachine list", (string project, bool includeInactive = false, bool json = false) =>
+    CinemachineCommand.List(project, includeInactive, json));
+
+app.Add("cinemachine get", (string project, string id, bool json = false) =>
+    CinemachineCommand.Get(project, id, json));
+
+app.Add("cinemachine set-property", (string project, string id, string property, string value, bool json = false) =>
+    CinemachineCommand.SetProperty(project, id, property, value, json));
+
+// Volume/PostProcessing — Phase D
+app.Add("volume list", (string project, bool includeInactive = false, bool json = false) =>
+    VolumeCommand.List(project, includeInactive, json));
+
+app.Add("volume get", (string project, string id, bool json = false) =>
+    VolumeCommand.Get(project, id, json));
+
+app.Add("volume set-override", (string project, string id, string component, string property, string value, bool json = false) =>
+    VolumeCommand.SetOverride(project, id, component, property, value, json));
+
+app.Add("volume get-overrides", (string project, string id, string component, bool json = false) =>
+    VolumeCommand.GetOverrides(project, id, component, json));
+
+app.Add("renderer-feature list", (string project, bool json = false) =>
+    RendererFeatureCommand.List(project, json));
+
+// UGUI Enhancement — Phase I-1
+app.Add("ui scroll", (string project, string id, string? x = null, string? y = null, string mode = "auto", bool json = false) =>
+    UiCommand.Scroll(project, id, x, y, mode, json));
+
+app.Add("ui slider-set", (string project, string id, string value, string mode = "auto", bool json = false) =>
+    UiCommand.SliderSet(project, id, value, mode, json));
+
+app.Add("ui dropdown-set", (string project, string id, string value, string mode = "auto", bool json = false) =>
+    UiCommand.DropdownSet(project, id, value, mode, json));
+
+// Profiler — Phase C
+app.Add("profiler get-stats", (string project, bool json = false) =>
+    ProfilerCommand.GetStats(project, json));
+
+app.Add("profiler start", (string project, bool json = false) =>
+    ProfilerCommand.Start(project, json));
+
+app.Add("profiler stop", (string project, bool json = false) =>
+    ProfilerCommand.Stop(project, json));
+
+// Animation Workflow Extension — Phase H
+app.Add("animation list-clips", (string project, string? folder = null, string? filter = null, int? limit = null, bool json = false) =>
+    AnimationCommand.ListClips(project, folder, filter, limit, json));
+
+app.Add("animation get-clip", (string project, string path, bool json = false) =>
+    AnimationCommand.GetClip(project, path, json));
+
+app.Add("animation get-controller", (string project, string path, bool json = false) =>
+    AnimationCommand.GetController(project, path, json));
+
+app.Add("animation add-curve", (string project, string path, string binding, string keys, bool json = false) =>
+    AnimationCommand.AddCurve(project, path, binding, keys, json));
+
+// Asset Import/Export Extension — Phase G
+app.Add("asset export", (string project, string paths, string output, bool includeDependencies = true, bool json = false) =>
+    AssetCommand.Export(project, paths, output, includeDependencies, json));
+
+app.Add("model get-import-settings", (string project, string path, bool json = false) =>
+    ModelCommand.GetImportSettings(project, path, json));
+
+app.Add("audio get-import-settings", (string project, string path, bool json = false) =>
+    AudioCommand.GetImportSettings(project, path, json));
+
 // Screenshot / Visual Feedback — P3
 app.Add("screenshot capture", (
         string project,

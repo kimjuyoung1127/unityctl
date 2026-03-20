@@ -212,6 +212,86 @@ public static class UiCommand
         };
     }
 
+    // Phase I-1: UGUI Enhancement
+    public static void Scroll(string project, string id, string? x = null, string? y = null, string mode = "auto", bool json = false)
+    {
+        var request = CreateScrollRequest(id, x, y, mode);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    public static void SliderSet(string project, string id, string value, string mode = "auto", bool json = false)
+    {
+        var request = CreateSliderSetRequest(id, value, mode);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    public static void DropdownSet(string project, string id, string value, string mode = "auto", bool json = false)
+    {
+        var request = CreateDropdownSetRequest(id, value, mode);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    internal static CommandRequest CreateScrollRequest(string id, string? x, string? y, string mode = "auto")
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("id must not be empty", nameof(id));
+
+        var normalizedMode = ParseInteractionMode(mode, nameof(mode));
+        var parameters = new JsonObject
+        {
+            ["id"] = id,
+            ["mode"] = normalizedMode
+        };
+        if (!string.IsNullOrEmpty(x)) parameters["x"] = x;
+        if (!string.IsNullOrEmpty(y)) parameters["y"] = y;
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.UiScroll,
+            Parameters = parameters
+        };
+    }
+
+    internal static CommandRequest CreateSliderSetRequest(string id, string value, string mode = "auto")
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("id must not be empty", nameof(id));
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("value must not be empty", nameof(value));
+
+        var normalizedMode = ParseInteractionMode(mode, nameof(mode));
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.UiSliderSet,
+            Parameters = new JsonObject
+            {
+                ["id"] = id,
+                ["value"] = value,
+                ["mode"] = normalizedMode
+            }
+        };
+    }
+
+    internal static CommandRequest CreateDropdownSetRequest(string id, string value, string mode = "auto")
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("id must not be empty", nameof(id));
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("value must not be empty", nameof(value));
+
+        var normalizedMode = ParseInteractionMode(mode, nameof(mode));
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.UiDropdownSet,
+            Parameters = new JsonObject
+            {
+                ["id"] = id,
+                ["value"] = value,
+                ["mode"] = normalizedMode
+            }
+        };
+    }
+
     internal static bool ParseOptionalBool(string value, string parameterName)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -318,6 +398,9 @@ public static class UiCommand
         {
             WellKnownCommands.UiToggle => "ui toggle",
             WellKnownCommands.UiInput => "ui input",
+            WellKnownCommands.UiScroll => "ui scroll",
+            WellKnownCommands.UiSliderSet => "ui slider-set",
+            WellKnownCommands.UiDropdownSet => "ui dropdown-set",
             _ => command
         };
     }

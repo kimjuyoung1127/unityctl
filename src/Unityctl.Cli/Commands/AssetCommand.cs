@@ -315,6 +315,31 @@ public static class AssetCommand
         };
     }
 
+    public static void Export(string project, string paths, string output, bool includeDependencies = true, bool json = false)
+    {
+        var request = CreateExportRequest(paths, output, includeDependencies);
+        CommandRunner.Execute(project, request, json);
+    }
+
+    internal static CommandRequest CreateExportRequest(string paths, string output, bool includeDependencies)
+    {
+        if (string.IsNullOrWhiteSpace(paths))
+            throw new ArgumentException("paths must not be empty", nameof(paths));
+        if (string.IsNullOrWhiteSpace(output))
+            throw new ArgumentException("output must not be empty", nameof(output));
+
+        return new CommandRequest
+        {
+            Command = WellKnownCommands.AssetExport,
+            Parameters = new JsonObject
+            {
+                ["paths"] = paths,
+                ["output"] = output,
+                ["includeDependencies"] = includeDependencies
+            }
+        };
+    }
+
     internal static CommandRequest CreateGetLabelsRequest(string path)
     {
         if (string.IsNullOrWhiteSpace(path))

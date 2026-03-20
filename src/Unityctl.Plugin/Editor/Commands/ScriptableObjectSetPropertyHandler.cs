@@ -27,7 +27,7 @@ namespace Unityctl.Plugin.Editor.Commands
             if (asset == null)
                 return Fail(StatusCode.NotFound, $"ScriptableObject not found at: {path}");
 
-            UnityEngine.Undo.RecordObject(asset, $"Set {property} on {asset.name}");
+            UnityEditor.Undo.RecordObject(asset, $"Set {property} on {asset.name}");
 
             using (var serializedObject = new SerializedObject(asset))
             {

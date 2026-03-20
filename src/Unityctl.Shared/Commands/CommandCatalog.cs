@@ -1173,6 +1173,224 @@ public static class CommandCatalog
         Parameter("name", "string", "Shader name (e.g. Standard, Universal Render Pipeline/Lit)", required: true),
         Parameter("json", "bool", "Output as JSON", required: false)).WithCli("shader get-properties");
 
+    // UI Toolkit — Phase I-2
+    public static readonly CommandDefinition UitkFindCmd = Define(
+        WellKnownCommands.UitkFind,
+        "Find UI Toolkit elements via UIDocument (requires Unity 2021.2+)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("name", "string", "Element name filter", required: false),
+        Parameter("className", "string", "USS class name filter", required: false),
+        Parameter("type", "string", "Element type filter (e.g. Button, Label, TextField)", required: false),
+        Parameter("limit", "int", "Maximum number of results", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("uitk find");
+
+    public static readonly CommandDefinition UitkGetCmd = Define(
+        WellKnownCommands.UitkGet,
+        "Get detailed properties of a UI Toolkit element by name",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("name", "string", "Element name", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("uitk get");
+
+    public static readonly CommandDefinition UitkSetValueCmd = Define(
+        WellKnownCommands.UitkSetValue,
+        "Set value on a UI Toolkit element (TextField, Toggle, Slider, etc.)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("name", "string", "Element name", required: true),
+        Parameter("value", "string", "New value", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("uitk set-value");
+
+    // Cinemachine — Phase E
+    public static readonly CommandDefinition CinemachineListCmd = Define(
+        WellKnownCommands.CinemachineList,
+        "List Cinemachine virtual cameras in the scene (requires Cinemachine package)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("includeInactive", "bool", "Include inactive GameObjects (default: false)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("cinemachine list");
+
+    public static readonly CommandDefinition CinemachineGetCmd = Define(
+        WellKnownCommands.CinemachineGet,
+        "Get Cinemachine virtual camera properties (requires Cinemachine package)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the virtual camera or its GameObject", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("cinemachine get");
+
+    public static readonly CommandDefinition CinemachineSetPropertyCmd = Define(
+        WellKnownCommands.CinemachineSetProperty,
+        "Set a property on a Cinemachine virtual camera (requires Cinemachine package)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the virtual camera or its GameObject", required: true),
+        Parameter("property", "string", "Property name (e.g. m_Lens.FieldOfView, Priority)", required: true),
+        Parameter("value", "string", "New value", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("cinemachine set-property");
+
+    // Volume/PostProcessing — Phase D
+    public static readonly CommandDefinition VolumeListCmd = Define(
+        WellKnownCommands.VolumeList,
+        "List Volume components in the scene (requires URP or HDRP)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("includeInactive", "bool", "Include inactive GameObjects (default: false)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("volume list");
+
+    public static readonly CommandDefinition VolumeGetCmd = Define(
+        WellKnownCommands.VolumeGet,
+        "Get Volume component details and its VolumeProfile overrides (requires URP or HDRP)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the Volume or its GameObject", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("volume get");
+
+    public static readonly CommandDefinition VolumeSetOverrideCmd = Define(
+        WellKnownCommands.VolumeSetOverride,
+        "Set a VolumeComponent parameter value (requires URP or HDRP)",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the Volume or its GameObject", required: true),
+        Parameter("component", "string", "VolumeComponent type name (e.g. Bloom, Vignette)", required: true),
+        Parameter("property", "string", "Parameter name (e.g. intensity, threshold)", required: true),
+        Parameter("value", "string", "New value", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("volume set-override");
+
+    public static readonly CommandDefinition VolumeGetOverridesCmd = Define(
+        WellKnownCommands.VolumeGetOverrides,
+        "Get all parameters of a specific VolumeComponent (requires URP or HDRP)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the Volume or its GameObject", required: true),
+        Parameter("component", "string", "VolumeComponent type name (e.g. Bloom, Vignette)", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("volume get-overrides");
+
+    public static readonly CommandDefinition RendererFeatureListCmd = Define(
+        WellKnownCommands.RendererFeatureList,
+        "List ScriptableRendererFeatures on the active URP renderer",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("renderer-feature list");
+
+    // UGUI Enhancement — Phase I-1
+    public static readonly CommandDefinition UiScrollCmd = Define(
+        WellKnownCommands.UiScroll,
+        "Set ScrollRect normalized scroll position",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the ScrollRect or its GameObject", required: true),
+        Parameter("x", "string", "Horizontal normalized position (0-1)", required: false),
+        Parameter("y", "string", "Vertical normalized position (0-1)", required: false),
+        Parameter("mode", "string", "Interaction mode: auto, edit, play (default: auto)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui scroll");
+
+    public static readonly CommandDefinition UiSliderSetCmd = Define(
+        WellKnownCommands.UiSliderSet,
+        "Set Slider value",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the Slider or its GameObject", required: true),
+        Parameter("value", "string", "Slider value (between minValue and maxValue)", required: true),
+        Parameter("mode", "string", "Interaction mode: auto, edit, play (default: auto)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui slider-set");
+
+    public static readonly CommandDefinition UiDropdownSetCmd = Define(
+        WellKnownCommands.UiDropdownSet,
+        "Set Dropdown selected index",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("id", "string", "GlobalObjectId of the Dropdown or its GameObject", required: true),
+        Parameter("value", "string", "Selected option index (0-based)", required: true),
+        Parameter("mode", "string", "Interaction mode: auto, edit, play (default: auto)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("ui dropdown-set");
+
+    // Profiler — Phase C
+    public static readonly CommandDefinition ProfilerGetStatsCmd = Define(
+        WellKnownCommands.ProfilerGetStats,
+        "Get profiler statistics (FPS, memory, draw calls). Full stats require Play Mode.",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("profiler get-stats");
+
+    public static readonly CommandDefinition ProfilerStartCmd = Define(
+        WellKnownCommands.ProfilerStart,
+        "Enable the Unity Profiler",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("profiler start");
+
+    public static readonly CommandDefinition ProfilerStopCmd = Define(
+        WellKnownCommands.ProfilerStop,
+        "Disable the Unity Profiler",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("profiler stop");
+
+    // Animation Workflow Extension — Phase H
+    public static readonly CommandDefinition AnimationListClipsCmd = Define(
+        WellKnownCommands.AnimationListClips,
+        "List AnimationClip assets in the project",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("folder", "string", "Root folder to search", required: false),
+        Parameter("filter", "string", "Name filter", required: false),
+        Parameter("limit", "int", "Maximum number of results", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation list-clips");
+
+    public static readonly CommandDefinition AnimationGetClipCmd = Define(
+        WellKnownCommands.AnimationGetClip,
+        "Get AnimationClip details (curves, events, length, frameRate)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "AnimationClip asset path", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation get-clip");
+
+    public static readonly CommandDefinition AnimationGetControllerCmd = Define(
+        WellKnownCommands.AnimationGetController,
+        "Get AnimatorController structure (layers, states, transitions)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "AnimatorController asset path", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation get-controller");
+
+    public static readonly CommandDefinition AnimationAddCurveCmd = Define(
+        WellKnownCommands.AnimationAddCurve,
+        "Add or replace an animation curve on an AnimationClip",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "AnimationClip asset path", required: true),
+        Parameter("binding", "string", "Curve binding as JSON: {path, type, propertyName}", required: true),
+        Parameter("keys", "string", "Keyframes as JSON array: [{time, value}]", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("animation add-curve");
+
+    // Asset Import/Export Extension — Phase G
+    public static readonly CommandDefinition AssetExportCmd = Define(
+        WellKnownCommands.AssetExport,
+        "Export assets as a .unitypackage file",
+        "action",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("paths", "string", "Comma-separated asset paths to export", required: true),
+        Parameter("output", "string", "Output .unitypackage file path", required: true),
+        Parameter("includeDependencies", "bool", "Include asset dependencies (default: true)", required: false),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("asset export");
+
+    public static readonly CommandDefinition ModelGetImportSettingsCmd = Define(
+        WellKnownCommands.ModelGetImportSettings,
+        "Get ModelImporter settings for a model asset (FBX, OBJ, etc.)",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "Model asset path (e.g. Assets/Models/character.fbx)", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("model get-import-settings");
+
+    public static readonly CommandDefinition AudioGetImportSettingsCmd = Define(
+        WellKnownCommands.AudioGetImportSettings,
+        "Get AudioImporter settings for an audio asset",
+        "query",
+        Parameter("project", "string", "Path to Unity project", required: true),
+        Parameter("path", "string", "Audio asset path (e.g. Assets/Audio/bgm.wav)", required: true),
+        Parameter("json", "bool", "Output as JSON", required: false)).WithCli("audio get-import-settings");
+
     public static CommandDefinition[] All { get; } =
     [
         Init,
@@ -1327,7 +1545,38 @@ public static class CommandCatalog
         ScriptableObjectSetPropertyCmd,
         // Shader
         ShaderFindCmd,
-        ShaderGetPropertiesCmd
+        ShaderGetPropertiesCmd,
+        // UI Toolkit — Phase I-2
+        UitkFindCmd,
+        UitkGetCmd,
+        UitkSetValueCmd,
+        // Cinemachine — Phase E
+        CinemachineListCmd,
+        CinemachineGetCmd,
+        CinemachineSetPropertyCmd,
+        // Volume/PostProcessing — Phase D
+        VolumeListCmd,
+        VolumeGetCmd,
+        VolumeSetOverrideCmd,
+        VolumeGetOverridesCmd,
+        RendererFeatureListCmd,
+        // UGUI Enhancement — Phase I-1
+        UiScrollCmd,
+        UiSliderSetCmd,
+        UiDropdownSetCmd,
+        // Profiler — Phase C
+        ProfilerGetStatsCmd,
+        ProfilerStartCmd,
+        ProfilerStopCmd,
+        // Animation Workflow Extension — Phase H
+        AnimationListClipsCmd,
+        AnimationGetClipCmd,
+        AnimationGetControllerCmd,
+        AnimationAddCurveCmd,
+        // Asset Import/Export Extension — Phase G
+        AssetExportCmd,
+        ModelGetImportSettingsCmd,
+        AudioGetImportSettingsCmd
     ];
 
     private static CommandDefinition Define(

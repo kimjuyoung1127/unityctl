@@ -178,5 +178,43 @@ namespace Unityctl.Plugin.Editor.Shared
         // Shader
         public const string ShaderFind = "shader-find";
         public const string ShaderGetProperties = "shader-get-properties";
+
+        // UI Toolkit — Phase I-2
+        public const string UitkFind = "uitk-find";
+        public const string UitkGet = "uitk-get";
+        public const string UitkSetValue = "uitk-set-value";
+
+        // Cinemachine — Phase E
+        public const string CinemachineList = "cinemachine-list";
+        public const string CinemachineGet = "cinemachine-get";
+        public const string CinemachineSetProperty = "cinemachine-set-property";
+
+        // Volume/PostProcessing — Phase D
+        public const string VolumeList = "volume-list";
+        public const string VolumeGet = "volume-get";
+        public const string VolumeSetOverride = "volume-set-override";
+        public const string VolumeGetOverrides = "volume-get-overrides";
+        public const string RendererFeatureList = "renderer-feature-list";
+
+        // UGUI Enhancement — Phase I-1
+        public const string UiScroll = "ui-scroll";
+        public const string UiSliderSet = "ui-slider-set";
+        public const string UiDropdownSet = "ui-dropdown-set";
+
+        // Profiler — Phase C
+        public const string ProfilerGetStats = "profiler-get-stats";
+        public const string ProfilerStart = "profiler-start";
+        public const string ProfilerStop = "profiler-stop";
+
+        // Animation Workflow Extension — Phase H
+        public const string AnimationListClips = "animation-list-clips";
+        public const string AnimationGetClip = "animation-get-clip";
+        public const string AnimationGetController = "animation-get-controller";
+        public const string AnimationAddCurve = "animation-add-curve";
+
+        // Asset Import/Export Extension — Phase G
+        public const string AssetExport = "asset-export";
+        public const string ModelGetImportSettings = "model-get-import-settings";
+        public const string AudioGetImportSettings = "audio-get-import-settings";
     }
 }

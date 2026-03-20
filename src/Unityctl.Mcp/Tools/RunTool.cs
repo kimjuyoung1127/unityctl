@@ -98,7 +98,24 @@ internal sealed class RunTool(CommandExecutor executor)
         // Texture Import
         WellKnownCommands.TextureSetImportSettings,
         // ScriptableObject
-        WellKnownCommands.ScriptableObjectSetProperty
+        WellKnownCommands.ScriptableObjectSetProperty,
+        // UI Toolkit — Phase I-2
+        WellKnownCommands.UitkSetValue,
+        // Cinemachine — Phase E
+        WellKnownCommands.CinemachineSetProperty,
+        // Volume/PostProcessing — Phase D
+        WellKnownCommands.VolumeSetOverride,
+        // UGUI Enhancement — Phase I-1
+        WellKnownCommands.UiScroll,
+        WellKnownCommands.UiSliderSet,
+        WellKnownCommands.UiDropdownSet,
+        // Profiler — Phase C
+        WellKnownCommands.ProfilerStart,
+        WellKnownCommands.ProfilerStop,
+        // Animation Workflow — Phase H
+        WellKnownCommands.AnimationAddCurve,
+        // Asset Import/Export — Phase G
+        WellKnownCommands.AssetExport
     };
 
     [McpServerTool(Name = "unityctl_run")]
