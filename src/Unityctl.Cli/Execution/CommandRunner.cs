@@ -92,9 +92,17 @@ public static class CommandRunner
         var selection = (selectionStore ?? new EditorSelectionStore()).GetCurrent();
         if (selection == null)
         {
+            // Try auto-detect from current working directory
+            var detected = DetectUnityProject(Directory.GetCurrentDirectory());
+            if (detected != null)
+            {
+                resolvedProject = detected;
+                return true;
+            }
+
             failureResponse = CommandResponse.Fail(
                 StatusCode.InvalidParameters,
-                "No project specified and no current editor selection. Run `unityctl editor select --project <path>` or pass --project.");
+                "No project specified, no editor selection, and no Unity project found in current directory. Run `unityctl editor select --project <path>` or pass --project.");
             return false;
         }
 
@@ -109,6 +117,27 @@ public static class CommandRunner
 
         resolvedProject = selection.ProjectPath;
         return true;
+    }
+
+    /// <summary>
+    /// Walk from startDir up to root looking for a Unity project (Assets/ + ProjectSettings/).
+    /// </summary>
+    internal static string? DetectUnityProject(string startDir)
+    {
+        var dir = startDir;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.Exists(Path.Combine(dir, "Assets")) &&
+                Directory.Exists(Path.Combine(dir, "ProjectSettings")))
+            {
+                return Path.GetFullPath(dir);
+            }
+
+            var parent = Directory.GetParent(dir)?.FullName;
+            if (parent == dir) break; // root reached
+            dir = parent;
+        }
+        return null;
     }
 
     internal static void PrintResponse(string project, CommandResponse response, bool json)
