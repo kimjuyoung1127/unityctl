@@ -1,5 +1,7 @@
 # unityctl
 
+[English](README.md) | [한국어](README.ko.md)
+
 [![NuGet](https://img.shields.io/nuget/v/unityctl?label=unityctl)](https://www.nuget.org/packages/unityctl)
 [![NuGet](https://img.shields.io/nuget/v/unityctl-mcp?label=unityctl-mcp)](https://www.nuget.org/packages/unityctl-mcp)
 [![CI](https://github.com/kimjuyoung1127/unityctl/actions/workflows/ci-dotnet.yml/badge.svg)](https://github.com/kimjuyoung1127/unityctl/actions)
@@ -112,6 +114,27 @@ unityctl component add --id "<MainCameraId>" --type "Camera" --project $P
 unityctl gameobject set-tag --id "<MainCameraId>" --tag "MainCamera" --project $P
 unityctl project validate --project $P --json   # valid: true
 ```
+
+---
+
+## What To Build First
+
+If you want to prove `unityctl` in public, do not start with Minecraft.
+Start with a showcase ladder that matches the strongest verified loops in the current toolchain:
+
+1. **Zero-to-playable**: a small 3D arena microgame built from primitives, scripts, UI, physics, and verification artifacts.
+2. **Vertical slice**: expand that into a polished top-down survival or base-defense prototype with prefabs, NavMesh, materials, audio, and build validation.
+3. **Sandbox step**: only then move into chunked worlds, crafting, procedural terrain, and save-heavy systems.
+
+The best first showcase for `unityctl` is a **small 3D survival / base-defense game**, not an open-world sandbox.
+It is easy to understand in screenshots and GIFs, maps cleanly to scene editing + script patching + rollback + visual verification, and can grow into a more complex sandbox later.
+
+See [Showcase Roadmap](docs/ref/showcase-roadmap.md) for:
+
+- the recommended public demo scope
+- the asset checklist to prepare before building
+- the pre-production plan for using `unityctl` effectively
+- the gaps worth closing before attempting a Minecraft-like demo
 
 ---
 
@@ -457,7 +480,7 @@ unityctl.slnx
 +-- src/Unityctl.Cli      (net10.0)         CLI shell
 +-- src/Unityctl.Mcp      (net10.0)         MCP server
 +-- src/Unityctl.Plugin   (Unity UPM)       Editor bridge (IPC server)
-+-- tests/*                                 624 xUnit tests
++-- tests/*                                 633 xUnit tests
 ```
 
 ---
@@ -493,6 +516,7 @@ unityctl.slnx
 
 - [Getting Started](docs/ref/getting-started.md) — installation, setup, and common workflows
 - [AI Agent Quickstart](docs/ref/ai-quickstart.md) — MCP setup and agent integration guide
+- [Showcase Roadmap](docs/ref/showcase-roadmap.md) — recommended demo game ladder, asset checklist, and pre-production plan
 - [Architecture](docs/ref/architecture-mermaid.md) — system design and transport diagrams
 - [Glossary](docs/ref/glossary.md) — key terms and concepts
 
