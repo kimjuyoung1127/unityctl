@@ -6,7 +6,7 @@ namespace Unityctl.Shared;
 
 public static class Constants
 {
-    public const string Version = "0.2.0";
+    public const string Version = "0.3.0";
     public const string PipePrefix = "unityctl_";
     public const int DefaultTimeoutMs = 120_000;
     public const int PingTimeoutMs = 10_000;
